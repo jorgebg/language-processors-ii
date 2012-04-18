@@ -1,0 +1,223 @@
+/**
+ * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
+ */
+ options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(SNL)
+public class SNL{  public static void main(String args []) throws ParseException  {    SNL snlParser = new SNL(System.in);
+        while (true)    {      System.out.println("Reading from standard input...");      System.out.println("Enter an expression in Structured Java Natual Language: ");
+            try      {        /*switch (SNL.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }
+        */      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        eg1.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(SNL)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}
+/* ---- */
+TOKEN : /* MODIFIERS */
+{    < PACKAGE_MOD : "package" >
+| < IMPORT_MOD : "import" >
+| < PUBLIC_MOD : "public" >
+| < PRIVATE_MOD : "private" >
+| < PROTECTED_MOD : "protected" >
+| < ABSTRACT_MOD : "abstract" >
+| < STATIC_MOD : "static" >
+| < FINAL_MOD : "final" >
+| < EXTENDS_MOD : "extends" >
+| < IMPLEMENTS_MOD : "implements" >
+}
+
+TOKEN : /* IDENTIGFIERS */
+{  < CLASS_IDENTIFIER: <CAP_LETTER> (<ID_ANY>)* >
+| < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
+}
+
+TOKEN : /* AUXILIAR TOKENS */
+{  < #CAP_LETTER : ([ "A"-"Z" ]) >
+| < #ID_BEGIN : ([ "a" - "z" ] | "$" | "_") >
+| < #ID_ANY : (["a"-"z"] | ["A"-"Z"] | ["0"-"9"] | "$" | "_" ) >
+}
+
+TOKEN [IGNORE_CASE] : /* BEGIN-END TOKENS */
+{  
+  < CLASS : "class" >
+| < END_CLASS : "end-class" >
+| < CONSTRUCTOR : "constructor" >
+| < END_CONSTRUCTOR : "end-constructor" >
+| < FUNCTION : ("function" | "method") >
+| < END_FUNCTION: ("end-function" | "end-method") >
+}
+
+TOKEN [IGNORE_CASE] : /* CONTROL - LOOP STATEMENTS */
+{ <IF : "if" >
+| < ELSE : "else" >
+| < THEN : "then" | "then," >
+| < END_IF : "end-if" >
+| < WHILE : "while" >
+| < END_WHILE: "end-while" >
+}
+
+TOKEN [IGNORE_CASE] : /* EXPRESSION CONSTANTS */
+{  < INSTANCE_OF : "instance_of" >
+| < NULL : "null" >
+| < SUPER : "super" >
+| < THIS : "this" >
+| < NEW : "new" >
+| < TRUE : "true" >
+| < FALSE : "false" >
+}
+
+TOKEN [IGNORE_CASE] : /* TYPE NAMES */
+{  < STRING : "string" >
+| < CHAR : "char" >
+| < BOOLEAN : "boolean" >
+| < BYTE : "byte" >
+| < SHORT : "short" >
+| < INT : "int" >
+| < LONG : "long" >
+| < FLOAT : "float" >
+| < DOUBLE : "double" >
+}
+
+TOKEN : /* ARRAY BRACKET LIST */
+{	< ARRAY_TOKEN : ("[" "]")* >
+}
+ 
+/* NATURAL LANGUAGE RELATED TOKENS */
+
+TOKEN : /* SUBJECT TOKENS */
+{  < CREATION_SUBJECT : (< SUBJECT >) >
+| < CREATION_SUBJECT_3rd : (< SUBJECT_3 >) >
+| < CONTROL_SUBJECT : (< SUBJECT >) >
+| < CONTROL_SUBJECT_3rd : (< SUBJECT_3 >) >
+| < PRINT_SUBJECT : (< SUBJECT >) >
+| < PRINT_SUBJECT_3rd : (< SUBJECT_3 >) >
+| < RETURN_SUBJECT : (< A_THE > "function") | "it" >
+}
+
+TOKEN :	/* SUBJECTS */
+{  < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
+| < SUBJECT_3 : (< THRD_SUBJECT > | < OTHER_SUBJECT >) >
+}
+
+TOKEN : /* "I" ONLY CAP LETTERS*/
+{  < #I_SUBJECT : "I" >
+}
+
+TOKEN [IGNORE_CASE] : /* AUXILIAR SUBJECT TOKENS */ /* EXTENSIBLE */
+{ < #NORMAL_SUBJECT : ("you" | "we" | "they") >
+| < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
+| < #OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
+} 
+
+TOKEN [IGNORE_CASE] : /* AUXILIAR VERBS */ /* EXTENSIBLE */
+{  <AUX_VERB : "want" | "need" >
+| <AUX_VERB_3rd : "wants" | "needs" >
+| <MODAL_VERB : "shall" | "must" | "will" >
+}
+
+TOKEN [IGNORE_CASE] : /* ACTION VERBS */ /* EXTENSIBLE */
+{ <ASSIGN_VERB : "save" | "store" >
+| <ASSIGN_VERB_3rd : "saves" | "stores" >
+| <CREATION_VERB : "create" | "define" >
+| <CREATION_VERB_3rd : "creates" | "defines" >
+| <CONTROL_VERB : "check" | "verify" >
+| <CONTROL_VERB_3rd : "checks" | "verifies" >
+| <PRINT_VERB : "print" >
+| <PRINT_VERB_3rd : "prints" >
+| <RETURN_VERB : "return" >
+}
+
+TOKEN [IGNORE_CASE] : /* WORD CONNECTORS */
+{
+ <TO  : "to" >
+| <IN  : "in" >
+| <A_THE  : "a" | "an" | "the" >
+}
+
+TOKEN [IGNORE_CASE] : /* PHRASE CONNECTORS */
+{
+  < PHRASE_CONNECTOR : ( < PHRASE_SYMBOL > | < PHRASE_EXPRESSION > ) >
+| < #PHRASE_SYMBOL : ( "." < CAP_LETTER > ) > 
+/*| < #LANGUAGE_PHRASE_CONNECTOR: in wich > */
+}
+
+/* REVIEW CONNECTORS !!!*/
+
+
+TOKEN : /* LIST CONNECTORS */
+<SYMBOLIC_LIST_CONNECTOR: , >
+ <LANGUAGE_LIST_CONNECTOR: and >
+}
+
+TOKEN [IGNORE_CASE] : /* AUXILIAR CONNECTORS */
+{
+ <AUX_CONNECTOR : ("in" "addition") | "also" >
+}
+
+TOKEN [IGNORE_CASE] : /* VALUE OF */ /* NOT USED */
+{  
+ <VALUE_OF : ("the" "value" "of") >
+}
+
+TOKEN : /* COMPARATION SENTENCE */
+{
+< COMPARE : ( < IS > < COMPARATION_EXPRESSIONS > < THAN > ) | ( < COMPARATION_SYMBOLS > ) >}
+
+TOKEN [IGNORE_CASE] : /* COMPARATOR AUXILIAR VERB*/
+{
+ <#IS  : "is" >
+|  <#THAN  : "than" >
+}
+
+TOKEN [IGNORE_CASE] : /* COMPARATOR EXPRESSIONS AND SYMBOLS */
+{ 
+ < #COMPARATION_SYMBOLS : ">" | "<" | "==" | "!=" | ">=" | "<=" >
+| < #COMPARATION_EXPRESSIONS : "greater" | "smaller" | ("greater" "or" "equal") | "smaller" "or" "equal" | < EQUAL_EXPRESSIONS > >
+}
+
+TOKEN  [IGNORE_CASE] : /* EQUAL EXPRESSIONS */
+{  <#EQUAL_EXPRESSIONS : ("not")? "equal" >
+| <#ASSIGN_EQUAL : "equal" >
+}
+
+TOKEN : /* ASSIGN SENTENCE */ /* NOT USED */
+{  < ASSIGN : ( < ASSIGN_SYMBOL > | < ASSIGN_EXPRESSION > ) >
+} 
+
+TOKEN [IGNORE_CASE] : /* ASSIGN EXPRESSIONS AND SYMBOL */
+{  
+ <ASSIGN_SYMBOL : "=" >
+| <ASSIGN_EXPRESSION : ( < ASSIGN_EQUAL > < TO > ) >
+}
+
+TOKEN [IGNORE_CASE] : /* COMPLEX OPERATION EXPRESSION*/ /* NOT USED */
+{ 
+ <COMPLEX_OPERATION : "complex" "operation" >
+}
+
+
+
+
+ 
+ <SYMBOLIC_NUMERIC_INCREMENT: -- , ++ >
+ <LANGUAGE_NUMERIC_INCREMENT: increment, decrement >
+ <SYMBOLIC_MINUS : - >
+ <LANGUAGE_MINUS : minus >
+ <SYMBOLIC_NUMERIC_OPERATOR: +, +=, -, -=, *, *=, /, /=, %, %= >
+ <LANGUAGE_NUMERIC_OPERATOR: plus, plus equal, minus, minus equal, times, times equal, divides, divides equal, modulo, modulo equals >
+ <SYMBOLIC_LOGICAL_EXPRESSION: &&, || >
+ <LANGUAGE_LOGICAL_EXPRESSION: AND, OR >
+ <SYMBOLIC_NEGATIVE_EXPRESSION: ! >
+ <LANGUAGE_NEGATIVE_EXPRESSION: NOT >
+ <SYMBOLIC_STRING_EXPRESSION: + >
+ <VARIABLE  : variable, variables >
+ <DOT_NOTATION : if it is a '.' it might cause problems >
+
+ TOKEN [IGNORE_CASE] : /* A, THE, AN */
+{
+ < A_THE : "a" | "the" | "an" >
+}
+
+%%
+ <CHARACTER 
+ <DECIMAL_DIGITS
+ <STRING_CHAIN
+
+
+
+
+

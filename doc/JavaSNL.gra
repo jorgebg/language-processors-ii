@@ -1,0 +1,624 @@
+%token PACKAGE IMPORT
+%token PUBLIC PRIVATE PROTECTED ABSTRACT STATIC FINAL
+%token EXTENDS IMPLEMENTS
+%token CLASS_IDENTIFIER IDENTIFIER CLASS END_CLASS END_CONSTRUCTOR END_FUNCTION
+%token IF ELSE_IF ELSE THEN END_IF WHILE END_WHILE
+%token INSTANCE_OF NULL SUPER THIS TRUE FALSE NEW
+%token STRING INT FLOAT DOUBLE BOOLEAN CHAR SHORT LONG BYTE
+%token CHARACTER DECIMAL_DIGITS STRING_CHAIN
+%token ARRAY_TOKEN 			/* ('[ ]')* */
+	 /* NATURAL LANGUAGE RELATED TOKENS */
+%token CREATION_SUBJECT 		/* I, you, we, they */
+%token CREATION_SUBJECT_3rd 		/* he, she, it, the program, the computer */
+%token CONTROL_SUBJECT 			/* I, you, we, they */
+%token CONTROL_SUBJECT_3rd 		/* he, she, it, the program, the computer */
+%token PRINT_SUBJECT 			/* I, you, we, they */
+%token PRINT_SUBJECT_3rd 		/* he, she, it, the program, the computer */
+%token RETURN_SUBJECT			/* The function */
+%token AUX_VERB				/* want, need */
+%token AUX_VERB_3rd			/* wants, needs */
+%token MODAL_VERB			/* shall, must, will */
+%token ASSIGN_VERB			/* save, store */
+%token ASSIGN_VERB_3rd			/* saves, stores */
+%token CREATION_VERB			/* create, define */
+%token CREATION_VERB_3rd		/* creates, defines */
+%token CONTROL_VERB			/* check, verify */
+%token CONTROL_VERB_3rd			/* checks, verifies */
+%token PRINT_VERB			/* print */
+%token PRINT_VERB_3rd			/* prints */
+%token RETURN_VERB			/* returns */
+%token TO				/* to */
+%token IN				/* in */
+%token A_THE				/* a, the */
+%token AN				/* an */
+%token AUX_CONNECTOR			/* in addition, also */
+%token VALUE_OF				/* the value of */
+%token IS				/* is */
+%token THAN				/* than */
+%token SYMBOLIC_ASSIGN			/* = */
+%token LANGUAGE_ASSIGN 			/* equal to */
+%token COMPLEX_OPERATION		/* complex_operation */
+%token SYMBOLIC_PHRASE_CONNECTOR	/* . */
+%token LANGUAGE_PHRASE_CONNECTOR	/* in which */
+%token SYMBOLIC_LIST_CONNECTOR		/* , 	*/
+%token LANGUAGE_LIST_CONNECTOR		/* and */
+%token SYMBOLIC_COMPARATOR		/* > , < ,==, != >=, <= */
+%token LANGUAGE_COMPARATOR		/* greater, smaller, greater or equal, smaller or equal */
+%token LANGUAGE_EQUALITY		/* equal, not equal */
+%token SYMBOLIC_NUMERIC_INCREMENT	/* -- , ++ */
+%token LANGUAGE_NUMERIC_INCREMENT	/* increment, decrement */
+%token SYMBOLIC_MINUS			/* - */
+%token LANGUAGE_MINUS			/* minus */
+%token SYMBOLIC_NUMERIC_OPERATOR	/* +, +=, -, -=, *, *=, /, /=, %, %= */
+%token LANGUAGE_NUMERIC_OPERATOR	/* plus, plus equal, minus, minus equal, times, times equal, divides, divides equal, modulo, modulo equals */
+%token SYMBOLIC_LOGICAL_EXPRESSION	/* &&, || */
+%token LANGUAGE_LOGICAL_EXPRESSION	/* AND, OR */
+%token SYMBOLIC_NEGATIVE_EXPRESSION	/* ! */
+%token LANGUAGE_NEGATIVE_EXPRESSION	/* NOT */
+%token SYMBOLIC_STRING_EXPRESSION	/* + */
+%token FUNCTION				/* function, method */
+%token CONSTRUCTOR			/* constructor */
+%token VARIABLE				/* variable, variables */
+%token DOT_NOTATION			/* if it is a '.' it might cause problems */
+%%
+
+			/* JAVA IMPORT EXPRESSIONS */
+
+compilation_unit
+	: package_statement import_statement_list type_declaration_list
+	;
+
+package_statement
+	:
+	| PACKAGE class_name ';'
+	;
+
+import_statement_list
+	: import_statement import_statement_list'
+	;
+
+import_statement_list'
+	: import_statement_list
+	;
+
+import_statement
+	: IMPORT imported_elements ';'
+	;
+
+imported_elements
+	: class_name complete_package ';'
+	;
+
+complete_package
+	:
+	| '*'
+	;
+
+type_declaration_list
+	: type_declaration type_declaration_list'
+	;
+
+type_declaration_list'
+	: type_declaration_list
+	;
+
+type_declaration							/* import declaration might be added */
+	: class_declaration
+	;
+
+			/* JAVA AND NATURAL LANGUAGES EXPRESSIONS */
+
+/* CLASS */
+
+class_declaration
+	: creation_sentence class_modifiers CLASS identifier inheritance_declaration statement_connector field_declaration_list END_CLASS
+	;
+
+inheritance_declaration
+	: extends_declaration implements_declaration
+	;
+
+class_modifiers
+	: access_modifier final_abstract_modifier
+	;
+
+extends_declaration
+	:
+	| EXTENDS class_name
+	;
+
+implements_declaration
+	:  IMPLEMENTS implements_list
+	;
+
+implements_list
+	: class_name implements_list'
+	;
+
+implements_list'
+	:
+	| ',' implements_list
+	; 
+
+field_declaration_list
+	: field_declaration_sentence field_declaration_list'
+	;
+
+field_declaration_list'
+	: 
+	| statement_connector field_declaration_list
+	;
+
+field_declaration_sentence
+	: creation_sentence field_declaration
+	;
+
+field_declaration
+	: field_modifiers element_declaration 
+	;
+
+element_declaration
+	: constructor_declaration					/* constructor must have only access modifiers */
+	| method_declaration
+	| variable_declaration
+	;
+
+field_modifiers
+	: access_modifier static_modifier final_modifier
+	; 
+
+/* METHOD - FUNCTION - CONSTRUCTOR */
+
+constructor_declaration
+	: CONSTRUCTOR identifier '(' parameter_list ')' statement_connector statement_list END_CONSTRUCTOR 
+	;
+
+method_declaration							/* E.g.: int [] intID [] --> valid for variable and previous of function */
+	: FUNCTION type identifier array_token '(' parameter_list ')' statement_connector statement_list END_FUNCTION 
+	;
+
+parameter_list
+	: 
+	| parameter parameter_list'
+	;
+
+parameter_list'
+	: 
+	| ',' parameter_list
+	;
+
+parameter
+	: type identifier array_token
+	;
+
+/* ATTRIBUTES - GLOBAL VARIABLES */
+
+variable_declaration
+	: VARIABLE type variable_declaration_rest
+	;
+
+variable_declaration_rest
+	: identifier array_token variable_init variable_declaration_list
+	;
+
+variable_declaration_list
+	: 
+	| list_connector variable_declaration_rest
+	;
+
+variable_init
+	:
+	| initial_assign_sentence variable_initializer
+	;
+
+variable_initializer
+	: expression
+	| '{' variable_array_values_list '}'
+	;
+
+variable_array_values_list
+	: 
+	| variable_initializer variable_array_values_list'
+	;
+
+variable_array_values_list'
+	: ',' variable_array_values_list
+	;
+
+/* STATEMENTS */
+
+statement_list
+	: statement statement_list'
+	;
+
+statement_list'
+	: 
+	| statement_connector statement_list
+	;
+
+statement
+	: variable_declaration_statement
+	| expression
+	| if_statement
+	| while_statement
+	| print_statement
+	| return_statement
+	;
+
+variable_declaration_statement
+	: creation_sentence type variable_declaration
+	;
+
+/* CONTROL STATEMENT - IF ELSE_IF ELSE */
+if_statement
+	: control_sentence if_expression statement else_expression END_IF
+	;
+
+if_expression
+	: IF '(' expression ')' THEN			/* logical_expression */
+	;
+
+else_expression
+	:
+	| ELSE if_expression statement else_list
+	;
+
+else_list
+	: else_expression
+	;
+
+/* LOOP STATEMENT - WHILE */
+
+while_statement								/* no natural language */
+	: WHILE expression THEN statement END_WHILE
+	;
+
+/* PRINT STATEMENT*/
+
+print_statement
+	: print_sentence '(' expression ')'				/* string expression */
+	;
+
+/* RETURN STATEMENT */
+
+return_statement
+	: return_sentence expression
+	;
+
+
+/* EXPRESSION */
+
+expression
+	: simple_expression complex_expression
+	;
+
+/* SIMPLE EXPRESSIONS */
+
+simple_expression
+	: 
+	| logical_simple_expression
+	| creating_expression
+	| literal_expression 
+	| '(' casting_expression ')'			/* also for nested brackets */
+	| expression_constants
+	;
+
+logical_simple_expression
+	: negative_expression expression
+	| logical_constants
+	;
+
+creating_expression
+	: NEW expression_specifier
+	;
+
+expression_specifier
+	: class_name '(' argument_list ')'
+	| type_specifier_special '[' expression ']'
+	| '(' expression ')'
+	;
+
+literal_expression
+	: integer_literal
+	| str
+	| character
+	;
+
+casting_expression
+	: expression ')'
+	| type ')' expression
+	;
+
+/* COMPLEX EXPRESSIONS */
+
+complex_expression
+	: numeric_expression
+	| logical_expression
+	| testing_expression
+	| post_expression
+	;
+
+numeric_expression
+	: operation_symbol expression   
+	;
+
+logical_expression
+	: logical_symbol expression
+	;
+
+testing_expression
+	: compare_symbol expression
+	;
+
+post_expression
+	: '['  argument_list ']'
+	| DOT_NOTATION expression			
+	| ',' expression			
+	| INSTANCE_OF class_name
+	;
+
+argument_list
+	: 
+	| expression argument_list'
+	;
+
+argument_list'
+	: argument_list
+	;
+
+			/* NATURAL LANGUAGE EXPRESSIONS */
+		/* natural language expressions are optional for the program use */
+
+/* CREATION ð */ 
+
+creation_sentence
+	: 
+	| CREATION_SUBJECT auxiliar_expression creation_verb auxiliar_connector A_THE
+	| CREATION_SUBJECT_3rd creation_expression_3rd auxiliar_connector A_THE
+	;
+
+creation_expression_3rd
+	: CREATION_VERB_3rd						/* it needs to be a 3rd person verb */
+	| AUX_VERB_3rd TO creation_verb
+	| MODAL_VERB creation_verb
+	;
+
+creation_verb
+	: CREATION_VERB							/*might be changed if new verb times are included */
+	;
+
+/* CONTROL  ð */
+
+control_sentence
+	: 
+	| CONTROL_SUBJECT auxiliar_expression control_verb auxiliar_connector
+	| CONTROL_SUBJECT_3rd control_expression_3rd auxiliar_connector
+	;
+
+control_expression_3rd
+	: CONTROL_VERB_3rd						/* it needs to be a 3rd person verb */
+	| AUX_VERB_3rd TO control_verb
+	| MODAL_VERB control_verb
+	;
+
+control_verb
+	: CONTROL_VERB							/*might be changed if new verb times are included */
+	;
+
+/* PRINT ð */
+
+print_sentence
+	: PRINT_SUBJECT auxiliar_expression print_verb auxiliar_connector
+	| PRINT_SUBJECT_3rd print_expression_3rd auxiliar_connector
+	;
+
+print_expression_3rd
+	: PRINT_VERB_3rd						/* it needs to be a 3rd person verb */
+	| AUX_VERB_3rd TO print_verb
+	| MODAL_VERB print_verb
+	;
+
+print_verb
+	: PRINT_VERB							/*might be changed if new verb times are included */
+	;
+
+/* RETURN ð */
+
+return_sentence
+	: RETURN_SUBJECT return_expression 
+	;
+
+return_expression
+	: RETURN_VERB							/* it needs to be a 3rd person verb */
+	| AUX_VERB_3rd TO return_verb
+	| MODAL_VERB return_verb
+	;
+
+return_verb
+	: RETURN_VERB							/*might be changed if new verb times are included */
+	;
+
+/* CONNECTION EXPRESSIONS ð */
+
+statement_connector							/* "." */
+	: SYMBOLIC_PHRASE_CONNECTOR
+	| LANGUAGE_PHRASE_CONNECTOR
+	;
+
+list_connector								/* "," and */
+	: SYMBOLIC_LIST_CONNECTOR
+	| LANGUAGE_LIST_CONNECTOR
+	;
+
+/* SYMBOLS ð */
+
+operation_symbol
+	: increment_symbol
+	| operator_symbol 		
+	;
+
+increment_symbol
+	: SYMBOLIC_NUMERIC_INCREMENT
+	| LANGUAGE_NUMERIC_INCREMENT
+	;
+
+minus_symbol
+	: SYMBOLIC_MINUS
+	| LANGUAGE_MINUS
+	;
+
+operator_symbol
+	: SYMBOLIC_NUMERIC_OPERATOR
+	| LANGUAGE_NUMERIC_OPERATOR
+	;
+
+logical_symbol
+	: SYMBOLIC_LOGICAL_EXPRESSION
+	| LANGUAGE_LOGICAL_EXPRESSION
+	;
+
+compare_symbol
+	: IS equality_comparator
+	| SYMBOLIC_COMPARATOR
+	;
+
+equality_comparator
+	: LANGUAGE_COMPARATOR THAN
+	| LANGUAGE_EQUALITY TO
+	;
+
+str_symbol
+	: SYMBOLIC_STRING_EXPRESSION
+/*	 | LANGUAGE_STRING_EXPRESSION */			/* not needed yet. does not make much sense */
+	;
+
+initial_assign_sentence
+	: SYMBOLIC_ASSIGN
+/*	 | LANGUAGE_ASSIGN */					/* natural language might be used in the future, but not jet */
+	;
+
+negative_expression
+	: SYMBOLIC_NEGATIVE_EXPRESSION
+	| LANGUAGE_NEGATIVE_EXPRESSION
+	;
+
+/* AUXILIAR EXPRESSIONS ð */
+
+auxiliar_connector
+	:
+	| AUX_CONNECTOR
+	;
+
+auxiliar_expression
+	:  
+	| AUX_VERB TO
+	| MODAL_VERB
+	;
+
+			/* TERMINAL EXPRESSIONS */
+
+access_modifier
+	:
+	| PUBLIC
+	| PRIVATE
+	| PROTECTED
+	;
+
+final_abstract_modifier
+	:
+	| ABSTRACT
+	| FINAL
+	;
+
+static_modifier
+	:
+	| STATIC
+	;
+
+final_modifier
+	:
+	| FINAL
+	;
+
+array_token
+	: 
+	| ARRAY_TOKEN
+	;
+
+integer_literal
+	: DECIMAL_DIGITS fixed_point_notation
+	;
+
+fixed_point_notation
+	:
+	| '.' DECIMAL_DIGITS floating_type_suffix
+	;
+
+floating_type_suffix
+	:
+	| 'f'
+	| 'd'
+	;
+
+type
+	: type_specifier array_token
+	;
+
+type_specifier_special
+	: BOOLEAN
+	| BYTE
+	| CHAR
+	| SHORT
+	| INT
+	| LONG
+	| FLOAT
+	| DOUBLE
+	;
+
+type_specifier
+	: BOOLEAN
+	| BYTE
+	| CHAR
+	| SHORT
+	| INT
+	| LONG
+	| FLOAT
+	| DOUBLE
+	| class_name
+	;
+
+class_name					/* Cyclic naming for packaging --> identifier.identifier. ... .identifier */
+	: class_identifier class_name_list	/* CLASS_IDENTIFIER is required for LL(1) --> Identifier */
+	;
+
+class_name_list
+	: 
+	| '.' class_name
+	;
+
+expression_constants
+	: NULL
+	| THIS
+	| SUPER
+	;
+
+logical_constants
+	: TRUE
+	| FALSE
+	;
+
+str
+	: STRING_CHAIN
+	;
+
+character
+	: CHARACTER
+	;
+
+class_identifier
+	: CLASS_IDENTIFIER
+	;
+
+identifier
+	: IDENTIFIER
+	;
