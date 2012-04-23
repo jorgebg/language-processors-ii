@@ -10,6 +10,14 @@
  * the program must PRINT (Hello World, This is my first SSNL Program =D);
  * END_METHOD END_CLASS
  * 
+ * FUNCTIONALITY TESTED:
+ *  Class Declaration
+ *  Method Declaration
+ *  String output
+ *  
+ *  Auxiliary Sentences
+ *  Third person sentences
+ *  Modal verb usage
  */
 package test;
 
