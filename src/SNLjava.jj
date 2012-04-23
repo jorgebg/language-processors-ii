@@ -1,7 +1,8 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */
- options{  JDK_VERSION = "1.5";  static = true;}PARSER_BEGIN(SNL)
+ options{  JDK_VERSION = "1.5";  static = true;}
+PARSER_BEGIN(SNL)
 public class SNL{  public static void main(String args []) throws ParseException  {    SNL snlParser = new SNL(System.in);
         while (true)    {      System.out.println("Reading from standard input...");      System.out.println("Enter an expression in Structured Java Natual Language: ");
             try      {        /*switch (SNL.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }

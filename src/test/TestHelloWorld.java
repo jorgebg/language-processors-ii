@@ -1,0 +1,25 @@
+/**
+ * SSNL To Java
+ * Test Number: 001
+ * @author sohrab farzaneh
+ * @version 0.1
+ * 
+ * SSNL CODE:
+ * I want to create a public CLASS TestHelloWorld. 
+ * The program shall define a public static void METHOD main(String[] args):
+ * the program must PRINT (Hello World, This is my first SSNL Program =D);
+ * END_METHOD END_CLASS
+ * 
+ */
+package test;
+
+/**
+ * Class HelloWorld
+ */
+public class TestHelloWorld {
+
+	public static void main(String[] args) {
+		//Prints hello world
+		System.out.println("Hello World, This is my first SSNL =D");
+	}
+}
