@@ -138,10 +138,12 @@ TOKEN [IGNORE_CASE] : /* PHRASE CONNECTORS */
 /* REVIEW CONNECTORS !!!*/
 
 
-TOKEN : /* LIST CONNECTORS */
+TOKEN : /* LIST CONNECTORS - N2, AttributeToAttribute or ParameterToParameter*/
 <SYMBOLIC_LIST_CONNECTOR: , >
  <LANGUAGE_LIST_CONNECTOR: and >
 }
+
+/*N1, N3 connectors, need to be implemented*/
 
 TOKEN [IGNORE_CASE] : /* AUXILIAR CONNECTORS */
 {
@@ -188,8 +190,6 @@ TOKEN [IGNORE_CASE] : /* COMPLEX OPERATION EXPRESSION*/ /* NOT USED */
 { 
  <COMPLEX_OPERATION : "complex" "operation" >
 }
-
-
  
  <SYMBOLIC_NUMERIC_INCREMENT: -- , ++ >
  <LANGUAGE_NUMERIC_INCREMENT: increment, decrement >
