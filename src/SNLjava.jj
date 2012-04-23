@@ -5,8 +5,7 @@
 PARSER_BEGIN(SNL)
 public class SNL{  public static void main(String args []) throws ParseException  {    SNL snlParser = new SNL(System.in);
         while (true)    {      System.out.println("Reading from standard input...");      System.out.println("Enter an expression in Structured Java Natual Language: ");
-            try      {        /*switch (SNL.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }
-        */      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        eg1.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(SNL)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}
+            try      {        switch (SNL.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        eg1.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(SNL)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}
 /* ---- */
 TOKEN : /* MODIFIERS */
 {    < PACKAGE_MOD : "package" >
@@ -21,7 +20,7 @@ TOKEN : /* MODIFIERS */
 | < IMPLEMENTS_MOD : "implements" >
 }
 
-TOKEN : /* IDENTIGFIERS */
+TOKEN : /* IDENTIFIERS */
 {  < CLASS_IDENTIFIER: <CAP_LETTER> (<ID_ANY>)* >
 | < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
 }
@@ -189,8 +188,6 @@ TOKEN [IGNORE_CASE] : /* COMPLEX OPERATION EXPRESSION*/ /* NOT USED */
 { 
  <COMPLEX_OPERATION : "complex" "operation" >
 }
-
-
 
 
  
