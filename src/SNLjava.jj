@@ -3,10 +3,83 @@
  */
  options{  JDK_VERSION = "1.5";  static = true;}
 PARSER_BEGIN(SNL)
-public class SNL{  public static void main(String args []) throws ParseException  {    SNL snlParser = new SNL(System.in);
-        while (true)    {      System.out.println("Reading from standard input...");      System.out.println("Enter an expression in Structured Java Natual Language: ");
-            try      {        switch (SNL.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        eg1.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(SNL)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}
-/* ---- */
+public class SNL{
+    public static void main(String args []) throws ParseException {
+	if (args.length == 0) {
+	    System.out.println("No input given");
+	    //  SNL snlParser = new SNL(System.in);
+	    return;
+	}else if(args.length == 1){		System.out.println("Reading from file:" + args[0] + "...");
+		try {
+	    	SNL snlParser = new SNL(new java.io.FileInputStream(args[0]));
+	    } catch (java.io.FileNotFoundException e) {
+	    	System.out.println("The File " + args[0] + " has not been found");
+	    	return;
+	   	}
+	} else {
+	    System.out.println("Wrong number of parameters");
+	    return;
+	}
+
+	//Parser begin
+	
+  }
+}
+/* Parser begin -EXAMPLE 1
+	try {
+      	parser.inicio();
+      	parser.ReInit(new java.io.FileInputStream(args[0]));
+      	parser.inicioSegundo();
+		String archivo = args[0];
+      	if(archivo.endsWith(".java"))
+      		archivo = archivo.replace(".java","");
+      	parser.generarCodigo(archivo+".as");
+    	System.out.println("Completado parser");
+    } catch (ParseException e) {
+   		System.out.println("Errores"+ e.getMessage());
+	} catch (java.io.FileNotFoundException e) {
+		System.out.println("Fichero " + args[0] + " no encontrado");
+		return;
+	}
+*/
+
+/* Parser begin - EXAMPLE 2
+	while (true){
+	  System.out.println("Reading from standard input...");
+	  System.out.println("Enter an expression in Structured Java Natual Language: ");
+	  
+	  try
+	  {
+	    switch (SNL.one_line())
+	    {
+	      case 0 : 
+	      System.out.println("OK.");
+	      break;
+	      case 1 : 
+	      System.out.println("Goodbye.");
+	      break;
+	      default : 
+	      break;
+	    }
+	  }
+	  catch (Exception e)
+	  {
+	    System.out.println("NOK.");
+	    System.out.println(e.getMessage());
+	    eg1.ReInit(System.in);
+	  }
+	  catch (Error e)
+	  {
+	    System.out.println("Oops.");
+	    System.out.println(e.getMessage());
+	    break;
+	  }
+	}
+*/PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}TOKEN : /*Meta tokens*/{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}
+/* __ GENERAL TOKENS __ */
+
+/* __ JAVA TOKENS __*/
+
 TOKEN : /* MODIFIERS */
 {    < PACKAGE_MOD : "package" >
 | < IMPORT_MOD : "import" >
@@ -20,6 +93,8 @@ TOKEN : /* MODIFIERS */
 | < IMPLEMENTS_MOD : "implements" >
 }
 
+/* __ IDs __ */
+
 TOKEN : /* IDENTIFIERS */
 {  < CLASS_IDENTIFIER: <CAP_LETTER> (<ID_ANY>)* >
 | < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
@@ -31,6 +106,8 @@ TOKEN : /* AUXILIAR TOKENS */
 | < #ID_ANY : (["a"-"z"] | ["A"-"Z"] | ["0"-"9"] | "$" | "_" ) >
 }
 
+/*__ SSNL TOKENS __*/
+
 TOKEN [IGNORE_CASE] : /* BEGIN-END TOKENS */
 {  
   < CLASS : "class" >
@@ -40,6 +117,8 @@ TOKEN [IGNORE_CASE] : /* BEGIN-END TOKENS */
 | < FUNCTION : ("function" | "method") >
 | < END_FUNCTION: ("end-function" | "end-method") >
 }
+
+/* __ EXPRESSIONS __*/
 
 TOKEN [IGNORE_CASE] : /* CONTROL - LOOP STATEMENTS */
 { <IF : "if" >
@@ -76,7 +155,9 @@ TOKEN : /* ARRAY BRACKET LIST */
 {	< ARRAY_TOKEN : ("[" "]")* >
 }
  
-/* NATURAL LANGUAGE RELATED TOKENS */
+/* __ NATURAL LANGUAGE RELATED TOKENS __ */
+
+/* __ SUBJECTS __ */
 
 TOKEN : /* SUBJECT TOKENS */
 {  < CREATION_SUBJECT : (< SUBJECT >) >
@@ -103,6 +184,8 @@ TOKEN [IGNORE_CASE] : /* AUXILIAR SUBJECT TOKENS */ /* EXTENSIBLE */
 | < #OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
 } 
 
+/* __ VERBS __ */
+
 TOKEN [IGNORE_CASE] : /* AUXILIAR VERBS */ /* EXTENSIBLE */
 {  <AUX_VERB : "want" | "need" >
 | <AUX_VERB_3rd : "wants" | "needs" >
@@ -118,8 +201,12 @@ TOKEN [IGNORE_CASE] : /* ACTION VERBS */ /* EXTENSIBLE */
 | <CONTROL_VERB_3rd : "checks" | "verifies" >
 | <PRINT_VERB : "print" >
 | <PRINT_VERB_3rd : "prints" >
-| <RETURN_VERB : "return" >
+| <RETURN_VERB : "returns" >
 }
+
+/* __ CONNECTORS __ */
+
+/* __ SNL LIKE __ */
 
 TOKEN [IGNORE_CASE] : /* WORD CONNECTORS */
 {
@@ -128,24 +215,17 @@ TOKEN [IGNORE_CASE] : /* WORD CONNECTORS */
 | <A_THE  : "a" | "an" | "the" >
 }
 
-TOKEN [IGNORE_CASE] : /* PHRASE CONNECTORS */
+/* __ FUNCTIONAL CONNECTORS __ */
+
+TOKEN [IGNORE_CASE] : /* CONNECTORS */
 {
-  < PHRASE_CONNECTOR : ( < PHRASE_SYMBOL > | < PHRASE_EXPRESSION > ) >
-| < #PHRASE_SYMBOL : ( "." < CAP_LETTER > ) > 
-/*| < #LANGUAGE_PHRASE_CONNECTOR: in wich > */
+  < CLASS_METHOD_CONNECTOR : "."  >			//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
+| < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
+| <LIST_CONNECTOR: ("," | "AND") >			//N2 connector. VariableToVariable, ParameterToParamenter
+| < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement 
 }
 
-/* REVIEW CONNECTORS !!!*/
-
-
-TOKEN : /* LIST CONNECTORS - N2, AttributeToAttribute or ParameterToParameter*/
-<SYMBOLIC_LIST_CONNECTOR: , >
- <LANGUAGE_LIST_CONNECTOR: and >
-}
-
-/*N1, N3 connectors, need to be implemented*/
-
-TOKEN [IGNORE_CASE] : /* AUXILIAR CONNECTORS */
+TOKEN [IGNORE_CASE] : /* AUXILIAR CONNECTORS */ /*might not be used*/
 {
  <AUX_CONNECTOR : ("in" "addition") | "also" >
 }
@@ -155,65 +235,113 @@ TOKEN [IGNORE_CASE] : /* VALUE OF */ /* NOT USED */
  <VALUE_OF : ("the" "value" "of") >
 }
 
-TOKEN : /* COMPARATION SENTENCE */
-{
-< COMPARE : ( < IS > < COMPARATION_EXPRESSIONS > < THAN > ) | ( < COMPARATION_SYMBOLS > ) >}
+/* __ EXPRESSIONS __ */
 
-TOKEN [IGNORE_CASE] : /* COMPARATOR AUXILIAR VERB*/
+/* __ COMPARISON __ */
+
+TOKEN : /* COMPARISON SENTENCE */
+{
+< COMPARE : ( < IS > < COMPARISON_EXPRESSIONS > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >}
+
+TOKEN [IGNORE_CASE] : /* COMPARISON AUXILIAR VERB*/
 {
  <#IS  : "is" >
 |  <#THAN  : "than" >
 }
 
-TOKEN [IGNORE_CASE] : /* COMPARATOR EXPRESSIONS AND SYMBOLS */
-{ 
- < #COMPARATION_SYMBOLS : ">" | "<" | "==" | "!=" | ">=" | "<=" >
-| < #COMPARATION_EXPRESSIONS : "greater" | "smaller" | ("greater" "or" "equal") | "smaller" "or" "equal" | < EQUAL_EXPRESSIONS > >
-}
 
-TOKEN  [IGNORE_CASE] : /* EQUAL EXPRESSIONS */
-{  <#EQUAL_EXPRESSIONS : ("not")? "equal" >
-| <#ASSIGN_EQUAL : "equal" >
-}
+/* __ ASSIGN __*/
 
 TOKEN : /* ASSIGN SENTENCE */ /* NOT USED */
-{  < ASSIGN : ( < ASSIGN_SYMBOL > | < ASSIGN_EXPRESSION > ) >
+{  < ASSIGN : ( < SYMBOLIC_EQUALS > | < LANGUAGE_EQUALS >< TO > ) >
 } 
 
-TOKEN [IGNORE_CASE] : /* ASSIGN EXPRESSIONS AND SYMBOL */
-{  
- <ASSIGN_SYMBOL : "=" >
-| <ASSIGN_EXPRESSION : ( < ASSIGN_EQUAL > < TO > ) >
-}
+/* __ OPERATIONS __ */
 
 TOKEN [IGNORE_CASE] : /* COMPLEX OPERATION EXPRESSION*/ /* NOT USED */
 { 
  <COMPLEX_OPERATION : "complex" "operation" >
 }
- 
- <SYMBOLIC_NUMERIC_INCREMENT: -- , ++ >
- <LANGUAGE_NUMERIC_INCREMENT: increment, decrement >
- <SYMBOLIC_MINUS : - >
- <LANGUAGE_MINUS : minus >
- <SYMBOLIC_NUMERIC_OPERATOR: +, +=, -, -=, *, *=, /, /=, %, %= >
- <LANGUAGE_NUMERIC_OPERATOR: plus, plus equal, minus, minus equal, times, times equal, divides, divides equal, modulo, modulo equals >
- <SYMBOLIC_LOGICAL_EXPRESSION: &&, || >
- <LANGUAGE_LOGICAL_EXPRESSION: AND, OR >
- <SYMBOLIC_NEGATIVE_EXPRESSION: ! >
- <LANGUAGE_NEGATIVE_EXPRESSION: NOT >
- <SYMBOLIC_STRING_EXPRESSION: + >
- <VARIABLE  : variable, variables >
- <DOT_NOTATION : if it is a '.' it might cause problems >
 
- TOKEN [IGNORE_CASE] : /* A, THE, AN */
+/* __ OPERATORS __ */
+
+//this way of declaring the operators might be the solution for the LL(1) problem, it should also increase efficiency
+//The syntactical analyzer only needs to call expression operator, logical operator or concatenation operator
+//expression_operator(+,-,*,/,+=,-=,*=,/=, and any combination with natural language)
+//logical_operator(<,>,=,!=,==,<=, >= and any combination with natural language)
+//comparison_operator (||, &&, or)
+//PARENTHESIS ARE NOT INCLUDED !!!!
+
+/*It might be better that the syntactical analyzer is on charge of this part, allowing nested brackets*/
+
+TOKEN: /*OPERATORS*//*===CHANGED===*//*+++!LL(1)+++*/
+//{//< EXPRESSION_OPERATOR: (< DOUBLE_EXPRESSION_OPERATOR >|< UNARY_EXPRESSION_OPERATOR >) >
+//| <LOGICAL_OPERATOR: (< DOUBLE_LOGICAL_OPERATOR >|< UNARY_LOGICAL_OPERATOR >) >
+//| < COMPARISON_OPERATOR(< OR >|< AND >) > 	// AND has not jet a language token
+//}
+
+TOKEN: /* CALCULATION EXPRESSION *//*===CHANGED====*//*+++!LL(1)+++*/ 
+//{//< DOUBLE_EXPRESSION_OPERATOR: (< UNARY_EXPRESSION_OPERATOR > <EQUAL >) >
+//| < UNARY_EXPRESSION_OPERATOR: (< MINUS >|< PLUS >|< TIMES >|< DIVIDES >) >
+//}
+
+TOKEN: /* LOGICAL EXPRESSION *//*===CHANGED===*//*+++!LL(1)+++*/ 
+//{//< DOUBLE_LOGICAL_OPERATOR:((< EQUAL >|< NOT >|< UNARY_LOGICAL_OPERATOR >) < EQUAL >) //NOT is not standallone token, EQUAL is not standallone as a logical expression
+//| <UNARY_LOGICAL_OPERATOR:(< GREATER >|< SMALLER >) >
+//}
+
+/* __ UNIVERSAL UNARY OPERATORS __ */
+
+TOKEN [IGNORE_CASE]: /* UNARY OPERATORS DEFINITION *//*===CHANGED===*//*+++LL(1)DANGER++*/
+//{
+// < MINUS: (< SYMBOLIC_MINUS >|< LANGUAGE_MINUS >) >
+//|  < PLUS: (< SYMBOLIC_PLUS >|< LANGUAGE_PLUS >) >
+//|  < TIMES: (< SYMBOLIC_TIMES >|<LANGUAGE_TIMES >) >
+//|  < DIVIDES: (< SYMBOLIC_DIVIDES >|<LANGUAGE_DIVIDES >) >
+//|  < NOT: (< SYMBOLIC_NOT >|<LANGUAGE_NOT >) > 
+//|  < EQUALS: (< SYMBOLIC_EQUALS >|<LANGUAGE_EQUALS >) >
+//|  < GREATER:  (< SYMBOLIC_GREATER >|<LANGUAGE_GREATER >) >
+//|  < SMALLER:  (< SYMBOLIC_SMALLER >|<LANGUAGE_SMALLER >) >//|  < OR: (< SYMBOLIC_OR >|<LANGUAGE_OR >) >
+//|  < AND: (< SYMBOLIC_AND >) > //LANGUAGE AND MIGHT BE ADDED IN FUTURE
+//}
+
+/*----------------------------------*/
+
+
+/* __ SPECIFIC UNARY OPERATORS __ */
+
+TOKEN [IGNORE_CASE]: /*UNARY SYMBOLS AND NL WORDS*/ /*+++LL(1)DANGER+++*//*+++SEMANTIC DANGER+++*/
+{  <#SYMBOLIC_MINUS : "-" > | <#LANGUAGE_MINUS : "minus" >
+| <#SYMBOLIC_PLUS : "+" > | <#LANGUAGE_PLUS : "plus" >
+| <#SYMBOLIC_TIMES : "*" > | <#LANGUAGE_TIMES : "times" >
+| <#SYMBOLIC_DIVIDES : "/" > | <#LANGUAGE_DIVIDES : "divides" >
+| <#SYMBOLIC_NOT : "!" > | <#LANGUAGE_NOT : "not" >
+| <#SYMBOLIC_EQUALS : "=" > | <#LANGUAGE_EQUALS : "equals" >
+| <#SYMBOLIC_GREATER : ">" > | <#LANGUAGE_GREATER : "greater" >
+| <#SYMBOLIC_SMALLER : "<" > | <#LANGUAGE_SMALLER : "smaller" >
+| <#SYMBOLIC_OR : "||" > | <#LANGUAGE_OR : "or" >
+| <#SYMBOLIC_AND: "&&" >
+| <#LANGUAGE_NUMERIC_INCREMENT: "increment" >
+| <#LANGUAGE_NUMERIC_DECREMENT: "decrement" >
+}
+
+/* __ OTHER TOKENS __*/
+
+TOKEN [IGNORE_CASE]:
+{< VARIABLE : ("variable" |"variables") >
+}
+
+TOKEN [IGNORE_CASE]:
+{ < DOT_NOTATION: "->" > 
+}
+
+TOKEN [IGNORE_CASE]: /* A, THE, AN */
 {
  < A_THE : "a" | "the" | "an" >
 }
 
 %%
- <CHARACTER 
- <DECIMAL_DIGITS
- <STRING_CHAIN
+ 
 
 
 
