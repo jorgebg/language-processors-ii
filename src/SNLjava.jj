@@ -146,18 +146,12 @@ TOKEN [IGNORE_CASE] :
 | < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
 	//Symbolic operators
 | < SYMBOLIC_EQUALS : "=" >
-
-| < SYMBOLIC_DECREMENT:"--" >
-| < SYMBOLIC_INCREMENT:"++" >
 | < SYMBOLIC_OR : "||" >
 | < SYMBOLIC_AND: "&&" >
 	//Language Operators
 | < LANGUAGE_EQUALS : "equals" >
-
 | < LANGUAGE_OR : "or" >
 | < LANGUAGE_AND : "and" >
-| < LANGUAGE_NUMERIC_INCREMENT: "increment" >
-| < LANGUAGE_NUMERIC_DECREMENT: "decrement" >
 	//Other Tokens
 | < DOT_NOTATION: "->" >
 | < A_THE : "a" | "the" | "an" >
@@ -179,10 +173,12 @@ TOKEN :
 | < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
 	//Constant
 | < CONSTANT : (< DIGIT >)+ >
-	//Comparison	// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
+	//Comparison		// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
 | < COMPARATOR : ( < IS > < COMPARISON_EXPRESSIONS > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
-	//Operation // ====== CHANGED ====== // -- An operator is to be used in any operation situation. No other token must be used
+	//Operation 		// ====== CHANGED ====== // -- An operator is to be used in any operation situation. No other token must be used
 | < OPERATOR: (< OPERATION_EXPRESSION >|< OPERATION_SYMBOL >) >
+	//Unary Operation 	// ====== CHANGED ====== // -- An unary operator is to be used in any unary operation situation. No other token must be used
+| <UNARY_OPERATOR: (< UNARY_OPERATION_EXPRESSION >|< UNARY_OPERATION_SYMBOL >) > 
 }
 
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
@@ -194,36 +190,41 @@ TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and L
 | < #COMPARISON_SYMBOLS: < SYMBOLIC_EQUALS_COMPARISON >|(< SYMBOLIC_COMPARISON > (< LANGUAGE_EQUALS_COMPARISON >)?) >
 | < #SYMBOLIC_EQUALS_COMPARISON: (< SYMBOLIC_EQUALS >|< SYMBOLIC_NOT ><SYMBOLIC_EQUALS >) >
 | < #SYMBOLIC_COMPARISON: (< SYBOLIC_GREATER >|< SYMBOLIC_SMALLER >) >
-	//Language Operation
+	//Operations
 | < #OPERATION_EXPRESSION: (< LANGUAGE_PLUS >|< LANGUAGE_MINUS >|< LANGUAGE_TIMES >|< LANGUAGE_DIVIDES >) >
-	//Symbol Operation
 | < #OPERATION_SYMBOL: (< SYMBOLIC_PLUS >|< SYMBOLIC_MINUS >|< SYMBOLIC_TIMES >|< SYMBOLIC_DIVIDES >) >
-
+	//Unary Operation
+| < #UNARY_OPERATION_EXPRESSION: (< LANGUAGE_INCREMENT >|< LANGUAGE_DECREMENT >) >
+| < #UNARY_OPERATION_SYMBOL: (< SYMBOLIC_INCREMENT >|< SYMBOLIC_DECREMENT >) > 
 }
 
 
 TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 {
+  	//Language Comparators
+  < #LANGUAGE_NOT : "not" >
+| < #LANGUAGE_GREATER : "greater" >
+| < #LANGUAGE_SMALLER : "smaller" >
   	//Symbolic Comparators -- 
-	//| < #SYMBOLIC_EQUALS : "=" > Equals might be used by the syntactical analyzer
 | < #SYMBOLIC_NOT : "!" >
 | < #SYMBOLIC_GREATER : ">" >
 | < #SYMBOLIC_SMALLER : "<" >
-	//Symbolic Operators
-| < #SYMBOLIC_MINUS : "-" >
-| < #SYMBOLIC_PLUS : "+" >
-| < #SYMBOLIC_TIMES : "*" >
-| < #SYMBOLIC_DIVIDES : "/" >
-  	//Language Comparators
-	//| < #LANGUAGE_EQUALS : "equals" > Equals might be used by the syntactical analyzer
-| < #LANGUAGE_NOT : "not" >
-| < #LANGUAGE_GREATER : "greater" >
-| < #LANGUAGE_SMALLER : "smaller" >
 	//Language Operators
 | < #LANGUAGE_MINUS : "minus" >
 | < #LANGUAGE_PLUS : "plus" >
 | < #LANGUAGE_TIMES : "times" >
 | < #LANGUAGE_DIVIDES : "divides" >
+	//Symbolic Operators
+| < #SYMBOLIC_MINUS : "-" >
+| < #SYMBOLIC_PLUS : "+" >
+| < #SYMBOLIC_TIMES : "*" >
+| < #SYMBOLIC_DIVIDES : "/" >
+	//Language Unary Operators
+| < #LANGUAGE_INCREMENT: "increment" >
+| < #LANGUAGE_DECREMENT: "decrement" >
+	//Symbolic Unary Operators
+| < #SYMBOLIC_DECREMENT:"--" >
+| < #SYMBOLIC_INCREMENT:"++" >
   	//Subject
 | < #NORMAL_SUBJECT : ("you" | "we" | "they") >
 | < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
@@ -231,6 +232,8 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 	//Others
 | < #IS  : "is" >
 | < #THAN  : "than" >
+//< #LANGUAGE_EQUALS : "equals" > Equals might be used by the syntactical analyzer
+//< #SYMBOLIC_EQUALS : "=" > Equals might be used by the syntactical analyzer
 } 
 
 TOKEN : /*Meta tokens*/
