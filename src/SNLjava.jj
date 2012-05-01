@@ -160,7 +160,7 @@ TOKEN [IGNORE_CASE] :
 
 TOKEN :
 {
-  	//Subjects
+  	//Subjects 			// ====== CHANGED ====== // 
   < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
 | < SUBJECT_3 : (< THRD_SUBJECT > | < OTHER_SUBJECT >) >
 	//Comparison		// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
@@ -197,7 +197,6 @@ TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and L
 | < #LINKER_EXPRESSION: (< LANGUAGE_AND >|< LANGUAGE_OR >) >
 | < #LINKER_SYMBOL: (< SYMBOLIC_AND >|< SYMBOLIC_OR >) >
 }
-
 
 TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 {
@@ -254,77 +253,28 @@ TOKEN : /*Meta tokens*/
 | < #DIGIT : [ "0"-"9" ] >
 }
 
+/* __ __ REMARKS & CHANGES __ __ */
+
 /* __ SUBJECTS __ */
 /* This is not necesary, it must be changed in the grammar*/
-
-TOKEN : /* SUBJECT TOKENS */ /*==============__REAL CHANGE__==============*/
-//{
-//  < CREATION_SUBJECT : (< SUBJECT >) >
-//| < CREATION_SUBJECT_3rd : (< SUBJECT_3 >) >
-//| < CONTROL_SUBJECT : (< SUBJECT >) >
-//| < CONTROL_SUBJECT_3rd : (< SUBJECT_3 >) >
-//| < PRINT_SUBJECT : (< SUBJECT >) >
-//| < PRINT_SUBJECT_3rd : (< SUBJECT_3 >) >
-//| < RETURN_SUBJECT : (< A_THE > "function") | "it" >
-//}
-
-TOKEN [IGNORE_CASE] : /* VALUE OF */ /* NOT USED */
-//{  
-//<VALUE_OF : ("the" "value" "of") >
-//}
-/* __ ASSIGN __*/
-TOKEN : /* ASSIGN SENTENCE */ /* NOT USED */
-//{//  < ASSIGN : ( < SYMBOLIC_EQUALS > | < LANGUAGE_EQUALS >< TO > ) >
-//} 
-
-/* __ OPERATIONS __ */
-TOKEN [IGNORE_CASE] : /* COMPLEX OPERATION EXPRESSION*/ /* NOT USED */
-//{ 
-// <COMPLEX_OPERATION : "complex" "operation" >
-//}
-
 /* __ OPERATORS __ */
-
 //this way of declaring the operators might be the solution for the LL(1) problem, it should also increase efficiency
 //The syntactical analyzer only needs to call expression operator, logical operator or concatenation operator
 //expression_operator(+,-,*,/,+=,-=,*=,/=, and any combination with natural language)
 //logical_operator(<,>,=,!=,==,<=, >= and any combination with natural language)
 //comparison_operator (||, &&, or)
 //PARENTHESIS ARE NOT INCLUDED !!!!
-
 /*It might be better that the syntactical analyzer is on charge of this part, allowing nested brackets*/
-
-TOKEN: /*OPERATORS*//*===CHANGED===*//*+++!LL(1)+++*/
-//{//< EXPRESSION_OPERATOR: (< DOUBLE_EXPRESSION_OPERATOR >|< UNARY_EXPRESSION_OPERATOR >) >
-//| <LOGICAL_OPERATOR: (< DOUBLE_LOGICAL_OPERATOR >|< UNARY_LOGICAL_OPERATOR >) >
-//| < COMPARISON_OPERATOR(< OR >|< AND >) > 	// AND has not jet a language token
+/* __ UNUSED TOKENS __*/
+TOKEN [IGNORE_CASE] :
+//{  
+// <VALUE_OF : ("the" "value" "of") >// <ASSIGN : ( < SYMBOLIC_EQUALS > | < LANGUAGE_EQUALS >< TO > ) >
+// <COMPLEX_OPERATION : "complex" "operation" >
 //}
+/*__ __ -------------------- __ __*/
 
-TOKEN: /* CALCULATION EXPRESSION *//*===CHANGED====*//*+++!LL(1)+++*/ 
-//{//< DOUBLE_EXPRESSION_OPERATOR: (< UNARY_EXPRESSION_OPERATOR > <EQUAL >) >
-//| < UNARY_EXPRESSION_OPERATOR: (< MINUS >|< PLUS >|< TIMES >|< DIVIDES >) >
-//}
 
-TOKEN: /* LOGICAL EXPRESSION *//*===CHANGED===*//*+++!LL(1)+++*/ 
-//{//< DOUBLE_LOGICAL_OPERATOR:((< EQUAL >|< NOT >|< UNARY_LOGICAL_OPERATOR >) < EQUAL >) //NOT is not standallone token, EQUAL is not standallone as a logical expression
-//| <UNARY_LOGICAL_OPERATOR:(< GREATER >|< SMALLER >) >
-//}
 
-/* __ UNIVERSAL UNARY OPERATORS __ */
-
-TOKEN [IGNORE_CASE]: /* UNARY OPERATORS DEFINITION *//*===CHANGED===*//*+++LL(1)DANGER++*/
-//{
-// < MINUS: (< SYMBOLIC_MINUS >|< LANGUAGE_MINUS >) >
-//|  < PLUS: (< SYMBOLIC_PLUS >|< LANGUAGE_PLUS >) >
-//|  < TIMES: (< SYMBOLIC_TIMES >|<LANGUAGE_TIMES >) >
-//|  < DIVIDES: (< SYMBOLIC_DIVIDES >|<LANGUAGE_DIVIDES >) >
-//|  < NOT: (< SYMBOLIC_NOT >|<LANGUAGE_NOT >) > 
-//|  < EQUALS: (< SYMBOLIC_EQUALS >|<LANGUAGE_EQUALS >) >
-//|  < GREATER:  (< SYMBOLIC_GREATER >|<LANGUAGE_GREATER >) >
-//|  < SMALLER:  (< SYMBOLIC_SMALLER >|<LANGUAGE_SMALLER >) >//|  < OR: (< SYMBOLIC_OR >|<LANGUAGE_OR >) >
-//|  < AND: (< SYMBOLIC_AND >) > //LANGUAGE AND MIGHT BE ADDED IN FUTURE
-//}
-/*----------------------------------*/
 
 
 
