@@ -75,13 +75,15 @@ public class SNL{
 	    break;
 	  }
 	}
-*/PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}TOKEN : /*Meta tokens*/{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}
-/* __ GENERAL TOKENS __ */
+*/PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}
 
-/* __ JAVA TOKENS __*/
 
-TOKEN : /* MODIFIERS */
-{    < PACKAGE_MOD : "package" >
+/* __ SSNL TOKENS __*/
+
+TOKEN [IGNORE_CASE] : 
+{
+  	//Java reserved words
+  	< PACKAGE_MOD : "package" >
 | < IMPORT_MOD : "import" >
 | < PUBLIC_MOD : "public" >
 | < PRIVATE_MOD : "private" >
@@ -91,56 +93,29 @@ TOKEN : /* MODIFIERS */
 | < FINAL_MOD : "final" >
 | < EXTENDS_MOD : "extends" >
 | < IMPLEMENTS_MOD : "implements" >
-}
-
-/* __ IDs __ */
-
-TOKEN : /* IDENTIFIERS */
-{  < CLASS_IDENTIFIER: <CAP_LETTER> (<ID_ANY>)* >
-| < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
-}
-
-TOKEN : /* AUXILIAR TOKENS */
-{  < #CAP_LETTER : ([ "A"-"Z" ]) >
-| < #ID_BEGIN : ([ "a" - "z" ] | "$" | "_") >
-| < #ID_ANY : (["a"-"z"] | ["A"-"Z"] | ["0"-"9"] | "$" | "_" ) >
-}
-
-/*__ SSNL TOKENS __*/
-
-TOKEN [IGNORE_CASE] : /* BEGIN-END TOKENS */
-{  
-  < CLASS : "class" >
+  	//Begin-End tokens
+| < CLASS : "class" >
 | < END_CLASS : "end-class" >
 | < CONSTRUCTOR : "constructor" >
 | < END_CONSTRUCTOR : "end-constructor" >
 | < FUNCTION : ("function" | "method") >
 | < END_FUNCTION: ("end-function" | "end-method") >
-}
-
-/* __ EXPRESSIONS __*/
-
-TOKEN [IGNORE_CASE] : /* CONTROL - LOOP STATEMENTS */
-{ <IF : "if" >
+	//Control - Loop Expressions| <IF : "if" >
 | < ELSE : "else" >
-| < THEN : "then" | "then," >
+| < THEN : "then" >
 | < END_IF : "end-if" >
 | < WHILE : "while" >
 | < END_WHILE: "end-while" >
-}
-
-TOKEN [IGNORE_CASE] : /* EXPRESSION CONSTANTS */
-{  < INSTANCE_OF : "instance_of" >
+| < VARIABLE : ("variable" |"variables") >
+	//Expression constants| < INSTANCE_OF : "instance_of" >
 | < NULL : "null" >
 | < SUPER : "super" >
 | < THIS : "this" >
 | < NEW : "new" >
 | < TRUE : "true" >
 | < FALSE : "false" >
-}
-
-TOKEN [IGNORE_CASE] : /* TYPE NAMES */
-{  < STRING : "string" >
+	//Type names
+| < STRING : "string" >
 | < CHAR : "char" >
 | < BOOLEAN : "boolean" >
 | < BYTE : "byte" >
@@ -149,51 +124,14 @@ TOKEN [IGNORE_CASE] : /* TYPE NAMES */
 | < LONG : "long" >
 | < FLOAT : "float" >
 | < DOUBLE : "double" >
-}
-
-TOKEN : /* ARRAY BRACKET LIST */
-{	< ARRAY_TOKEN : ("[" "]")* >
-}
- 
-/* __ NATURAL LANGUAGE RELATED TOKENS __ */
-
-/* __ SUBJECTS __ */
-
-TOKEN : /* SUBJECT TOKENS */
-{  < CREATION_SUBJECT : (< SUBJECT >) >
-| < CREATION_SUBJECT_3rd : (< SUBJECT_3 >) >
-| < CONTROL_SUBJECT : (< SUBJECT >) >
-| < CONTROL_SUBJECT_3rd : (< SUBJECT_3 >) >
-| < PRINT_SUBJECT : (< SUBJECT >) >
-| < PRINT_SUBJECT_3rd : (< SUBJECT_3 >) >
-| < RETURN_SUBJECT : (< A_THE > "function") | "it" >
-}
-
-TOKEN :	/* SUBJECTS */
-{  < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
-| < SUBJECT_3 : (< THRD_SUBJECT > | < OTHER_SUBJECT >) >
-}
-
-TOKEN : /* "I" ONLY CAP LETTERS*/
-{  < #I_SUBJECT : "I" >
-}
-
-TOKEN [IGNORE_CASE] : /* AUXILIAR SUBJECT TOKENS */ /* EXTENSIBLE */
-{ < #NORMAL_SUBJECT : ("you" | "we" | "they") >
-| < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
-| < #OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
-} 
-
-/* __ VERBS __ */
-
-TOKEN [IGNORE_CASE] : /* AUXILIAR VERBS */ /* EXTENSIBLE */
-{  <AUX_VERB : "want" | "need" >
+	//Array Bracket list
+| < ARRAY_TOKEN : ("[" "]")* >
+	//Auxiliar Verbs -EXTENSIBLE
+| <AUX_VERB : "want" | "need" >
 | <AUX_VERB_3rd : "wants" | "needs" >
 | <MODAL_VERB : "shall" | "must" | "will" >
-}
-
-TOKEN [IGNORE_CASE] : /* ACTION VERBS */ /* EXTENSIBLE */
-{ <ASSIGN_VERB : "save" | "store" >
+	//Action Verbs -EXTENSIBLE
+| <ASSIGN_VERB : "save" | "store" >
 | <ASSIGN_VERB_3rd : "saves" | "stores" >
 | <CREATION_VERB : "create" | "define" >
 | <CREATION_VERB_3rd : "creates" | "defines" >
@@ -202,66 +140,112 @@ TOKEN [IGNORE_CASE] : /* ACTION VERBS */ /* EXTENSIBLE */
 | <PRINT_VERB : "print" >
 | <PRINT_VERB_3rd : "prints" >
 | <RETURN_VERB : "returns" >
-}
-
-/* __ CONNECTORS __ */
-
-/* __ SNL LIKE __ */
-
-TOKEN [IGNORE_CASE] : /* WORD CONNECTORS */
-{
- <TO  : "to" >
+	//Word connectors
+| <TO  : "to" >
 | <IN  : "in" >
 | <A_THE  : "a" | "an" | "the" >
-}
-
-/* __ FUNCTIONAL CONNECTORS __ */
-
-TOKEN [IGNORE_CASE] : /* CONNECTORS */
-{
-  < CLASS_METHOD_CONNECTOR : "."  >			//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
+	//Functional connectors
+| < CLASS_METHOD_CONNECTOR : "."  >			//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
 | < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
-| <LIST_CONNECTOR: ("," | "AND") >			//N2 connector. VariableToVariable, ParameterToParamenter
-| < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement 
+| <LIST_CONNECTOR: ("," | "and") >			//N2 connector. VariableToVariable, ParameterToParamenter
+| < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
+	//Auxiliar connector (not needed), might not be used
+| <AUX_CONNECTOR : ("in" "addition") | "also" >
+	//Symbolic operators
+| < SYMBOLIC_MINUS : "-" >
+| < SYMBOLIC_PLUS : "+" >
+| < SYMBOLIC_TIMES : "*" >
+| < SYMBOLIC_DIVIDES : "/" >
+| < SYMBOLIC_NOT : "!" >
+| < SYMBOLIC_EQUALS : "=" >
+| < SYMBOLIC_GREATER : ">" >
+| < SYMBOLIC_SMALLER : "<" >
+| < SYMBOLIC_OR : "||" >
+| < SYMBOLIC_AND: "&&" >
+	//Language Operators -- Actualy Add does not have a language operator
+| < LANGUAGE_MINUS : "minus" >
+| < LANGUAGE_PLUS : "plus" >
+| < LANGUAGE_TIMES : "times" >
+| < LANGUAGE_DIVIDES : "divides" >
+| < LANGUAGE_NOT : "not" >
+| < LANGUAGE_EQUALS : "equals" >
+| < LANGUAGE_GREATER : "greater" >
+| < LANGUAGE_SMALLER : "smaller" >
+| < LANGUAGE_OR : "or" >
+| < LANGUAGE_NUMERIC_INCREMENT: "increment" >
+| < LANGUAGE_NUMERIC_DECREMENT: "decrement" >
+	//Other Tokens
+| < DOT_NOTATION: "->" >
+| < A_THE : "a" | "the" | "an" >
 }
 
-TOKEN [IGNORE_CASE] : /* AUXILIAR CONNECTORS */ /*might not be used*/
+/* __ COMPLEX TOKENS __ */
+
+TOKEN :
 {
- <AUX_CONNECTOR : ("in" "addition") | "also" >
+  	//Subjects
+  < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
+| < SUBJECT_3 : (< THRD_SUBJECT > | < OTHER_SUBJECT >) >
+	//Identifiers
+| < CLASS_IDENTIFIER: <CAP_LETTER> (<ID_ANY>)* >
+| < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
+	//Constant
+| < CONSTANT : (< DIGIT >)+ >
+	//Comparison	// ====== CHANGED ====== //
+| < COMPARE : ( < IS > < COMPARISON_EXPRESSIONS > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
 }
 
-TOKEN [IGNORE_CASE] : /* VALUE OF */ /* NOT USED */
-{  
- <VALUE_OF : ("the" "value" "of") >
-}
-
-/* __ EXPRESSIONS __ */
-
-/* __ COMPARISON __ */
-
-TOKEN : /* COMPARISON SENTENCE */
+TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 {
-< COMPARE : ( < IS > < COMPARISON_EXPRESSIONS > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >}
-
-TOKEN [IGNORE_CASE] : /* COMPARISON AUXILIAR VERB*/
-{
- <#IS  : "is" >
-|  <#THAN  : "than" >
-}
-
-
-/* __ ASSIGN __*/
-
-TOKEN : /* ASSIGN SENTENCE */ /* NOT USED */
-{  < ASSIGN : ( < SYMBOLIC_EQUALS > | < LANGUAGE_EQUALS >< TO > ) >
+  	//Subject
+  < #NORMAL_SUBJECT : ("you" | "we" | "they") >
+| < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
+| < #OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
+	//Others
+| <#IS  : "is" >
+| <#THAN  : "than" >
 } 
 
-/* __ OPERATIONS __ */
-
-TOKEN [IGNORE_CASE] : /* COMPLEX OPERATION EXPRESSION*/ /* NOT USED */
-{ 
- <COMPLEX_OPERATION : "complex" "operation" >
+TOKEN : /*Meta tokens*/
+{
+  	//First person subject
+  < #I_SUBJECT : "I" >
+	//Identifiers
+| < #CAP_LETTER : ([ "A"-"Z" ]) >
+| < #ID_BEGIN : ([ "a" - "z" ] | "$" | "_") >
+| < #ID_ANY : (["a"-"z"] | ["A"-"Z"] | ["0"-"9"] | "$" | "_" ) >
+  	//Constant
+| < #DIGIT : [ "0"-"9" ] >
 }
+
+/* __ SUBJECTS __ */
+/* This is not necesary, it must be changed in the grammar*/
+
+TOKEN : /* SUBJECT TOKENS */ /*==============__REAL CHANGE__==============*/
+//{
+//  < CREATION_SUBJECT : (< SUBJECT >) >
+//| < CREATION_SUBJECT_3rd : (< SUBJECT_3 >) >
+//| < CONTROL_SUBJECT : (< SUBJECT >) >
+//| < CONTROL_SUBJECT_3rd : (< SUBJECT_3 >) >
+//| < PRINT_SUBJECT : (< SUBJECT >) >
+//| < PRINT_SUBJECT_3rd : (< SUBJECT_3 >) >
+//| < RETURN_SUBJECT : (< A_THE > "function") | "it" >
+//}
+
+TOKEN [IGNORE_CASE] : /* VALUE OF */ /* NOT USED */
+//{  
+//<VALUE_OF : ("the" "value" "of") >
+//}
+/* __ ASSIGN __*/
+TOKEN : /* ASSIGN SENTENCE */ /* NOT USED */
+//{//  < ASSIGN : ( < SYMBOLIC_EQUALS > | < LANGUAGE_EQUALS >< TO > ) >
+//} 
+
+/* __ OPERATIONS __ */
+TOKEN [IGNORE_CASE] : /* COMPLEX OPERATION EXPRESSION*/ /* NOT USED */
+//{ 
+// <COMPLEX_OPERATION : "complex" "operation" >
+//}
 
 /* __ OPERATORS __ */
 
@@ -304,41 +288,10 @@ TOKEN [IGNORE_CASE]: /* UNARY OPERATORS DEFINITION *//*===CHANGED===*//*+++LL(1)
 //|  < SMALLER:  (< SYMBOLIC_SMALLER >|<LANGUAGE_SMALLER >) >//|  < OR: (< SYMBOLIC_OR >|<LANGUAGE_OR >) >
 //|  < AND: (< SYMBOLIC_AND >) > //LANGUAGE AND MIGHT BE ADDED IN FUTURE
 //}
-
 /*----------------------------------*/
 
 
-/* __ SPECIFIC UNARY OPERATORS __ */
-
-TOKEN [IGNORE_CASE]: /*UNARY SYMBOLS AND NL WORDS*/ /*+++LL(1)DANGER+++*//*+++SEMANTIC DANGER+++*/
-{  <#SYMBOLIC_MINUS : "-" > | <#LANGUAGE_MINUS : "minus" >
-| <#SYMBOLIC_PLUS : "+" > | <#LANGUAGE_PLUS : "plus" >
-| <#SYMBOLIC_TIMES : "*" > | <#LANGUAGE_TIMES : "times" >
-| <#SYMBOLIC_DIVIDES : "/" > | <#LANGUAGE_DIVIDES : "divides" >
-| <#SYMBOLIC_NOT : "!" > | <#LANGUAGE_NOT : "not" >
-| <#SYMBOLIC_EQUALS : "=" > | <#LANGUAGE_EQUALS : "equals" >
-| <#SYMBOLIC_GREATER : ">" > | <#LANGUAGE_GREATER : "greater" >
-| <#SYMBOLIC_SMALLER : "<" > | <#LANGUAGE_SMALLER : "smaller" >
-| <#SYMBOLIC_OR : "||" > | <#LANGUAGE_OR : "or" >
-| <#SYMBOLIC_AND: "&&" >
-| <#LANGUAGE_NUMERIC_INCREMENT: "increment" >
-| <#LANGUAGE_NUMERIC_DECREMENT: "decrement" >
-}
-
-/* __ OTHER TOKENS __*/
-
-TOKEN [IGNORE_CASE]:
-{< VARIABLE : ("variable" |"variables") >
-}
-
-TOKEN [IGNORE_CASE]:
-{ < DOT_NOTATION: "->" > 
-}
-
-TOKEN [IGNORE_CASE]: /* A, THE, AN */
-{
- < A_THE : "a" | "the" | "an" >
-}
+/
 
 %%
  
