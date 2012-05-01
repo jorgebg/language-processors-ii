@@ -144,14 +144,9 @@ TOKEN [IGNORE_CASE] :
 | < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
 | <LIST_CONNECTOR: (",") >					//N2 connector. VariableToVariable, ParameterToParamenter
 | < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
-	//Symbolic operators
+	//Operators
 | < SYMBOLIC_EQUALS : "=" >
-| < SYMBOLIC_OR : "||" >
-| < SYMBOLIC_AND: "&&" >
-	//Language Operators
 | < LANGUAGE_EQUALS : "equals" >
-| < LANGUAGE_OR : "or" >
-| < LANGUAGE_AND : "and" >
 	//Other Tokens
 | < DOT_NOTATION: "->" >
 | < A_THE : "a" | "the" | "an" >
@@ -168,17 +163,19 @@ TOKEN :
   	//Subjects
   < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
 | < SUBJECT_3 : (< THRD_SUBJECT > | < OTHER_SUBJECT >) >
-	//Identifiers
-| < CLASS_IDENTIFIER: <CAP_LETTER> (<ID_ANY>)* >
-| < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
-	//Constant
-| < CONSTANT : (< DIGIT >)+ >
 	//Comparison		// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
 | < COMPARATOR : ( < IS > < COMPARISON_EXPRESSIONS > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
 	//Operation 		// ====== CHANGED ====== // -- An operator is to be used in any operation situation. No other token must be used
 | < OPERATOR: (< OPERATION_EXPRESSION >|< OPERATION_SYMBOL >) >
 	//Unary Operation 	// ====== CHANGED ====== // -- An unary operator is to be used in any unary operation situation. No other token must be used
-| <UNARY_OPERATOR: (< UNARY_OPERATION_EXPRESSION >|< UNARY_OPERATION_SYMBOL >) > 
+| <UNARY_OPERATOR: (< UNARY_OPERATION_EXPRESSION >|< UNARY_OPERATION_SYMBOL >) >
+	//Linkers			// ====== CHANGED ====== // -- A linker is to be used in any union situation (And, Or). No other token must be used
+| < LINKER: (< LINKER_EXPRESSION >|< LINKER_SYMBOL >) >
+	//Identifiers
+| < CLASS_IDENTIFIER: <CAP_LETTER> (<ID_ANY>)* >
+| < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
+	//Constant
+| < CONSTANT : (< DIGIT >)+ >
 }
 
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
@@ -195,7 +192,10 @@ TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and L
 | < #OPERATION_SYMBOL: (< SYMBOLIC_PLUS >|< SYMBOLIC_MINUS >|< SYMBOLIC_TIMES >|< SYMBOLIC_DIVIDES >) >
 	//Unary Operation
 | < #UNARY_OPERATION_EXPRESSION: (< LANGUAGE_INCREMENT >|< LANGUAGE_DECREMENT >) >
-| < #UNARY_OPERATION_SYMBOL: (< SYMBOLIC_INCREMENT >|< SYMBOLIC_DECREMENT >) > 
+| < #UNARY_OPERATION_SYMBOL: (< SYMBOLIC_INCREMENT >|< SYMBOLIC_DECREMENT >) >
+	//Linker
+| < #LINKER_EXPRESSION: (< LANGUAGE_AND >|< LANGUAGE_OR >) >
+| < #LINKER_SYMBOL: (< SYMBOLIC_AND >|< SYMBOLIC_OR >) >
 }
 
 
@@ -225,6 +225,12 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 	//Symbolic Unary Operators
 | < #SYMBOLIC_DECREMENT:"--" >
 | < #SYMBOLIC_INCREMENT:"++" >
+	//Language Linkers
+| < #LANGUAGE_AND : "and" >
+| < #LANGUAGE_OR : "or" >
+	//Symbolic Linkers
+| < #SYMBOLIC_OR : "||" >
+| < #SYMBOLIC_AND: "&&" >
   	//Subject
 | < #NORMAL_SUBJECT : ("you" | "we" | "they") >
 | < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
