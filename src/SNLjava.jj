@@ -75,15 +75,14 @@ public class SNL{
 	    break;
 	  }
 	}
-*/PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}
-
+*/PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}
 
 /* __ SSNL TOKENS __*/
 
 TOKEN [IGNORE_CASE] : 
 {
   	//Java reserved words
-  	< PACKAGE_MOD : "package" >
+  < PACKAGE_MOD : "package" >
 | < IMPORT_MOD : "import" >
 | < PUBLIC_MOD : "public" >
 | < PRIVATE_MOD : "private" >
@@ -145,17 +144,13 @@ TOKEN [IGNORE_CASE] :
 | < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
 | <LIST_CONNECTOR: (",") >					//N2 connector. VariableToVariable, ParameterToParamenter
 | < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
-	//Auxiliar connector (not needed), might not be used
-| <AUX_CONNECTOR : ("in" "addition") | "also" >
 	//Symbolic operators
 | < SYMBOLIC_MINUS : "-" >
 | < SYMBOLIC_PLUS : "+" >
 | < SYMBOLIC_TIMES : "*" >
 | < SYMBOLIC_DIVIDES : "/" >
-| < SYMBOLIC_NOT : "!" >
-| < SYMBOLIC_EQUALS : "=" >
-| < SYMBOLIC_GREATER : ">" >
-| < SYMBOLIC_SMALLER : "<" >
+| < SYMBOLIC_DECREMENT:"--" >
+| < SYMBOLIC_INCREMENT:"++" >
 | < SYMBOLIC_OR : "||" >
 | < SYMBOLIC_AND: "&&" >
 	//Language Operators
@@ -163,10 +158,6 @@ TOKEN [IGNORE_CASE] :
 | < LANGUAGE_PLUS : "plus" >
 | < LANGUAGE_TIMES : "times" >
 | < LANGUAGE_DIVIDES : "divides" >
-| < LANGUAGE_NOT : "not" >
-| < LANGUAGE_EQUALS : "equals" >
-| < LANGUAGE_GREATER : "greater" >
-| < LANGUAGE_SMALLER : "smaller" >
 | < LANGUAGE_OR : "or" >
 | < LANGUAGE_AND : "and" >
 | < LANGUAGE_NUMERIC_INCREMENT: "increment" >
@@ -176,6 +167,8 @@ TOKEN [IGNORE_CASE] :
 | < A_THE : "a" | "the" | "an" >
 | <TO  : "to" >
 | <IN  : "in" >
+	//Auxiliar connector (not needed), might not be used
+| <AUX_CONNECTOR : ("in" "addition") | "also" >
 }
 
 /* __ COMPLEX TOKENS __ */
@@ -190,19 +183,41 @@ TOKEN :
 | < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
 	//Constant
 | < CONSTANT : (< DIGIT >)+ >
-	//Comparison	// ====== CHANGED ====== //
-| < COMPARE : ( < IS > < COMPARISON_EXPRESSIONS > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
+	//Comparison	// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
+| < COMPARATOR : ( < IS > < COMPARISON_EXPRESSIONS > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
 }
+
+TOKEN:
+{
+ 	//Language Comparison 	  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON > (< LANGAUGE_EQUALS_COMPARISON >)? )>
+| < #LANGUAGE_EQUALS_COMPARISON : (< LANGUAGE_EQUALS > | < LANGUAGE_NOT ><LANGUAGE_EQUALS > )
+| < #LANGUAGE_COMPARISSON : (< LANGUAGE_GREATER >|< LANGUAGE_SMALLER > ) >
+	//Symbol Comparison
+| < #COMPARISON_SYMBOLS: < SYMBOLIC_EQUALS_COMPARISON >|(< SYMBOLIC_COMPARISON > (< LANGUAGE_EQUALS_COMPARISON >)?) >
+| < #SYMBOLIC_EQUALS_COMPARISON: (< SYMBOLIC_EQUALS >|< SYMBOLIC_NOT ><SYMBOLIC_EQUALS >) >
+| < #SYMBOLIC_COMPARISON: (< SYBOLIC_GREATER >|< SYMBOLIC_SMALLER >) >
+}
+
 
 TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 {
+  	//Symbolic Comparators -- 
+| < #SYMBOLIC_NOT : "!" >
+| < #SYMBOLIC_EQUALS : "=" >
+| < #SYMBOLIC_GREATER : ">" >
+| < #SYMBOLIC_SMALLER : "<" >
+  	//Language Comparators
+| < #LANGUAGE_NOT : "not" >
+| < #LANGUAGE_EQUALS : "equals" >
+| < #LANGUAGE_GREATER : "greater" >
+| < #LANGUAGE_SMALLER : "smaller" >
   	//Subject
-  < #NORMAL_SUBJECT : ("you" | "we" | "they") >
+| < #NORMAL_SUBJECT : ("you" | "we" | "they") >
 | < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
 | < #OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
 	//Others
-| <#IS  : "is" >
-| <#THAN  : "than" >
+| < #IS  : "is" >
+| < #THAN  : "than" >
 } 
 
 TOKEN : /*Meta tokens*/
