@@ -13,7 +13,7 @@
  * It returns this->sum END METHOD.
  * The program shall define a public static void METHOD main(String[] args)
  * I need to define the VARIABLE TestSimpleOperatin tso = new TestSimpleOperation();
- * I PRINT (7+tso->getSum()); END_METHOD. END_CLASS $$
+ * I PRINT (7+tso->getSum()); END_METHOD. END_CLASS 
  *
  * END_METHOD END_CLASS
  * 

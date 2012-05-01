@@ -8,7 +8,7 @@
  * I want to create a public CLASS TestHelloWorld. 
  * The program shall define a public static void METHOD main(String[] args):
  * the program must PRINT ("Hello World, This is my first SSNL Program =D");
- * END_METHOD. END_CLASS $$
+ * END_METHOD. END_CLASS 
  * 
  * FUNCTIONALITY TESTED:
  *  Class Declaration

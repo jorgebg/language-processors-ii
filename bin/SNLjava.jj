@@ -140,14 +140,10 @@ TOKEN [IGNORE_CASE] :
 | <PRINT_VERB : "print" >
 | <PRINT_VERB_3rd : "prints" >
 | <RETURN_VERB : "returns" >
-	//Word connectors
-| <TO  : "to" >
-| <IN  : "in" >
-| <A_THE  : "a" | "an" | "the" >
 	//Functional connectors
 | < CLASS_METHOD_CONNECTOR : "."  >			//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
 | < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
-| <LIST_CONNECTOR: ("," | "and") >			//N2 connector. VariableToVariable, ParameterToParamenter
+| <LIST_CONNECTOR: (",") >					//N2 connector. VariableToVariable, ParameterToParamenter
 | < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
 	//Auxiliar connector (not needed), might not be used
 | <AUX_CONNECTOR : ("in" "addition") | "also" >
@@ -162,7 +158,7 @@ TOKEN [IGNORE_CASE] :
 | < SYMBOLIC_SMALLER : "<" >
 | < SYMBOLIC_OR : "||" >
 | < SYMBOLIC_AND: "&&" >
-	//Language Operators -- Actualy Add does not have a language operator
+	//Language Operators
 | < LANGUAGE_MINUS : "minus" >
 | < LANGUAGE_PLUS : "plus" >
 | < LANGUAGE_TIMES : "times" >
@@ -172,11 +168,14 @@ TOKEN [IGNORE_CASE] :
 | < LANGUAGE_GREATER : "greater" >
 | < LANGUAGE_SMALLER : "smaller" >
 | < LANGUAGE_OR : "or" >
+| < LANGUAGE_AND : "and" >
 | < LANGUAGE_NUMERIC_INCREMENT: "increment" >
 | < LANGUAGE_NUMERIC_DECREMENT: "decrement" >
 	//Other Tokens
 | < DOT_NOTATION: "->" >
 | < A_THE : "a" | "the" | "an" >
+| <TO  : "to" >
+| <IN  : "in" >
 }
 
 /* __ COMPLEX TOKENS __ */
@@ -291,7 +290,6 @@ TOKEN [IGNORE_CASE]: /* UNARY OPERATORS DEFINITION *//*===CHANGED===*//*+++LL(1)
 /*----------------------------------*/
 
 
-/
 
 %%
  
