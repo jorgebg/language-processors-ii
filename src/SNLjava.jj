@@ -96,9 +96,6 @@ TOKEN [IGNORE_CASE] :
   	//Java reserved words
   < PACKAGE_MOD : "package" >
 | < IMPORT_MOD : "import" >
-| < PUBLIC_MOD : "public" >
-| < PRIVATE_MOD : "private" >
-| < PROTECTED_MOD : "protected" >
 | < ABSTRACT_MOD : "abstract" >
 | < STATIC_MOD : "static" >
 | < FINAL_MOD : "final" >
@@ -111,7 +108,7 @@ TOKEN [IGNORE_CASE] :
 | < END_CONSTRUCTOR : "end-constructor" >
 | < FUNCTION : ("function" | "method") >
 | < END_FUNCTION: ("end-function" | "end-method") >
-	//Control - Loop Expressions| <IF : "if" >
+	//Control - Loop Expressions| < IF : "if" >
 | < ELSE : "else" >
 | < THEN : "then" >
 | < END_IF : "end-if" >
@@ -195,7 +192,9 @@ TOKEN :
 TOKEN:
 {
   < PACKAGE_STATEMENT: (< PACKAGE_MOD >< CLASS_ID >< STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
-  // IMPORT FUNCTION HAS BEEN DISABLED}
+  // IMPORT FUNCTION HAS BEEN DISABLED
+  < VISIBILITY: (< PUBLIC >|< PRIVATE >|< PROTECTED >) >
+  }
 
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
 {
@@ -258,6 +257,10 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 | < #THAN  : "than" >
 //< #LANGUAGE_EQUALS : "equals" > Equals might be used by the syntactical analyzer
 //< #SYMBOLIC_EQUALS : "=" > Equals might be used by the syntactical analyzer
+	//Visibility
+| < #PUBLIC_MOD : "public" >
+| < #PRIVATE_MOD : "private" >
+| < #PROTECTED_MOD : "protected" >
 } 
 
 TOKEN : /*Meta tokens*/
@@ -301,12 +304,26 @@ TOKEN [IGNORE_CASE] :
  * //compilation_unit : PACKAGE_STATEMENT? IMPORT_STATEMENT* TYPE_DECLARATION+
  *
  *IMPORT_STATEMENTS has been disabled for simplicity
- * compilation_unit : PACKAGE_STATEMENT? TYPE_DECLARATION+
+ *
+ *	("package" CLASS_ID ";")? class_declaration+
  */ 
 void compilation_unit():{ if(this.verbose) System.out.println("Start compilation_unit"); }
 {
-  (< PACKAGE_STATEMENT >)? (type_declaration())+}
+  (< PACKAGE_STATEMENT >)? (class_declaration())+}
 
+/*
+ *	creation_sentence? ("public"|"private"|"protected")? ("final"|"abstract")? "class" CLASS_ID field_declaration+ "end-class"
+ */
+void class_declaration():{ if(this.verbose) System.out.println("Starts class_declaration");}{
+  (creation_sentence())? (< VISIBILITY >)? (< FINAL_MOD >|<ABSTRACT_MOD >)? < CLASS > < CLASS_ID > (field_declaration())+ < END_CLASS >}
+/*
+ *	"." creation_sentence? ("public"|"private"|"protected")? ("static")? ("final")? (constructor_declaration | method_declaration | variable_declaration)
+ */
+void field_declaration():
+{ if(this.verbose) System.out.println("Starts field_declaration");}
+{
+  < CLASS_METHOD_CONNECTOR > (creation_sentence())? (< VISIBILITY >)? (< STATIC_MOD >)? (< FINAL_MOD >)? (constructor_declaration() | method_declaration() | variable_declaration())
+}    
 
 
 %%
