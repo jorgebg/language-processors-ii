@@ -4,20 +4,32 @@
  options{  JDK_VERSION = "1.5";  static = true;}
 PARSER_BEGIN(SNL)
 public class SNL{
+
+  public boolean verbose;
     public static void main(String args []) throws ParseException {
 	if (args.length == 0) {
 	    System.out.println("No input given");
 	    //  SNL snlParser = new SNL(System.in);
 	    return;
-	}else if(args.length == 1){		System.out.println("Reading from file:" + args[0] + "...");
+	} else if(args.length <= 2){
+		System.out.println("Reading from file:" + args[0] + "...");
+		//Checks verbose option
+		if(args.lenght == 2 && Integer.toString(args[1]) == 1)
+			this.verbose = true;
+		else
+			this.verbose = false;
+		//Starts the parser
 		try {
-	    	SNL snlParser = new SNL(new java.io.FileInputStream(args[0]));
+	    	SNL parser = new SNL(new java.io.FileInputStream(args[0]));
+	    	parser.compilation_unit();
+			System.out.println("Parsing complete");
+		//Catchs Exceptions
 	    } catch (java.io.FileNotFoundException e) {
 	    	System.out.println("The File " + args[0] + " has not been found");
 	    	return;
 	   	}
 	} else {
-	    System.out.println("Wrong number of parameters");
+	    System.out.println("Wrong number of parameters. Paramater 1: input file. Parameter 2 (optional): verbose (1,0)");
 	    return;
 	}
 
@@ -126,23 +138,23 @@ TOKEN [IGNORE_CASE] :
 	//Array Bracket list
 | < ARRAY_TOKEN : ("[" "]")* >
 	//Auxiliar Verbs -EXTENSIBLE
-| <AUX_VERB : "want" | "need" >
-| <AUX_VERB_3rd : "wants" | "needs" >
-| <MODAL_VERB : "shall" | "must" | "will" >
+| < AUX_VERB : "want" | "need" >
+| < AUX_VERB_3rd : "wants" | "needs" >
+| < MODAL_VERB : "shall" | "must" | "will" >
 	//Action Verbs -EXTENSIBLE
-| <ASSIGN_VERB : "save" | "store" >
-| <ASSIGN_VERB_3rd : "saves" | "stores" >
-| <CREATION_VERB : "create" | "define" >
-| <CREATION_VERB_3rd : "creates" | "defines" >
-| <CONTROL_VERB : "check" | "verify" >
-| <CONTROL_VERB_3rd : "checks" | "verifies" >
-| <PRINT_VERB : "print" >
-| <PRINT_VERB_3rd : "prints" >
-| <RETURN_VERB : "returns" >
+| < ASSIGN_VERB : "save" | "store" >
+| < ASSIGN_VERB_3rd : "saves" | "stores" >
+| < CREATION_VERB : "create" | "define" >
+| < CREATION_VERB_3rd : "creates" | "defines" >
+| < CONTROL_VERB : "check" | "verify" >
+| < CONTROL_VERB_3rd : "checks" | "verifies" >
+| < PRINT_VERB : "print" >
+| < PRINT_VERB_3rd : "prints" >
+| < RETURN_VERB : "returns" >
 	//Functional connectors
 | < CLASS_METHOD_CONNECTOR : "."  >			//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
 | < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
-| <LIST_CONNECTOR: (",") >					//N2 connector. VariableToVariable, ParameterToParamenter
+| < LIST_CONNECTOR: (",") >					//N2 connector. VariableToVariable, ParameterToParamenter
 | < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
 	//Operators
 | < SYMBOLIC_EQUALS : "=" >
@@ -150,10 +162,10 @@ TOKEN [IGNORE_CASE] :
 	//Other Tokens
 | < DOT_NOTATION: "->" >
 | < A_THE : "a" | "the" | "an" >
-| <TO  : "to" >
-| <IN  : "in" >
+| < TO  : "to" >
+| < IN  : "in" >
 	//Auxiliar connector (not needed), might not be used
-| <AUX_CONNECTOR : ("in" "addition") | "also" >
+| < AUX_CONNECTOR : ("in" "addition") | "also" >
 }
 
 /* __ COMPLEX TOKENS __ */
@@ -172,15 +184,22 @@ TOKEN :
 	//Linkers			// ====== CHANGED ====== // -- A linker is to be used in any union situation (And, Or). No other token must be used
 | < LINKER: (< LINKER_EXPRESSION >|< LINKER_SYMBOL >) >
 	//Identifiers
-| < CLASS_IDENTIFIER: <CAP_LETTER> (<ID_ANY>)* >
-| < IDENTIFIER : <ID_BEGIN> (<ID_ANY>)* >
+| < CLASS_ID: <CAP_LETTER> (<ID_ANY>)* >
+| < ID : <ID_BEGIN> (<ID_ANY>)* >
 	//Constant
 | < CONSTANT : (< DIGIT >)+ >
 }
 
+/* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
+
+TOKEN:
+{
+  < PACKAGE_STATEMENT: (< PACKAGE_MOD >< CLASS_ID >< STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
+  // IMPORT FUNCTION HAS BEEN DISABLED}
+
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
 {
- 	//Language Comparison 	  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON > (< LANGAUGE_EQUALS_COMPARISON >)? )>
+ 	//Language Comparison 	  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON > (< LANGUAGE_OR >< LANGAUGE_EQUALS_COMPARISON >)? )>
 | < #LANGUAGE_EQUALS_COMPARISON : (< LANGUAGE_EQUALS > | < LANGUAGE_NOT ><LANGUAGE_EQUALS > )
 | < #LANGUAGE_COMPARISSON : (< LANGUAGE_GREATER >|< LANGUAGE_SMALLER > ) >
 	//Symbol Comparison
@@ -246,11 +265,12 @@ TOKEN : /*Meta tokens*/
   	//First person subject
   < #I_SUBJECT : "I" >
 	//Identifiers
+	  	//Constant
+| < #DIGIT : [ "0"-"9" ] >
 | < #CAP_LETTER : ([ "A"-"Z" ]) >
 | < #ID_BEGIN : ([ "a" - "z" ] | "$" | "_") >
 | < #ID_ANY : (["a"-"z"] | ["A"-"Z"] | ["0"-"9"] | "$" | "_" ) >
-  	//Constant
-| < #DIGIT : [ "0"-"9" ] >
+
 }
 
 /* __ __ REMARKS & CHANGES __ __ */
@@ -273,8 +293,19 @@ TOKEN [IGNORE_CASE] :
 //}
 /*__ __ -------------------- __ __*/
 
+/* __ -_-Syntactical Analyzer-_- __*/
 
-
+/*
+ *Prepares the grammar import and packages statements (Extracted from Java Grammar)
+ * 
+ * //compilation_unit : PACKAGE_STATEMENT? IMPORT_STATEMENT* TYPE_DECLARATION+
+ *
+ *IMPORT_STATEMENTS has been disabled for simplicity
+ * compilation_unit : PACKAGE_STATEMENT? TYPE_DECLARATION+
+ */ 
+void compilation_unit():{ if(this.verbose) System.out.println("Start compilation_unit"); }
+{
+  (< PACKAGE_STATEMENT >)? (type_declaration())+}
 
 
 
