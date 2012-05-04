@@ -417,6 +417,35 @@ void statement():
 }
 
 /* __ IF __ */
+
+/*
+ * control_sentence if_expression statement_list else_expression* "end-if"
+ */
+void if_statement():
+{ if(this.verbose) System.out.println("Starts if_statement");}
+{
+  control_sentence() if_expression() statement_list() (else_expression())* < END_IF >
+}
+
+/*
+ * "if" '(' logical_expression ')' "then"
+ */
+void if_expression():
+{ if(this.verbose) System.out.println("Starts if_expression");}
+{
+  < IF > "(" logical_expression ")" < THEN >
+}
+
+/*
+ * "else" if_expression? statement_list 
+ */
+void else_expression():
+{ if(this.verbose) System.out.println("Starts else_expression");}
+{
+  < ELSE > (if_expression())? statement_list()
+}
+
+
 /* __ WHILE __ */
 /* __ PRINT __ */
 /* __ READ __ */
