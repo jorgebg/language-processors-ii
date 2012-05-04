@@ -310,8 +310,8 @@ TOKEN [IGNORE_CASE] :
  *
  *IMPORT_STATEMENTS has been disabled for simplicity
  *
- */	//("package" CLASS_ID ";")? class_declaration+
- 
+ *	("package" CLASS_ID ";")? class_declaration+
+ */
 void compilation_unit():{ if(this.verbose) System.out.println("Start compilation_unit"); }
 {
   (< PACKAGE_STATEMENT >)? (class_declaration())+}
@@ -328,25 +328,26 @@ void field_declaration():
 { if(this.verbose) System.out.println("Starts field_declaration");}
 {
   < CLASS_METHOD_CONNECTOR > (creation_sentence())? (< VISIBILITY >)? (< STATIC_MOD >)? (< FINAL_MOD >)? (constructor_declaration() | method_declaration() | variable_list())
-}    
+}
+/* __ CONSTRUCTOR, METHOD, VARIABLES (attributes) __ */
 /*
  * The constructor must have only access modifiers
  *
- *	"constructor" ID parameter_list() statement+ "end-constructor"
+ *	"constructor" ID parameter_list() ':' statement_list "end-constructor"
  */
 void constructor_declaration():
 { if(this.verbose) System.out.println("Starts contructor_declaration");}
 {
-  < CONSTRUCTOR > < ID > parameter_list() statement()+ < END_CONSTRUCTOR >
+  < CONSTRUCTOR > < ID > parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_CONSTRUCTOR >
 }
 
 /*
- * ("method"|"function) ID '(' ( parameter ("," parameter)* )? ')' statement+ ("end-method"|"end-funtion")
+ * ("method"|"function) ID '(' ( parameter ("," parameter)* )? ')' ':' statement_list ("end-method"|"end-funtion")
  */
 void method_declaration():
 { if(this.verbose) System.out.println("Starts method_declaration");}
 {
-  < METHOD > < TYPE > < ID > < ARRAY_TOKEN > parameter_list() statement()+ < END_METHOD >
+  < METHOD > < TYPE > < ID > < ARRAY_TOKEN > parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
 }
 
 /*
@@ -382,19 +383,53 @@ void variable_init():
 void variable_initializer():
 { if(this.verbose) System.out.println("Starts variable_initializer");}
 {
-  expression() | array_values()
+  expression() | array_init()
 }
-
 
 /*
- * ("equals" | "=") (expression | array_values)
+ * needed for local variables, called from statement
+ * creation_sentence ("boolean" | ... | CLASS_ID) variable_list
  */
-void array_init():
-{ if(this.verbose) System.out.println("Starts array_init");}
+void variable_declaration_statement():
+{ if(this.verbose) System.out.println("Starts statement_list");}
 {
-  "{" "}"    
+  creation_sentence() < TYPE > variable_list()
 }
 
+/* __ STATEMENTS __ */
+
+/*
+ * statement (';' statement)*
+ */
+void statement_list():
+{ if(this.verbose) System.out.println("Starts statement_list");}
+{
+  statement() (< STATEMENT_CONNECTOR > statement())*
+}
+
+/*
+ * variable_list | expression | if_statement | while_statement | print_statement | read_statement | return_statement
+ */
+void statement():
+{ if(this.verbose) System.out.println("Starts statement");}
+{
+  ( variable_declaration_statement() | expression() | if_statement() | while_statement() | print_statement() | read_statement() | return_statement() )
+}
+
+/* __ IF __ */
+/* __ WHILE __ */
+/* __ PRINT __ */
+/* __ READ __ */
+/* __ RETURN __ */
+
+/* __ EXPRESSION __*/
+/* __ SIMPLE __*/
+/* __ COMPLEX __*/
+
+/* __ NATURAL LANGUAGE __*/
+
+
+/* __ AUXILIAR EXPRESSIONS __ */ 
 
 /*
  * A parameter list can allways be empty '()'
@@ -420,6 +455,22 @@ void parameter():
 { if(this.verbose) System.out.println("Starts parameter");}
 {
   < TYPE > < ID > < ARRAY_TOKEN >
+}
+
+/*
+ * ("equals" | "=") (expression | array_values)
+ *
+ * It can produce a list of expression or array expressions:
+ * 	expresssion
+ *  { expression }
+ *	{ expression ,expression }
+ *	{ expression ,{ expression ,expression } ,expression}
+ *
+ */
+void array_init():
+{ if(this.verbose) System.out.println("Starts array_init");}
+{
+  "{" variable_initializer() (< LIST_CONNECTOR > variable_initializer())* "}" 
 }
 
 
