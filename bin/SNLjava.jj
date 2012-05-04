@@ -116,14 +116,11 @@ TOKEN [IGNORE_CASE] :
 | < END_IF : "end-if" >
 | < WHILE : "while" >
 | < END_WHILE: "end-while" >
-
 	//Expression constants| < INSTANCE_OF : "instance_of" >
 | < NULL : "null" >
 | < SUPER : "super" >
 | < THIS : "this" >
 | < NEW : "new" >
-| < TRUE : "true" >
-| < FALSE : "false" >
 	//Array Bracket list
 | < ARRAY_TOKEN : ("[" "]")* >				// Is allways optional !!
 	//Auxiliar Verbs -EXTENSIBLE
@@ -187,7 +184,7 @@ TOKEN:
 | < VISIBILITY: (< PUBLIC >|< PRIVATE >|< PROTECTED >) >
 | < TYPE : (< TYPE_SPECIAL >|< CLASS_ID >) >
 | < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
-  }
+| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >}
 
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
 {
@@ -196,7 +193,7 @@ TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and L
 | < #LANGUAGE_COMPARISSON : (< LANGUAGE_GREATER >|< LANGUAGE_SMALLER > ) >
 	//Symbol Comparison
 | < #COMPARISON_SYMBOLS: < SYMBOLIC_EQUALS_COMPARISON >|(< SYMBOLIC_COMPARISON > (< LANGUAGE_EQUALS_COMPARISON >)?) >
-| < #SYMBOLIC_EQUALS_COMPARISON: (< SYMBOLIC_EQUALS >|< SYMBOLIC_NOT ><SYMBOLIC_EQUALS >) >
+| < #SYMBOLIC_EQUALS_COMPARISON: (< BOOLEAN_EQUALS >|< SYMBOLIC_NOT ><SYMBOLIC_EQUALS >) >
 | < #SYMBOLIC_COMPARISON: (< SYBOLIC_GREATER >|< SYMBOLIC_SMALLER >) >
 	//Operations
 | < #OPERATION_EXPRESSION: (< LANGUAGE_PLUS >|< LANGUAGE_MINUS >|< LANGUAGE_TIMES >|< LANGUAGE_DIVIDES >) >
@@ -207,9 +204,6 @@ TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and L
 	//Linker
 | < #LINKER_EXPRESSION: (< LANGUAGE_AND >|< LANGUAGE_OR >) >
 | < #LINKER_SYMBOL: (< SYMBOLIC_AND >|< SYMBOLIC_OR >) >
-	//Assign
-| < #SYMBOLIC_EQUALS : "=" >
-| < #LANGUAGE_EQUALS : "equals" >
 }
 
 TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
@@ -232,6 +226,9 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 | < #SYMBOLIC_PLUS : "+" >
 | < #SYMBOLIC_TIMES : "*" >
 | < #SYMBOLIC_DIVIDES : "/" >
+	//Assign
+| < #LANGUAGE_EQUALS : "equals" >  
+| < #SYMBOLIC_EQUALS : "=" > 
 	//Language Unary Operators
 | < #LANGUAGE_INCREMENT: "increment" >
 | < #LANGUAGE_DECREMENT: "decrement" >
@@ -244,6 +241,11 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 	//Symbolic Linkers
 | < #SYMBOLIC_OR : "||" >
 | < #SYMBOLIC_AND: "&&" >
+	//Boolean operator
+| < #BOOLEAN_EQUALS: "==" >
+	//Boolean Tokens
+| < #TRUE : "true" >
+| < #FALSE : "false" >
   	//Subject
 | < #NORMAL_SUBJECT : ("you" | "we" | "they") >
 | < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
@@ -251,8 +253,6 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 	//Others
 | < #IS  : "is" >
 | < #THAN  : "than" >
-//< #LANGUAGE_EQUALS : "equals" > Equals might be used by the syntactical analyzer
-//< #SYMBOLIC_EQUALS : "=" > Equals might be used by the syntactical analyzer
 	//Visibility
 | < #PUBLIC_MOD : "public" >
 | < #PRIVATE_MOD : "private" >
@@ -433,7 +433,7 @@ void if_statement():
 void if_expression():
 { if(this.verbose) System.out.println("Starts if_expression");}
 {
-  < IF > "(" logical_expression ")" < THEN >
+  < IF > "(" logical_expression() ")" < THEN >
 }
 
 /*
@@ -445,14 +445,122 @@ void else_expression():
   < ELSE > (if_expression())? statement_list()
 }
 
-
 /* __ WHILE __ */
+
+/*
+ * "while" '(' logical_expression ')' "then" statement_list "end-while"
+ *
+ * This statement does not use any natural language expression
+ *
+ */
+void while_statement():
+{ if(this.verbose) System.out.println("Starts while_statement");}
+{
+  < WHILE > "(" logical_expression() ")" < THEN > statement_list() < END_WHILE >
+}
+
 /* __ PRINT __ */
+
+/*
+ * print_sentence '(' expression ')'
+ */
+void print_statement():
+{ if(this.verbose) System.out.println("Starts print_statement");}
+{
+  print_sentence() "(" expression() ")" 
+}
+
 /* __ READ __ */
+
+/*
+ * read_sentence '(' expression ')'
+ *
+ * not yet implemented 
+ */
+//void read_statement():
+//{ if(this.verbose) System.out.println("Starts read_statement");}
+//{
+//	 read_sentence() "(" expression() ")" 
+//}
+
 /* __ RETURN __ */
 
-/* __ EXPRESSION __*/
+/*
+ * return_sentence expression 
+ *
+ * ÁÁÁ Semantic analyzer must check the return type !!!
+ */
+void return_statement():
+{ if(this.verbose) System.out.println("Starts return_statement");}
+{
+  return_sentence() expression() 
+}
+
+/* __ EXPRESSIONS __*/
+
+/* __ LOGICAL EXPRESSIONS __ */
+
+/*
+ * comparison_expression | '(' comparison_expression ')'
+ *
+ * allows nested brackets
+ */
+void logical_expression():
+{ if(this.verbose) System.out.println("Starts logical_expression");}
+{
+  comparison_expression() | "(" comparison_expression ")"
+}
+
+/*
+ * (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression?
+ */
+void comparison_expression():
+{ if(this.verbose) System.out.println("Starts comparison_expression");}
+{
+  (expression() < COMPARATOR > expression()) link_expression()
+}
+
+/*
+ * (( "||" | "&&") logical_expression)+
+ */
+void link_expression():
+{ if(this.verbose) System.out.println("Starts link_expression");}
+{
+  (< LINKER > logical_expression())*
+}
+
+
+
+/*
+ * simple_expression? complex_expression
+ */
+//void expression():
+//{ if(this.verbose) System.out.println("Starts expression");}
+//{
+ // simple_expression()? complex_expression
+//}
+
 /* __ SIMPLE __*/
+
+/*
+ * 
+ */
+//void simple_expression():
+//{ if(this.verbose) System.out.println("Starts simple_expression");}
+//{
+ // logical_simple_expression() | creating_expression() | literal_expression() | "(" casting_expression ")" | expression_constants()
+//}
+
+/*
+ * 
+ */
+//void logical_simple_expression():
+//{ if(this.verbose) System.out.println("Starts logical_simple_expression");}
+//{
+  
+//}
+
+
 /* __ COMPLEX __*/
 
 /* __ NATURAL LANGUAGE __*/
