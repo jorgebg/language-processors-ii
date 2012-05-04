@@ -117,9 +117,6 @@ TOKEN [IGNORE_CASE] :
 | < WHILE : "while" >
 | < END_WHILE: "end-while" >
 	//Expression constants| < INSTANCE_OF : "instance_of" >
-| < NULL : "null" >
-| < SUPER : "super" >
-| < THIS : "this" >
 | < NEW : "new" >
 	//Array Bracket list
 | < ARRAY_TOKEN : ("[" "]")* >				// Is allways optional !!
@@ -164,6 +161,10 @@ TOKEN :
 | < OPERATOR: (< OPERATION_EXPRESSION >|< OPERATION_SYMBOL >) >
 	//Unary Operation 	// ====== CHANGED ====== // -- An unary operator is to be used in any unary operation situation. No other token must be used
 | <UNARY_OPERATOR: (< UNARY_OPERATION_EXPRESSION >|< UNARY_OPERATION_SYMBOL >) >
+	//Minus (Unary Operation)
+| < MINUS : (< LANGUAGE_MINUS >|< SYMBOLIC_MINUS >) >
+	//String union expression // ONLY SYMBOLIC "+"
+| < PLUS : (< SYMBOLIC_PLUS >) >
 	//Linkers			// ====== CHANGED ====== // -- A linker is to be used in any union situation (And, Or). No other token must be used
 | < LINKER: (< LINKER_EXPRESSION >|< LINKER_SYMBOL >) >
 	//Assign
@@ -184,7 +185,8 @@ TOKEN:
 | < VISIBILITY: (< PUBLIC >|< PRIVATE >|< PROTECTED >) >
 | < TYPE : (< TYPE_SPECIAL >|< CLASS_ID >) >
 | < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
-| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >}
+| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
+| < EXPRESSION_MODIFIER: (< NULL >|< SUPER >|< THIS >) >}
 
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
 {
@@ -246,6 +248,10 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 	//Boolean Tokens
 | < #TRUE : "true" >
 | < #FALSE : "false" >
+	//Expression modifiers
+| < #NULL : "null" >
+| < #SUPER : "super" >
+| < #THIS : "this" >
   	//Subject
 | < #NORMAL_SUBJECT : ("you" | "we" | "they") >
 | < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
@@ -486,7 +492,7 @@ void print_statement():
 /* __ RETURN __ */
 
 /*
- * return_sentence expression 
+ * return_sentence expression
  *
  * ÁÁÁ Semantic analyzer must check the return type !!!
  */
@@ -500,68 +506,76 @@ void return_statement():
 
 /* __ LOGICAL EXPRESSIONS __ */
 
-/*
- * comparison_expression | '(' comparison_expression ')'
- *
- * allows nested brackets
- */
+/* comparison_expression | '(' comparison_expression ')' // allows nested brackets */
 void logical_expression():
 { if(this.verbose) System.out.println("Starts logical_expression");}
 {
   comparison_expression() | "(" comparison_expression ")"
 }
 
-/*
- * (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression?
- */
+/* (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression? */
 void comparison_expression():
 { if(this.verbose) System.out.println("Starts comparison_expression");}
 {
   (expression() < COMPARATOR > expression()) link_expression()
 }
 
-/*
- * (( "||" | "&&") logical_expression)+
- */
+/* (( "||" | "&&") logical_expression)+ */
 void link_expression():
 { if(this.verbose) System.out.println("Starts link_expression");}
 {
   (< LINKER > logical_expression())*
 }
 
-
-
-/*
- * simple_expression? complex_expression
- */
-//void expression():
-//{ if(this.verbose) System.out.println("Starts expression");}
-//{
- // simple_expression()? complex_expression
-//}
-
-/* __ SIMPLE __*/
+/* __ EXPRESSION __ */
 
 /*
- * 
+ * numeric_expression | string_expression | casting_expression | creating_expression
+ * | literal_expression | "null""this""super" | ID |"("expression")"|compound_expression
  */
-//void simple_expression():
-//{ if(this.verbose) System.out.println("Starts simple_expression");}
-//{
- // logical_simple_expression() | creating_expression() | literal_expression() | "(" casting_expression ")" | expression_constants()
-//}
+void expression():
+{ if(this.verbose) System.out.println("Starts expression");}
+{
+  numeric_expression() | string_expression() | casting_expression() | creating_expression()
+  | literal_expression() | EXPRESSION_MODIFIER | ID | "(" expression ")" | compound_expression() 
+}
 
-/*
- * 
- */
-//void logical_simple_expression():
-//{ if(this.verbose) System.out.println("Starts logical_simple_expression");}
-//{
-  
-//}
+/* (("--", "decrement"...)|("minus", "-")) expression() ) | ( expression ("++", "increment"...)) | ( expression ("+","-", ..."plus","minus",...)expression)*/
+void numeric_expression():
+{ if(this.verbose) System.out.println("Starts numeric_expression");}
+{
+  ( (< UNARY_OPERATOR >|< MINUS >) expression() ) | ( expression() < UNARY_OPERATOR >) | ( expression() < OPERATOR > expression()) )
+}
 
+/* expression "+" expression */
+void string_expression():
+{ if(this.verbose) System.out.println("Starts string_expression");}
+{
+   expression() < PLUS > expression()
+}
 
-/* __ COMPLEX __*/
+/* '(' TYPE ')' expression */
+void casting_expression():
+{ if(this.verbose) System.out.println("Starts casting_expression");}
+{
+   "(" < TYPE > ")" expression()
+}
+
+/* NEW expression_specifier */
+void creating_expression():
+{ if(this.verbose) System.out.println("Starts creating_expression");}
+{
+   < NEW > expression_specifier()
+}
+
+/* (CLASS_ID (' argument_list ')') | (TYPE_SPECIAL '[' expression ']') | '(' expression ')' */
+void expression_specifier():
+{ if(this.verbose) System.out.println("Starts expression_specifier");}
+{
+   ( < CLASS_ID > "(" argument_list() ")" ) | (< TYPE_SPECIAL > "[" expression() "]") | "(" expression() ")"
+}
+
+/* __ COMPUND EXPRESSION __*/
 
 /* __ NATURAL LANGUAGE __*/
 
