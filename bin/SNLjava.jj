@@ -1,7 +1,8 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */
- options{  JDK_VERSION = "1.5";  static = true;}
+ options{  JDK_VERSION = "1.5";
+  CHOICE_AMBIGUITY_CHECK = 7;  static = true;}
 PARSER_BEGIN(SNL)
 public class SNL{
 
@@ -551,36 +552,31 @@ void link_expression():
 
 /* __ EXPRESSION __ */
 
-/*
- * numeric_expression | string_expression | casting_expression | creating_expression
- * | literal_expression | "null""this""super" | ID | READ |"("expression")"|compound_expression
- */
+//Is necesary to divide the expression in order to delete the left recursion
+
+/* simple_expression? complex_expression */
 void expression():
 { if(this.verbose) System.out.println("Starts expression");}
 {
-  numeric_expression() | string_expression() | casting_expression() | creating_expression()
-  | literal_expression() | < EXPRESSION_MODIFIER > | < ID > | < READ > | "(" expression() ")" | compound_expression() 
+  (simple_expression())? complex_expression()
 }
 
-/* (("--", "decrement"...)|("minus", "-")) expression() ) | ( expression ("++", "increment"...)) | ( expression ("+","-", ..."plus","minus",...)expression)*/
-void numeric_expression():
-{ if(this.verbose) System.out.println("Starts numeric_expression");}
+/* __ SIMPLE __ */
+/*
+ * '(' casting_expression | creating_expression | literal_expression | "null""this""super" | ID | "-""--""++""increment""decrement" | "read"
+ * casting_expression, also allows the nested brackets
+ */
+void simple_expression():
+{ if(this.verbose) System.out.println("Starts simple_expression");}
 {
-  ( (< UNARY_OPERATOR >|< MINUS >) expression() ) | ( expression() < UNARY_OPERATOR >) | ( expression() < OPERATOR > expression() )
+   "(" casting_expression() | creating_expression() | literal_expression() | < EXPRESSION_MODIFIER > | < ID > | (< UNARY_OPERATOR >|< MINUS >) | < READ >
 }
 
-/* expression "+" expression */
-void string_expression():
-{ if(this.verbose) System.out.println("Starts string_expression");}
-{
-   expression() < PLUS > expression()
-}
-
-/* '(' TYPE ')' expression */
+/* expresion ')' | TYPE ')' expression */
 void casting_expression():
 { if(this.verbose) System.out.println("Starts casting_expression");}
 {
-   "(" < TYPE_SPECIFIER > ")" expression()
+   expression() ")" | < TYPE > ")" expression()
 }
 
 /* NEW expression_specifier */
@@ -594,23 +590,46 @@ void creating_expression():
 void expression_specifier():
 { if(this.verbose) System.out.println("Starts expression_specifier");}
 {
-   ( < CLASS_ID > "(" argument_list() ")" ) | (< TYPE_SPECIAL > "[" expression() "]") | "(" expression() ")"
+   ( < CLASS_ID > argument_list()  ) | (< TYPE_SPECIAL > "[" expression() "]") | "(" expression() ")"
 }
 
-/* CONSTANT ("." CONSTANT)? | \" (CHAR_LITERAL)+ \" | \' any char except (\n, \r \" \') \' */
+/* CONSTANT ("." CONSTANT)? | \" (CHAR_LITERAL)+ \" | \' any char except (\" \') \' */
 void literal_expression():
 { if(this.verbose) System.out.println("Starts literal_expression");}
 {
    < INTEGER_LITERAL > | < STRING_LITERAL > | < CHAR_LITERAL >
 }
 
-/* __ COMPUND EXPRESSION __*/
+/* __ COMPLEX EXPRESSION __*/
 
- /* expression ( '(' argument_list ')' | '[' expression ']' | DOT_NOTATION expression ) */
-void compound_expression():
-{ if(this.verbose) System.out.println("Starts compound_expression");}
+/*
+ * numeric_expression | casting_expression | assing_expression | complex_expression | "++", "--", "increment", "decrement"
+ */
+void complex_expression():
+{ if(this.verbose) System.out.println("Starts expression");}
 {
-   expression() ( argument_list() | "[" expression() "]" | < DOT_NOTATION > expression() )
+  numeric_expression() | post_expression() | assign_expression() | < UNARY_OPERATOR >
+}
+
+/* ("+","-", ..."plus","minus",...) expression */
+void numeric_expression():
+{ if(this.verbose) System.out.println("Starts numeric_expression");}
+{
+  < OPERATOR > expression()
+}
+
+/* '[' expression ']' | "- >" expression ) */
+void post_expression():
+{ if(this.verbose) System.out.println("Starts post_expression");}
+{
+    "[" expression() "]" | < DOT_NOTATION > expression() 
+}
+
+ /* EQUALS (expression) */
+void assign_expression():
+{ if(this.verbose) System.out.println("Starts assign_expression");}
+{
+     < EQUALS > expression()
 }
 
 /* __ NATURAL LANGUAGE __*/
