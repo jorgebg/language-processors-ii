@@ -274,8 +274,8 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 | < #BYTE : "byte" >
 | < #SHORT : "short" >
 | < #INT : "int" >
-| < #LONG : "long" >
-| < #FLOAT : "float" >
+| < #LONG : "long" > 		//must be disabled
+| < #FLOAT : "float" >		//must be disable
 | < #DOUBLE : "double" >
 	//Floating point suffixes
 } 
@@ -584,14 +584,21 @@ void expression_specifier():
    ( < CLASS_ID > "(" argument_list() ")" ) | (< TYPE_SPECIAL > "[" expression() "]") | "(" expression() ")"
 }
 
-/* Nliteral */
+/* CONSTANT ("." CONSTANT)? | \" (CHAR_LITERAL)+ \" | \' any char except (\n, \r \" \') \' */
 void literal_expression():
 { if(this.verbose) System.out.println("Starts literal_expression");}
 {
-   
+   < INTEGER_LITERAL > | < STRING_LITERAL > | < CHAR_LITERAL >
 }
 
 /* __ COMPUND EXPRESSION __*/
+
+ /* expression ( '(' argument_list ')' | '[' expression ']' | DOT_NOTATION expression ) */
+void compound_expression():
+{ if(this.verbose) System.out.println("Starts compound_expression");}
+{
+   expression() ( argument_list() | "[" expression "]" | < DOT_NOTATION > expression() )
+}
 
 /* __ NATURAL LANGUAGE __*/
 
@@ -617,12 +624,25 @@ void parameter_list():
   "(" (parameter() (< LIST_CONNECTOR > parameter())*)? ")" 
 }
 
-/**/
+/* TYPE ID ([])* */
 void parameter():
 { if(this.verbose) System.out.println("Starts parameter");}
 {
   < TYPE > < ID > < ARRAY_TOKEN >
 }
+
+/*
+ * Is like a parameter list but with expressions instead parameters, 
+ * much more complex
+ *
+ * (' ( expression ("," expression)* )? ')'
+ */
+void argument_list():
+{ if(this.verbose) System.out.println("Starts argument_list");}
+{
+  "(" (expression() (< LIST_CONNECTOR > expression())*)? ")" 
+}
+
 
 /*
  * ("equals" | "=") (expression | array_values)
