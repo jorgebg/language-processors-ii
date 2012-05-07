@@ -183,7 +183,8 @@ TOKEN:
   < PACKAGE_STATEMENT: (< PACKAGE_MOD >< CLASS_ID >< STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
   // IMPORT FUNCTION HAS BEEN DISABLED
 | < VISIBILITY: (< PUBLIC >|< PRIVATE >|< PROTECTED >) >
-| < TYPE : (< TYPE_SPECIAL >|< CLASS_ID >) >
+| < TYPE : (< TYPE_SPECIFIER >< ARRAY_TOKEN >) >
+| < TYPE_SPECIFIER: (< TYPE_SPECIAL >|< CLASS_ID >) > 
 | < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
 | < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
 | < EXPRESSION_MODIFIER: (< NULL >|< SUPER >|< THIS >) >}
@@ -558,7 +559,7 @@ void string_expression():
 void casting_expression():
 { if(this.verbose) System.out.println("Starts casting_expression");}
 {
-   "(" < TYPE > ")" expression()
+   "(" < TYPE_SPECIFIER > ")" expression()
 }
 
 /* NEW expression_specifier */
@@ -573,6 +574,13 @@ void expression_specifier():
 { if(this.verbose) System.out.println("Starts expression_specifier");}
 {
    ( < CLASS_ID > "(" argument_list() ")" ) | (< TYPE_SPECIAL > "[" expression() "]") | "(" expression() ")"
+}
+
+/* Nliteral */
+void literal_expression():
+{ if(this.verbose) System.out.println("Starts literal_expression");}
+{
+   
 }
 
 /* __ COMPUND EXPRESSION __*/
