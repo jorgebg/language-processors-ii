@@ -6,7 +6,7 @@
 public class SNL{
 
   public boolean verbose;
-    public static void main(String args []) throws ParseException {
+    public static void main(String args []) {
 	if (args.length == 0) {
 	    System.out.println("No input given");
 	    //  SNL snlParser = new SNL(System.in);
@@ -27,7 +27,14 @@ public class SNL{
 	    } catch (java.io.FileNotFoundException e) {
 	    	System.out.println("The File " + args[0] + " has not been found");
 	    	return;
-	   	}
+	   	} catch (TokenMgrException e1) {
+	    	System.out.println("Token Exception");
+	    	return;
+	 	} catch (ParseException e2) {
+	    	System.out.println("Parsing Exception");
+	    	return;
+	   }
+	    	
 	} else {
 	    System.out.println("Wrong number of parameters. Paramater 1: input file. Parameter 2 (optional): verbose (1,0)");
 	    return;
@@ -143,7 +150,7 @@ TOKEN [IGNORE_CASE] :
 | < TO  : "to" >
 | < IN  : "in" >
 	//Auxiliar connector (not needed), might not be used
-| < AUX_CONNECTOR : ("in" "addition") | "also" >
+| < AUXILIAR_CONNECTOR : ("in" "addition") | "also" >
 }
 
 /* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
@@ -152,7 +159,7 @@ TOKEN:
 {
   < PACKAGE_STATEMENT: (< PACKAGE_MOD > < CLASS_ID > < STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
   // IMPORT FUNCTION HAS BEEN DISABLED
-| < VISIBILITY: (< PUBLIC >|< PRIVATE >|< PROTECTED >) >
+| < VISIBILITY: (< PUBLIC_MOD >|< PRIVATE_MOD >|< PROTECTED_MOD >) >
 | < TYPE : (< TYPE_SPECIFIER >< ARRAY_TOKEN >) >
 | < TYPE_SPECIFIER: (< TYPE_SPECIAL >|< CLASS_ID >) > 
 | < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
@@ -166,9 +173,9 @@ TOKEN :
 {
   	//Subjects 			// ====== CHANGED ====== // 
   < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
-| < SUBJECT_3 : (< THRD_SUBJECT > | < OTHER_SUBJECT >) >
+| < SUBJECT_3rd : (< THIRD_SUBJECT > | < OTHER_SUBJECT >) >
 	//Comparison		// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
-| < COMPARATOR : ( < IS > < COMPARISON_EXPRESSIONS > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
+| < COMPARATOR : ( < IS > < COMPARISON_EXPRESSION > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
 	//Operation 		// ====== CHANGED ====== // -- An operator is to be used in any operation situation. No other token must be used
 | < OPERATOR: (< OPERATION_EXPRESSION >|< OPERATION_SYMBOL >) >
 	//Unary Operation 	// ====== CHANGED ====== // -- An unary operator is to be used in any unary operation situation. No other token must be used
@@ -195,13 +202,13 @@ TOKEN :
 
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
 {
- 	//Language Comparison 	  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON > (< LANGUAGE_OR >< LANGAUGE_EQUALS_COMPARISON >)? )>
+ 	//Language Comparison 	  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON > (< LANGUAGE_OR >< LANGUAGE_EQUALS_COMPARISON >)? )>
 | < #LANGUAGE_EQUALS_COMPARISON : (< LANGUAGE_EQUALS > | < LANGUAGE_NOT ><LANGUAGE_EQUALS > ) >
-| < #LANGUAGE_COMPARISSON : (< LANGUAGE_GREATER >|< LANGUAGE_SMALLER > ) >
+| < #LANGUAGE_COMPARISON : (< LANGUAGE_GREATER >|< LANGUAGE_SMALLER > ) >
 	//Symbol Comparison
 | < #COMPARISON_SYMBOLS: < SYMBOLIC_EQUALS_COMPARISON >|(< SYMBOLIC_COMPARISON > (< LANGUAGE_EQUALS_COMPARISON >)?) >
 | < #SYMBOLIC_EQUALS_COMPARISON: (< BOOLEAN_EQUALS >|< SYMBOLIC_NOT ><SYMBOLIC_EQUALS >) >
-| < #SYMBOLIC_COMPARISON: (< SYBOLIC_GREATER >|< SYMBOLIC_SMALLER >) >
+| < #SYMBOLIC_COMPARISON: (< SYMBOLIC_GREATER >|< SYMBOLIC_SMALLER >) >
 	//Operations
 | < #OPERATION_EXPRESSION: (< LANGUAGE_PLUS >|< LANGUAGE_MINUS >|< LANGUAGE_TIMES >|< LANGUAGE_DIVIDES >) >
 | < #OPERATION_SYMBOL: (< SYMBOLIC_PLUS >|< SYMBOLIC_MINUS >|< SYMBOLIC_TIMES >|< SYMBOLIC_DIVIDES >) >
@@ -216,11 +223,11 @@ TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and L
 TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 {
   	//Auxiliar Verbs -EXTENSIBLE
-| < #AUX_VERB : "want" | "need" >
+  < #AUX_VERB : "want" | "need" >
 | < #AUX_VERB_3rd : "wants" | "needs" >
 | < #MODAL_VERB : "shall" | "must" | "will" >
   	//Language Comparators
-  < #LANGUAGE_NOT : "not" >
+| < #LANGUAGE_NOT : "not" >
 | < #LANGUAGE_GREATER : "greater" >
 | < #LANGUAGE_SMALLER : "smaller" >
   	//Symbolic Comparators -- 
@@ -263,7 +270,7 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 | < #THIS : "this" >
   	//Subject
 | < #NORMAL_SUBJECT : ("you" | "we" | "they") >
-| < #THRD_SUJBJECT : ("he" | "she" | "it" ) >
+| < #THIRD_SUBJECT : ("he" | "she" | "it" ) >
 | < #OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
 	//Others
 | < #IS  : "is" >
@@ -291,14 +298,14 @@ TOKEN : /*Meta tokens*/
   < #I_SUBJECT : "I" >
 	//Identifiers
 | < #CONSTANT : (< DIGIT >)+ >
-| < #FLOATINT_POINT: ". " >
+| < #FLOATING_POINT: ". " >
 	//Might cause problems with N0 separator
 | < #DIGIT : [ "0"-"9" ] >
 | < #CAP_LETTER : ([ "A"-"Z" ]) >
 | < #ID_BEGIN : ([ "a" - "z" ] | "$" | "_") >
 | < #ID_ANY : (["a"-"z"] | ["A"-"Z"] | ["0"-"9"] | "$" | "_" ) >
 | < #STRING_VAL: (< CHAR_VAL >)+ >
-| < #CHAR_VAL: ~[ "\n""\r""\"""\'" ]  >
+| < #CHAR_VAL: (~["\"","'"]) >
 }
 
 /* __ __ REMARKS & CHANGES __ __ */
@@ -314,7 +321,7 @@ TOKEN : /*Meta tokens*/
 //PARENTHESIS ARE NOT INCLUDED !!!!
 /*It might be better that the syntactical analyzer is on charge of this part, allowing nested brackets*/
 /* __ UNUSED TOKENS __*/
-TOKEN [IGNORE_CASE] :
+//TOKEN [IGNORE_CASE] :
 //{  
 // <VALUE_OF : ("the" "value" "of") >// <ASSIGN : ( < SYMBOLIC_EQUALS > | < LANGUAGE_EQUALS >< TO > ) >
 // <COMPLEX_OPERATION : "complex" "operation" >
@@ -322,6 +329,7 @@ TOKEN [IGNORE_CASE] :
 /*__ __ -------------------- __ __*/
 
 /* __ -_-Syntactical Analyzer-_- __*/
+
 
 /*
  *Prepares the grammar import and packages statements (Extracted from Java Grammar)
@@ -385,7 +393,7 @@ void variable_list():
 void variable_declaration():
 { if(this.verbose) System.out.println("Starts variable_declaration");}
 {
-  < TYPE > < ID > < ARRAY_TOKEN > variable_init()?
+  < TYPE > < ID > < ARRAY_TOKEN > (variable_init())?
 }
 
 /*
@@ -433,7 +441,7 @@ void statement_list():
 void statement():
 { if(this.verbose) System.out.println("Starts statement");}
 {
-  ( variable_declaration_statement() | expression() | if_statement() | while_statement() | print_statement() | read_statement() | return_statement() )
+  ( variable_declaration_statement() | expression() | if_statement() | while_statement() | print_statement() | return_statement() )
 }
 
 /* __ IF __ */
@@ -524,7 +532,7 @@ void return_statement():
 void logical_expression():
 { if(this.verbose) System.out.println("Starts logical_expression");}
 {
-  comparison_expression() | "(" comparison_expression ")"
+  comparison_expression() | "(" comparison_expression() ")"
 }
 
 /* (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression? */
@@ -551,14 +559,14 @@ void expression():
 { if(this.verbose) System.out.println("Starts expression");}
 {
   numeric_expression() | string_expression() | casting_expression() | creating_expression()
-  | literal_expression() | < EXPRESSION_MODIFIER > | < ID > | < READ > | "(" expression ")" | compound_expression() 
+  | literal_expression() | < EXPRESSION_MODIFIER > | < ID > | < READ > | "(" expression() ")" | compound_expression() 
 }
 
 /* (("--", "decrement"...)|("minus", "-")) expression() ) | ( expression ("++", "increment"...)) | ( expression ("+","-", ..."plus","minus",...)expression)*/
 void numeric_expression():
 { if(this.verbose) System.out.println("Starts numeric_expression");}
 {
-  ( (< UNARY_OPERATOR >|< MINUS >) expression() ) | ( expression() < UNARY_OPERATOR >) | ( expression() < OPERATOR > expression()) )
+  ( (< UNARY_OPERATOR >|< MINUS >) expression() ) | ( expression() < UNARY_OPERATOR >) | ( expression() < OPERATOR > expression() )
 }
 
 /* expression "+" expression */
@@ -602,7 +610,7 @@ void literal_expression():
 void compound_expression():
 { if(this.verbose) System.out.println("Starts compound_expression");}
 {
-   expression() ( argument_list() | "[" expression "]" | < DOT_NOTATION > expression() )
+   expression() ( argument_list() | "[" expression() "]" | < DOT_NOTATION > expression() )
 }
 
 /* __ NATURAL LANGUAGE __*/
@@ -645,7 +653,7 @@ void control_sentence():
 void print_sentence():
 { if(this.verbose) System.out.println("Starts print_sentence");}
 {
-  	( PRINT_VERB )
+  	( < PRINT_VERB > )
 	| (< SUBJECT > (< AUXILIAR_EXPRESSION >)? < PRINT_VERB > (< AUXILIAR_CONNECTOR >)? )
  	| (< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < PRINT_VERB >) | < PRINT_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? )
 }
@@ -671,7 +679,7 @@ void print_sentence():
 void return_sentence():
 { if(this.verbose) System.out.println("Starts return_sentence");}
 {
-  	( RETURN_VERB )
+  	( < RETURN_VERB > )
  	| (< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < RETURN_VERB >) | < RETURN_VERB_3rd >) )
 }
 
@@ -715,7 +723,6 @@ void argument_list():
   "(" (expression() (< LIST_CONNECTOR > expression())*)? ")" 
 }
 
-
 /*
  * ("equals" | "=") (expression | array_values)
  *
@@ -731,11 +738,6 @@ void array_init():
 {
   "{" variable_initializer() (< LIST_CONNECTOR > variable_initializer())* "}" 
 }
-
-
-
-%%
- 
 
 
 
