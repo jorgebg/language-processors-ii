@@ -120,10 +120,6 @@ TOKEN [IGNORE_CASE] :
 | < NEW : "new" >
 	//Array Bracket list
 | < ARRAY_TOKEN : ("[" "]")* >				// Is allways optional !!
-	//Auxiliar Verbs -EXTENSIBLE
-| < AUX_VERB : "want" | "need" >
-| < AUX_VERB_3rd : "wants" | "needs" >
-| < MODAL_VERB : "shall" | "must" | "will" >
 	//Action Verbs -EXTENSIBLE
 | < ASSIGN_VERB : "save" | "store" >
 | < ASSIGN_VERB_3rd : "saves" | "stores" >
@@ -133,7 +129,9 @@ TOKEN [IGNORE_CASE] :
 | < CONTROL_VERB_3rd : "checks" | "verifies" >
 | < PRINT_VERB : "print" >
 | < PRINT_VERB_3rd : "prints" >
-| < RETURN_VERB : "returns" >
+| < READ : "read" >
+| < RETURN_VERB : "return" >
+| < RETURN_VERB_3rd : "returns" >
 	//Functional connectors
 | < CLASS_METHOD_CONNECTOR : "."  >			//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
 | < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
@@ -183,6 +181,9 @@ TOKEN :
 | < LINKER: (< LINKER_EXPRESSION >|< LINKER_SYMBOL >) >
 	//Assign
 | < EQUALS : (< LANGUAGE_EQUALS >|< SYMBOLIC_EQUALS >) >
+	//Auxiliar Verbs
+| < AUXILIAR_EXPRESSION: (< AUX_VERB > < TO >|< MODAL_VERB >) >
+| < AUXILIAR_EXPRESSION3:  (< AUX_VERB_3rd > < TO >|< MODAL_VERB >) >
 	//Identifiers
 | < CLASS_ID: <CAP_LETTER> (<ID_ANY>)* >
 | < ID : <ID_BEGIN> (<ID_ANY>)* >
@@ -214,6 +215,10 @@ TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and L
 
 TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 {
+  	//Auxiliar Verbs -EXTENSIBLE
+| < #AUX_VERB : "want" | "need" >
+| < #AUX_VERB_3rd : "wants" | "needs" >
+| < #MODAL_VERB : "shall" | "must" | "will" >
   	//Language Comparators
   < #LANGUAGE_NOT : "not" >
 | < #LANGUAGE_GREATER : "greater" >
@@ -403,12 +408,12 @@ void variable_initializer():
 
 /*
  * needed for local variables, called from statement
- * creation_sentence ("boolean" | ... | CLASS_ID) variable_list
+ * creation_sentence? ("boolean" | ... | CLASS_ID) variable_list
  */
 void variable_declaration_statement():
 { if(this.verbose) System.out.println("Starts statement_list");}
 {
-  creation_sentence() < TYPE > variable_list()
+  (creation_sentence())? < TYPE > variable_list()
 }
 
 /* __ STATEMENTS __ */
@@ -434,12 +439,12 @@ void statement():
 /* __ IF __ */
 
 /*
- * control_sentence if_expression statement_list else_expression* "end-if"
+ * control_sentence? if_expression statement_list else_expression* "end-if"
  */
 void if_statement():
 { if(this.verbose) System.out.println("Starts if_statement");}
 {
-  control_sentence() if_expression() statement_list() (else_expression())* < END_IF >
+  (control_sentence())? if_expression() statement_list() (else_expression())* < END_IF >
 }
 
 /*
@@ -540,13 +545,13 @@ void link_expression():
 
 /*
  * numeric_expression | string_expression | casting_expression | creating_expression
- * | literal_expression | "null""this""super" | ID |"("expression")"|compound_expression
+ * | literal_expression | "null""this""super" | ID | READ |"("expression")"|compound_expression
  */
 void expression():
 { if(this.verbose) System.out.println("Starts expression");}
 {
   numeric_expression() | string_expression() | casting_expression() | creating_expression()
-  | literal_expression() | EXPRESSION_MODIFIER | ID | "(" expression ")" | compound_expression() 
+  | literal_expression() | < EXPRESSION_MODIFIER > | < ID > | < READ > | "(" expression ")" | compound_expression() 
 }
 
 /* (("--", "decrement"...)|("minus", "-")) expression() ) | ( expression ("++", "increment"...)) | ( expression ("+","-", ..."plus","minus",...)expression)*/
@@ -601,7 +606,74 @@ void compound_expression():
 }
 
 /* __ NATURAL LANGUAGE __*/
+//Natural language clauses are easily extensible in the token list
 
+/* __ CREATION __ */
+
+/*
+ * ("I", "you"...) ("need to", "want to" | "must", "shall") ("create", "define") ("also", "in addition") ("a", "the")
+ * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("create", "define") | ("creates", "defines"))("also", "in addition") ("a", "the")
+ */
+void creation_sentence():
+{ if(this.verbose) System.out.println("Starts creation_sentence");}
+{
+ 	(< SUBJECT > (< AUXILIAR_EXPRESSION >)? < CREATION_VERB > (< AUXILIAR_CONNECTOR >)? < A_THE >)
+ 	|(< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < CREATION_VERB >) | < CREATION_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? < A_THE >)
+}
+
+/* __ CONTROL __ */
+
+/*
+ * ("I", "you"...) ("need to", "want to" | "must", "shall") ("check", "verify") ("also", "in addition")
+ * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("check", "verify") | ("checks", "verifies"))("also", "in addition")
+ */
+void control_sentence():
+{ if(this.verbose) System.out.println("Starts control_sentence");}
+{
+ 	(< SUBJECT > (< AUXILIAR_EXPRESSION >)? < CONTROL_VERB > (< AUXILIAR_CONNECTOR >)? )
+ 	|(< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < CONTROL_VERB >) | < CONTROL_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? )
+}
+
+/* __ PRINT __ */
+
+/*
+ * The print sentence is compulsory. But it can only contain the verb in order to simplify the sketched coding
+ * ("print")
+ * ("I", "you"...) ("need to", "want to" | "must", "shall") ("print") ("also", "in addition")
+ * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("print") | ("prints"))("also", "in addition") 
+ */
+void print_sentence():
+{ if(this.verbose) System.out.println("Starts print_sentence");}
+{
+  	( PRINT_VERB )
+	| (< SUBJECT > (< AUXILIAR_EXPRESSION >)? < PRINT_VERB > (< AUXILIAR_CONNECTOR >)? )
+ 	| (< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < PRINT_VERB >) | < PRINT_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? )
+}
+
+/* __ READ __ */
+
+/*
+ *The read sentence is not needed because it is encapsulated as an expression, so it has no sense to include a phrase in an expression and no phrases for the rest of them.
+ *In order to read and store the result in a variable the next expression should be used:
+ *
+ *String s = read
+ */
+
+/* __ RETURN __ */
+
+/*
+ * The return sentence is compulsory. But it can only contain the verb in order to simplify the sketched coding.
+ * It can only be used in third person, if it stands alone the regular form will be used "return" instead the third person "returns"
+ *
+ * ("return")
+ * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("return") | ("returns"))
+ */
+void return_sentence():
+{ if(this.verbose) System.out.println("Starts return_sentence");}
+{
+  	( RETURN_VERB )
+ 	| (< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < RETURN_VERB >) | < RETURN_VERB_3rd >) )
+}
 
 /* __ AUXILIAR EXPRESSIONS __ */ 
 
