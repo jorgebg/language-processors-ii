@@ -148,6 +148,20 @@ TOKEN [IGNORE_CASE] :
 | < AUX_CONNECTOR : ("in" "addition") | "also" >
 }
 
+/* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
+
+TOKEN:
+{
+  < PACKAGE_STATEMENT: (< PACKAGE_MOD > < CLASS_ID > < STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
+  // IMPORT FUNCTION HAS BEEN DISABLED
+| < VISIBILITY: (< PUBLIC >|< PRIVATE >|< PROTECTED >) >
+| < TYPE : (< TYPE_SPECIFIER >< ARRAY_TOKEN >) >
+| < TYPE_SPECIFIER: (< TYPE_SPECIAL >|< CLASS_ID >) > 
+| < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
+| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
+| < EXPRESSION_MODIFIER: (< NULL >|< SUPER >|< THIS >) >
+}
+
 /* __ COMPLEX TOKENS __ */
 
 TOKEN :
@@ -172,22 +186,11 @@ TOKEN :
 	//Identifiers
 | < CLASS_ID: <CAP_LETTER> (<ID_ANY>)* >
 | < ID : <ID_BEGIN> (<ID_ANY>)* >
-	//Constant
-| < CONSTANT : (< DIGIT >)+ >
+	//Literals
+| < INTEGER_LITERAL: < CONSTANT > (< FLOATING_POINT > < CONSTANT >)? > 	// Semantic analyzer must chech if it is an Integer, Float or Double
+| < STRING_LITERAL: "\"" <STRING_VAL > "\"" >
+| < CHAR_LITERAL: "\'" < CHAR_VAL > "\'" >
 }
-
-/* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
-
-TOKEN:
-{
-  < PACKAGE_STATEMENT: (< PACKAGE_MOD >< CLASS_ID >< STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
-  // IMPORT FUNCTION HAS BEEN DISABLED
-| < VISIBILITY: (< PUBLIC >|< PRIVATE >|< PROTECTED >) >
-| < TYPE : (< TYPE_SPECIFIER >< ARRAY_TOKEN >) >
-| < TYPE_SPECIFIER: (< TYPE_SPECIAL >|< CLASS_ID >) > 
-| < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
-| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
-| < EXPRESSION_MODIFIER: (< NULL >|< SUPER >|< THIS >) >}
 
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
 {
@@ -274,6 +277,7 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 | < #LONG : "long" >
 | < #FLOAT : "float" >
 | < #DOUBLE : "double" >
+	//Floating point suffixes
 } 
 
 TOKEN : /*Meta tokens*/
@@ -281,11 +285,15 @@ TOKEN : /*Meta tokens*/
   	//First person subject
   < #I_SUBJECT : "I" >
 	//Identifiers
-	  	//Constant
+| < #CONSTANT : (< DIGIT >)+ >
+| < #FLOATINT_POINT: ". " >
+	//Might cause problems with N0 separator
 | < #DIGIT : [ "0"-"9" ] >
 | < #CAP_LETTER : ([ "A"-"Z" ]) >
 | < #ID_BEGIN : ([ "a" - "z" ] | "$" | "_") >
 | < #ID_ANY : (["a"-"z"] | ["A"-"Z"] | ["0"-"9"] | "$" | "_" ) >
+| < #STRING_VAL: (< CHAR_VAL >)+ >
+| < #CHAR_VAL: ~[ "\n""\r""\"""\'" ]  >
 }
 
 /* __ __ REMARKS & CHANGES __ __ */
