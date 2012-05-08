@@ -29,6 +29,7 @@ public class SNL implements SNLConstants {
                 return;
                 } catch (ParseException e2) {
                 System.out.println("Parsing Exception");
+                System.out.println("Read Token: "+token.image);
                 return;
            }
 
@@ -74,20 +75,25 @@ public class SNL implements SNLConstants {
  *	("package" CLASS_ID ";")? class_declaration+
  */
   static final public void compilation_unit() throws ParseException {
+    trace_call("compilation_unit");
+    try {
   if(verbose) System.out.println("Start compilation_unit");
-    if (jj_2_1(3)) {
-      jj_consume_token(PACKAGE_STATEMENT);
-    } else {
-      ;
-    }
-    label_1:
-    while (true) {
-      class_declaration();
-      if (jj_2_2(3)) {
-        ;
+      if (jj_2_1(2)) {
+        jj_consume_token(PACKAGE_STATEMENT);
       } else {
-        break label_1;
+        ;
       }
+      label_1:
+      while (true) {
+        class_declaration();
+        if (jj_2_2(2)) {
+          ;
+        } else {
+          break label_1;
+        }
+      }
+    } finally {
+      trace_return("compilation_unit");
     }
   }
 
@@ -95,78 +101,88 @@ public class SNL implements SNLConstants {
  *	creation_sentence? ("public"|"private"|"protected")? ("final"|"abstract")? "class" CLASS_ID field_declaration+ "end-class"
  */
   static final public void class_declaration() throws ParseException {
+    trace_call("class_declaration");
+    try {
   if(verbose) System.out.println("Starts class_declaration");
-    if (jj_2_3(3)) {
-      creation_sentence();
-    } else {
-      ;
-    }
-    if (jj_2_4(3)) {
-      jj_consume_token(VISIBILITY);
-    } else {
-      ;
-    }
-    if (jj_2_7(3)) {
-      if (jj_2_5(3)) {
-        jj_consume_token(FINAL_MOD);
-      } else if (jj_2_6(3)) {
-        jj_consume_token(ABSTRACT_MOD);
+      if (jj_2_3(2)) {
+        creation_sentence();
       } else {
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-    } else {
-      ;
-    }
-    jj_consume_token(CLASS);
-    jj_consume_token(CLASS_ID);
-    label_2:
-    while (true) {
-      field_declaration();
-      if (jj_2_8(3)) {
         ;
-      } else {
-        break label_2;
       }
+      if (jj_2_4(2)) {
+        jj_consume_token(VISIBILITY);
+      } else {
+        ;
+      }
+      if (jj_2_7(2)) {
+        if (jj_2_5(2)) {
+          jj_consume_token(FINAL_MOD);
+        } else if (jj_2_6(2)) {
+          jj_consume_token(ABSTRACT_MOD);
+        } else {
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      } else {
+        ;
+      }
+      jj_consume_token(CLASS);
+      jj_consume_token(CLASS_ID);
+      label_2:
+      while (true) {
+        field_declaration();
+        if (jj_2_8(2)) {
+          ;
+        } else {
+          break label_2;
+        }
+      }
+      jj_consume_token(END_CLASS);
+    } finally {
+      trace_return("class_declaration");
     }
-    jj_consume_token(END_CLASS);
   }
 
 /*
  *	"." creation_sentence? ("public"|"private"|"protected")? ("static")? ("final")? (constructor_declaration | method_declaration | variable_list)
  */
   static final public void field_declaration() throws ParseException {
+    trace_call("field_declaration");
+    try {
   if(verbose) System.out.println("Starts field_declaration");
-    jj_consume_token(CLASS_METHOD_CONNECTOR);
-    if (jj_2_9(3)) {
-      creation_sentence();
-    } else {
-      ;
-    }
-    if (jj_2_10(3)) {
-      jj_consume_token(VISIBILITY);
-    } else {
-      ;
-    }
-    if (jj_2_11(3)) {
-      jj_consume_token(STATIC_MOD);
-    } else {
-      ;
-    }
-    if (jj_2_12(3)) {
-      jj_consume_token(FINAL_MOD);
-    } else {
-      ;
-    }
-    if (jj_2_13(3)) {
-      constructor_declaration();
-    } else if (jj_2_14(3)) {
-      method_declaration();
-    } else if (jj_2_15(3)) {
-      variable_list();
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      jj_consume_token(CLASS_METHOD_CONNECTOR);
+      if (jj_2_9(2)) {
+        creation_sentence();
+      } else {
+        ;
+      }
+      if (jj_2_10(2)) {
+        jj_consume_token(VISIBILITY);
+      } else {
+        ;
+      }
+      if (jj_2_11(2)) {
+        jj_consume_token(STATIC_MOD);
+      } else {
+        ;
+      }
+      if (jj_2_12(2)) {
+        jj_consume_token(FINAL_MOD);
+      } else {
+        ;
+      }
+      if (jj_2_13(2)) {
+        constructor_declaration();
+      } else if (jj_2_14(2)) {
+        method_declaration();
+      } else if (jj_2_15(2)) {
+        variable_list();
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("field_declaration");
     }
   }
 
@@ -177,62 +193,90 @@ public class SNL implements SNLConstants {
  *	"constructor" ID parameter_list() ':' statement_list "end-constructor"
  */
   static final public void constructor_declaration() throws ParseException {
+    trace_call("constructor_declaration");
+    try {
   if(verbose) System.out.println("Starts contructor_declaration");
-    jj_consume_token(CONSTRUCTOR);
-    jj_consume_token(ID);
-    parameter_list();
-    jj_consume_token(METHOD_STATEMENT_CONNECTOR);
-    statement_list();
-    jj_consume_token(END_CONSTRUCTOR);
+      jj_consume_token(CONSTRUCTOR);
+      jj_consume_token(ID);
+      parameter_list();
+      jj_consume_token(METHOD_STATEMENT_CONNECTOR);
+      statement_list();
+      jj_consume_token(END_CONSTRUCTOR);
+    } finally {
+      trace_return("constructor_declaration");
+    }
   }
 
 /*
  * ("method"|"function) ID '(' ( parameter ("," parameter)* )? ')' ':' statement_list ("end-method"|"end-funtion")
  */
   static final public void method_declaration() throws ParseException {
+    trace_call("method_declaration");
+    try {
   if(verbose) System.out.println("Starts method_declaration");
-    jj_consume_token(METHOD);
-    jj_consume_token(TYPE);
-    jj_consume_token(ID);
-    jj_consume_token(ARRAY_TOKEN);
-    parameter_list();
-    jj_consume_token(METHOD_STATEMENT_CONNECTOR);
-    statement_list();
-    jj_consume_token(END_METHOD);
+      jj_consume_token(METHOD);
+      jj_consume_token(TYPE);
+      jj_consume_token(ID);
+      if (jj_2_16(2)) {
+        jj_consume_token(ARRAY_TOKEN);
+      } else {
+        ;
+      }
+      parameter_list();
+      jj_consume_token(METHOD_STATEMENT_CONNECTOR);
+      statement_list();
+      jj_consume_token(END_METHOD);
+    } finally {
+      trace_return("method_declaration");
+    }
   }
 
 /*
  * ("variable"|"variables") variable_declaration ("," variable_declaration)* ("end-variable"|"end-variables")
  */
   static final public void variable_list() throws ParseException {
+    trace_call("variable_list");
+    try {
   if(verbose) System.out.println("Starts variable_list");
-    jj_consume_token(VARIABLE);
-    variable_declaration();
-    label_3:
-    while (true) {
-      if (jj_2_16(3)) {
-        ;
-      } else {
-        break label_3;
-      }
-      jj_consume_token(LIST_CONNECTOR);
+      jj_consume_token(VARIABLE);
       variable_declaration();
+      label_3:
+      while (true) {
+        if (jj_2_17(2)) {
+          ;
+        } else {
+          break label_3;
+        }
+        jj_consume_token(LIST_CONNECTOR);
+        variable_declaration();
+      }
+      jj_consume_token(END_VARIABLE);
+    } finally {
+      trace_return("variable_list");
     }
-    jj_consume_token(END_VARIABLE);
   }
 
 /*
  * ("boolean" | "byte" | "int" |...| CLASS_ID) ID []* variable_init?
  */
   static final public void variable_declaration() throws ParseException {
+    trace_call("variable_declaration");
+    try {
   if(verbose) System.out.println("Starts variable_declaration");
-    jj_consume_token(TYPE);
-    jj_consume_token(ID);
-    jj_consume_token(ARRAY_TOKEN);
-    if (jj_2_17(3)) {
-      variable_init();
-    } else {
-      ;
+      jj_consume_token(TYPE);
+      jj_consume_token(ID);
+      if (jj_2_18(2)) {
+        jj_consume_token(ARRAY_TOKEN);
+      } else {
+        ;
+      }
+      if (jj_2_19(2)) {
+        variable_init();
+      } else {
+        ;
+      }
+    } finally {
+      trace_return("variable_declaration");
     }
   }
 
@@ -240,23 +284,33 @@ public class SNL implements SNLConstants {
  * ("equals" | "=") (expression | array_values)
  */
   static final public void variable_init() throws ParseException {
+    trace_call("variable_init");
+    try {
   if(verbose) System.out.println("Starts variable_init");
-    jj_consume_token(EQUALS);
-    variable_initializer();
+      jj_consume_token(EQUALS);
+      variable_initializer();
+    } finally {
+      trace_return("variable_init");
+    }
   }
 
 /*
  * (expression | array_values)
  */
   static final public void variable_initializer() throws ParseException {
+    trace_call("variable_initializer");
+    try {
   if(verbose) System.out.println("Starts variable_initializer");
-    if (jj_2_18(3)) {
-      expression();
-    } else if (jj_2_19(3)) {
-      array_init();
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_20(2)) {
+        expression();
+      } else if (jj_2_21(2)) {
+        array_init();
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("variable_initializer");
     }
   }
 
@@ -265,14 +319,19 @@ public class SNL implements SNLConstants {
  * creation_sentence? ("boolean" | ... | CLASS_ID) variable_list
  */
   static final public void variable_declaration_statement() throws ParseException {
+    trace_call("variable_declaration_statement");
+    try {
   if(verbose) System.out.println("Starts statement_list");
-    if (jj_2_20(3)) {
-      creation_sentence();
-    } else {
-      ;
+      if (jj_2_22(2)) {
+        creation_sentence();
+      } else {
+        ;
+      }
+      jj_consume_token(TYPE);
+      variable_list();
+    } finally {
+      trace_return("variable_declaration_statement");
     }
-    jj_consume_token(TYPE);
-    variable_list();
   }
 
 /* __ STATEMENTS __ */
@@ -281,17 +340,22 @@ public class SNL implements SNLConstants {
  * statement (';' statement)*
  */
   static final public void statement_list() throws ParseException {
+    trace_call("statement_list");
+    try {
   if(verbose) System.out.println("Starts statement_list");
-    statement();
-    label_4:
-    while (true) {
-      if (jj_2_21(3)) {
-        ;
-      } else {
-        break label_4;
-      }
-      jj_consume_token(STATEMENT_CONNECTOR);
       statement();
+      label_4:
+      while (true) {
+        if (jj_2_23(2)) {
+          ;
+        } else {
+          break label_4;
+        }
+        jj_consume_token(STATEMENT_CONNECTOR);
+        statement();
+      }
+    } finally {
+      trace_return("statement_list");
     }
   }
 
@@ -299,28 +363,27 @@ public class SNL implements SNLConstants {
  * variable_list | expression | if_statement | while_statement | print_statement | read_statement | return_statement
  */
   static final public void statement() throws ParseException {
+    trace_call("statement");
+    try {
   if(verbose) System.out.println("Starts statement");
-    if (jj_2_22(3)) {
-
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
-    }
-    if (jj_2_23(3)) {
-      variable_declaration_statement();
-    } else if (jj_2_24(3)) {
-      expression();
-    } else if (jj_2_25(3)) {
-      if_statement();
-    } else if (jj_2_26(3)) {
-      while_statement();
-    } else if (jj_2_27(3)) {
-      print_statement();
-    } else if (jj_2_28(3)) {
-      return_statement();
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_24(3)) {
+        variable_declaration_statement();
+      } else if (jj_2_25(2)) {
+        expression();
+      } else if (jj_2_26(3)) {
+        if_statement();
+      } else if (jj_2_27(3)) {
+        while_statement();
+      } else if (jj_2_28(3)) {
+        print_statement();
+      } else if (jj_2_29(2)) {
+        return_statement();
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("statement");
     }
   }
 
@@ -330,56 +393,65 @@ public class SNL implements SNLConstants {
  * control_sentence? if_expression statement_list else_expression* "end-if"
  */
   static final public void if_statement() throws ParseException {
+    trace_call("if_statement");
+    try {
   if(verbose) System.out.println("Starts if_statement");
-    if (jj_2_29(3)) {
-      control_sentence();
-    } else {
-      ;
-    }
-    if_expression();
-    statement_list();
-    label_5:
-    while (true) {
-      if (jj_2_30(3)) {
-        ;
+      if (jj_2_30(2)) {
+        control_sentence();
       } else {
-        break label_5;
+        ;
       }
-      else_expression();
+      if_expression();
+      statement_list();
+      label_5:
+      while (true) {
+        if (jj_2_31(2)) {
+          ;
+        } else {
+          break label_5;
+        }
+        else_expression();
+      }
+      jj_consume_token(END_IF);
+    } finally {
+      trace_return("if_statement");
     }
-    jj_consume_token(END_IF);
   }
 
 /*
  * "if" '(' logical_expression ')' "then"
  */
   static final public void if_expression() throws ParseException {
+    trace_call("if_expression");
+    try {
   if(verbose) System.out.println("Starts if_expression");
-    jj_consume_token(IF);
-    jj_consume_token(142);
-    logical_expression();
-    jj_consume_token(143);
-    jj_consume_token(THEN);
+      jj_consume_token(IF);
+      jj_consume_token(142);
+      logical_expression();
+      jj_consume_token(143);
+      jj_consume_token(THEN);
+    } finally {
+      trace_return("if_expression");
+    }
   }
 
 /*
  * "else" if_expression? statement_list 
  */
   static final public void else_expression() throws ParseException {
+    trace_call("else_expression");
+    try {
   if(verbose) System.out.println("Starts else_expression");
-    if (jj_2_31(2)) {
-
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      jj_consume_token(ELSE);
+      if (jj_2_32(2)) {
+        if_expression();
+      } else {
+        ;
+      }
+      statement_list();
+    } finally {
+      trace_return("else_expression");
     }
-    jj_consume_token(ELSE);
-    if (jj_2_32(3)) {
-      if_expression();
-    } else {
-      ;
-    }
-    statement_list();
   }
 
 /* __ WHILE __ */
@@ -391,14 +463,19 @@ public class SNL implements SNLConstants {
  *
  */
   static final public void while_statement() throws ParseException {
+    trace_call("while_statement");
+    try {
   if(verbose) System.out.println("Starts while_statement");
-    jj_consume_token(WHILE);
-    jj_consume_token(142);
-    logical_expression();
-    jj_consume_token(143);
-    jj_consume_token(THEN);
-    statement_list();
-    jj_consume_token(END_WHILE);
+      jj_consume_token(WHILE);
+      jj_consume_token(142);
+      logical_expression();
+      jj_consume_token(143);
+      jj_consume_token(THEN);
+      statement_list();
+      jj_consume_token(END_WHILE);
+    } finally {
+      trace_return("while_statement");
+    }
   }
 
 /* __ PRINT __ */
@@ -407,11 +484,16 @@ public class SNL implements SNLConstants {
  * print_sentence '(' expression ')'
  */
   static final public void print_statement() throws ParseException {
+    trace_call("print_statement");
+    try {
   if(verbose) System.out.println("Starts print_statement");
-    print_sentence();
-    jj_consume_token(142);
-    expression();
-    jj_consume_token(143);
+      print_sentence();
+      jj_consume_token(142);
+      expression();
+      jj_consume_token(143);
+    } finally {
+      trace_return("print_statement");
+    }
   }
 
 /* __ READ __ */
@@ -435,9 +517,14 @@ public class SNL implements SNLConstants {
  * ÁÁÁ Semantic analyzer must check the return type !!!
  */
   static final public void return_statement() throws ParseException {
+    trace_call("return_statement");
+    try {
   if(verbose) System.out.println("Starts return_statement");
-    return_sentence();
-    expression();
+      return_sentence();
+      expression();
+    } finally {
+      trace_return("return_statement");
+    }
   }
 
 /* __ EXPRESSIONS __*/
@@ -446,40 +533,55 @@ public class SNL implements SNLConstants {
 
 /* comparison_expression | '(' comparison_expression ')' // allows nested brackets */
   static final public void logical_expression() throws ParseException {
+    trace_call("logical_expression");
+    try {
   if(verbose) System.out.println("Starts logical_expression");
-    if (jj_2_33(3)) {
-      comparison_expression();
-    } else if (jj_2_34(3)) {
-      jj_consume_token(142);
-      comparison_expression();
-      jj_consume_token(143);
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_33(3)) {
+        comparison_expression();
+      } else if (jj_2_34(3)) {
+        jj_consume_token(142);
+        comparison_expression();
+        jj_consume_token(143);
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("logical_expression");
     }
   }
 
 /* (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression? */
   static final public void comparison_expression() throws ParseException {
+    trace_call("comparison_expression");
+    try {
   if(verbose) System.out.println("Starts comparison_expression");
-    expression();
-    jj_consume_token(COMPARATOR);
-    expression();
-    link_expression();
+      expression();
+      jj_consume_token(COMPARATOR);
+      expression();
+      link_expression();
+    } finally {
+      trace_return("comparison_expression");
+    }
   }
 
 /* (( "||" | "&&") logical_expression)+ */
   static final public void link_expression() throws ParseException {
+    trace_call("link_expression");
+    try {
   if(verbose) System.out.println("Starts link_expression");
-    label_6:
-    while (true) {
-      if (jj_2_35(3)) {
-        ;
-      } else {
-        break label_6;
+      label_6:
+      while (true) {
+        if (jj_2_35(2)) {
+          ;
+        } else {
+          break label_6;
+        }
+        jj_consume_token(LINKER);
+        logical_expression();
       }
-      jj_consume_token(LINKER);
-      logical_expression();
+    } finally {
+      trace_return("link_expression");
     }
   }
 
@@ -489,13 +591,18 @@ public class SNL implements SNLConstants {
 
 /* simple_expression? complex_expression */
   static final public void expression() throws ParseException {
+    trace_call("expression");
+    try {
   if(verbose) System.out.println("Starts expression");
-    if (jj_2_36(3)) {
-      simple_expression();
-    } else {
-      ;
+      if (jj_2_36(2)) {
+        simple_expression();
+      } else {
+        ;
+      }
+      complex_expression();
+    } finally {
+      trace_return("expression");
     }
-    complex_expression();
   }
 
 /* __ SIMPLE __ */
@@ -504,91 +611,116 @@ public class SNL implements SNLConstants {
  * casting_expression, also allows the nested brackets
  */
   static final public void simple_expression() throws ParseException {
+    trace_call("simple_expression");
+    try {
   if(verbose) System.out.println("Starts simple_expression");
-    if (jj_2_39(3)) {
-      jj_consume_token(142);
-      casting_expression();
-    } else if (jj_2_40(3)) {
-      creating_expression();
-    } else if (jj_2_41(3)) {
-      literal_expression();
-    } else if (jj_2_42(3)) {
-      jj_consume_token(EXPRESSION_MODIFIER);
-    } else if (jj_2_43(3)) {
-      jj_consume_token(ID);
-    } else if (jj_2_44(3)) {
-      if (jj_2_37(3)) {
-        jj_consume_token(UNARY_OPERATOR);
-      } else if (jj_2_38(3)) {
-        jj_consume_token(MINUS);
+      if (jj_2_39(2)) {
+        jj_consume_token(142);
+        casting_expression();
+      } else if (jj_2_40(2)) {
+        creating_expression();
+      } else if (jj_2_41(2)) {
+        literal_expression();
+      } else if (jj_2_42(2)) {
+        jj_consume_token(EXPRESSION_MODIFIER);
+      } else if (jj_2_43(2)) {
+        jj_consume_token(ID);
+      } else if (jj_2_44(2)) {
+        if (jj_2_37(2)) {
+          jj_consume_token(UNARY_OPERATOR);
+        } else if (jj_2_38(2)) {
+          jj_consume_token(MINUS);
+        } else {
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+      } else if (jj_2_45(2)) {
+        jj_consume_token(READ);
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
-    } else if (jj_2_45(3)) {
-      jj_consume_token(READ);
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+    } finally {
+      trace_return("simple_expression");
     }
   }
 
 /* expresion ')' | TYPE ')' expression */
   static final public void casting_expression() throws ParseException {
+    trace_call("casting_expression");
+    try {
   if(verbose) System.out.println("Starts casting_expression");
-    if (jj_2_46(3)) {
-      expression();
-      jj_consume_token(143);
-    } else if (jj_2_47(3)) {
-      jj_consume_token(TYPE);
-      jj_consume_token(143);
-      expression();
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_46(2)) {
+        expression();
+        jj_consume_token(143);
+      } else if (jj_2_47(2)) {
+        jj_consume_token(TYPE);
+        jj_consume_token(143);
+        expression();
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("casting_expression");
     }
   }
 
 /* NEW expression_specifier */
   static final public void creating_expression() throws ParseException {
+    trace_call("creating_expression");
+    try {
   if(verbose) System.out.println("Starts creating_expression");
-    jj_consume_token(NEW);
-    expression_specifier();
+      jj_consume_token(NEW);
+      expression_specifier();
+    } finally {
+      trace_return("creating_expression");
+    }
   }
 
 /* (CLASS_ID (' argument_list ')') | (TYPE_SPECIAL '[' expression ']') | '(' expression ')' */
   static final public void expression_specifier() throws ParseException {
+    trace_call("expression_specifier");
+    try {
   if(verbose) System.out.println("Starts expression_specifier");
-    if (jj_2_48(3)) {
-      jj_consume_token(CLASS_ID);
-      argument_list();
-    } else if (jj_2_49(3)) {
-      jj_consume_token(TYPE_SPECIAL);
-      jj_consume_token(144);
-      expression();
-      jj_consume_token(145);
-    } else if (jj_2_50(3)) {
-      jj_consume_token(142);
-      expression();
-      jj_consume_token(143);
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_48(2)) {
+        jj_consume_token(CLASS_ID);
+        argument_list();
+      } else if (jj_2_49(2)) {
+        jj_consume_token(TYPE_SPECIAL);
+        jj_consume_token(144);
+        expression();
+        jj_consume_token(145);
+      } else if (jj_2_50(2)) {
+        jj_consume_token(142);
+        expression();
+        jj_consume_token(143);
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("expression_specifier");
     }
   }
 
 /* CONSTANT ("." CONSTANT)? | \" (CHAR_LITERAL)+ \" | \' any char except (\" \') \' */
   static final public void literal_expression() throws ParseException {
+    trace_call("literal_expression");
+    try {
   if(verbose) System.out.println("Starts literal_expression");
-    if (jj_2_51(3)) {
-      jj_consume_token(INTEGER_LITERAL);
-    } else if (jj_2_52(3)) {
-      jj_consume_token(STRING_LITERAL);
-    } else if (jj_2_53(3)) {
-      jj_consume_token(CHAR_LITERAL);
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_51(2)) {
+        jj_consume_token(INTEGER_LITERAL);
+      } else if (jj_2_52(2)) {
+        jj_consume_token(STRING_LITERAL);
+      } else if (jj_2_53(2)) {
+        jj_consume_token(CHAR_LITERAL);
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("literal_expression");
     }
   }
 
@@ -598,49 +730,69 @@ public class SNL implements SNLConstants {
  * numeric_expression | casting_expression | assing_expression | complex_expression | "++", "--", "increment", "decrement"
  */
   static final public void complex_expression() throws ParseException {
+    trace_call("complex_expression");
+    try {
   if(verbose) System.out.println("Starts expression");
-    if (jj_2_54(3)) {
-      numeric_expression();
-    } else if (jj_2_55(3)) {
-      post_expression();
-    } else if (jj_2_56(3)) {
-      assign_expression();
-    } else if (jj_2_57(3)) {
-      jj_consume_token(UNARY_OPERATOR);
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_54(2)) {
+        numeric_expression();
+      } else if (jj_2_55(2)) {
+        post_expression();
+      } else if (jj_2_56(2)) {
+        assign_expression();
+      } else if (jj_2_57(2)) {
+        jj_consume_token(UNARY_OPERATOR);
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("complex_expression");
     }
   }
 
 /* ("+","-", ..."plus","minus",...) expression */
   static final public void numeric_expression() throws ParseException {
+    trace_call("numeric_expression");
+    try {
   if(verbose) System.out.println("Starts numeric_expression");
-    jj_consume_token(OPERATOR);
-    expression();
+      jj_consume_token(OPERATOR);
+      expression();
+    } finally {
+      trace_return("numeric_expression");
+    }
   }
 
 /* '[' expression ']' | "- >" expression ) */
   static final public void post_expression() throws ParseException {
+    trace_call("post_expression");
+    try {
   if(verbose) System.out.println("Starts post_expression");
-    if (jj_2_58(3)) {
-      jj_consume_token(144);
-      expression();
-      jj_consume_token(145);
-    } else if (jj_2_59(3)) {
-      jj_consume_token(DOT_NOTATION);
-      expression();
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+      if (jj_2_58(2)) {
+        jj_consume_token(144);
+        expression();
+        jj_consume_token(145);
+      } else if (jj_2_59(2)) {
+        jj_consume_token(DOT_NOTATION);
+        expression();
+      } else {
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
+    } finally {
+      trace_return("post_expression");
     }
   }
 
  /* EQUALS (expression) */
   static final public void assign_expression() throws ParseException {
+    trace_call("assign_expression");
+    try {
   if(verbose) System.out.println("Starts assign_expression");
-    jj_consume_token(EQUALS);
-    expression();
+      jj_consume_token(EQUALS);
+      expression();
+    } finally {
+      trace_return("assign_expression");
+    }
   }
 
 /* __ NATURAL LANGUAGE __*/
@@ -653,41 +805,46 @@ public class SNL implements SNLConstants {
  * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("create", "define") | ("creates", "defines"))("also", "in addition") ("a", "the")
  */
   static final public void creation_sentence() throws ParseException {
+    trace_call("creation_sentence");
+    try {
   if(verbose) System.out.println("Starts creation_sentence");
-    if (jj_2_65(3)) {
-      jj_consume_token(SUBJECT);
-      if (jj_2_60(3)) {
-        jj_consume_token(AUXILIAR_EXPRESSION);
-      } else {
-        ;
-      }
-      jj_consume_token(CREATION_VERB);
-      if (jj_2_61(3)) {
-        jj_consume_token(AUXILIAR_CONNECTOR);
-      } else {
-        ;
-      }
-      jj_consume_token(A_THE);
-    } else if (jj_2_66(3)) {
-      jj_consume_token(SUBJECT_3rd);
-      if (jj_2_62(3)) {
-        jj_consume_token(AUXILIAR_EXPRESSION);
+      if (jj_2_65(2)) {
+        jj_consume_token(SUBJECT);
+        if (jj_2_60(2)) {
+          jj_consume_token(AUXILIAR_EXPRESSION);
+        } else {
+          ;
+        }
         jj_consume_token(CREATION_VERB);
-      } else if (jj_2_63(3)) {
-        jj_consume_token(CREATION_VERB_3rd);
+        if (jj_2_61(2)) {
+          jj_consume_token(AUXILIAR_CONNECTOR);
+        } else {
+          ;
+        }
+        jj_consume_token(A_THE);
+      } else if (jj_2_66(2)) {
+        jj_consume_token(SUBJECT_3rd);
+        if (jj_2_62(2)) {
+          jj_consume_token(AUXILIAR_EXPRESSION);
+          jj_consume_token(CREATION_VERB);
+        } else if (jj_2_63(2)) {
+          jj_consume_token(CREATION_VERB_3rd);
+        } else {
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        if (jj_2_64(2)) {
+          jj_consume_token(AUXILIAR_CONNECTOR);
+        } else {
+          ;
+        }
+        jj_consume_token(A_THE);
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
-      if (jj_2_64(3)) {
-        jj_consume_token(AUXILIAR_CONNECTOR);
-      } else {
-        ;
-      }
-      jj_consume_token(A_THE);
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+    } finally {
+      trace_return("creation_sentence");
     }
   }
 
@@ -698,39 +855,44 @@ public class SNL implements SNLConstants {
  * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("check", "verify") | ("checks", "verifies"))("also", "in addition")
  */
   static final public void control_sentence() throws ParseException {
+    trace_call("control_sentence");
+    try {
   if(verbose) System.out.println("Starts control_sentence");
-    if (jj_2_72(3)) {
-      jj_consume_token(SUBJECT);
-      if (jj_2_67(3)) {
-        jj_consume_token(AUXILIAR_EXPRESSION);
-      } else {
-        ;
-      }
-      jj_consume_token(CONTROL_VERB);
-      if (jj_2_68(3)) {
-        jj_consume_token(AUXILIAR_CONNECTOR);
-      } else {
-        ;
-      }
-    } else if (jj_2_73(3)) {
-      jj_consume_token(SUBJECT_3rd);
-      if (jj_2_69(3)) {
-        jj_consume_token(AUXILIAR_EXPRESSION);
+      if (jj_2_72(2)) {
+        jj_consume_token(SUBJECT);
+        if (jj_2_67(2)) {
+          jj_consume_token(AUXILIAR_EXPRESSION);
+        } else {
+          ;
+        }
         jj_consume_token(CONTROL_VERB);
-      } else if (jj_2_70(3)) {
-        jj_consume_token(CONTROL_VERB_3rd);
+        if (jj_2_68(2)) {
+          jj_consume_token(AUXILIAR_CONNECTOR);
+        } else {
+          ;
+        }
+      } else if (jj_2_73(2)) {
+        jj_consume_token(SUBJECT_3rd);
+        if (jj_2_69(2)) {
+          jj_consume_token(AUXILIAR_EXPRESSION);
+          jj_consume_token(CONTROL_VERB);
+        } else if (jj_2_70(2)) {
+          jj_consume_token(CONTROL_VERB_3rd);
+        } else {
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        if (jj_2_71(2)) {
+          jj_consume_token(AUXILIAR_CONNECTOR);
+        } else {
+          ;
+        }
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
-      if (jj_2_71(3)) {
-        jj_consume_token(AUXILIAR_CONNECTOR);
-      } else {
-        ;
-      }
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+    } finally {
+      trace_return("control_sentence");
     }
   }
 
@@ -743,41 +905,46 @@ public class SNL implements SNLConstants {
  * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("print") | ("prints"))("also", "in addition") 
  */
   static final public void print_sentence() throws ParseException {
+    trace_call("print_sentence");
+    try {
   if(verbose) System.out.println("Starts print_sentence");
-    if (jj_2_79(3)) {
-      jj_consume_token(PRINT_VERB);
-    } else if (jj_2_80(3)) {
-      jj_consume_token(SUBJECT);
-      if (jj_2_74(3)) {
-        jj_consume_token(AUXILIAR_EXPRESSION);
-      } else {
-        ;
-      }
-      jj_consume_token(PRINT_VERB);
-      if (jj_2_75(3)) {
-        jj_consume_token(AUXILIAR_CONNECTOR);
-      } else {
-        ;
-      }
-    } else if (jj_2_81(3)) {
-      jj_consume_token(SUBJECT_3rd);
-      if (jj_2_76(3)) {
-        jj_consume_token(AUXILIAR_EXPRESSION);
+      if (jj_2_79(2)) {
         jj_consume_token(PRINT_VERB);
-      } else if (jj_2_77(3)) {
-        jj_consume_token(PRINT_VERB_3rd);
+      } else if (jj_2_80(2)) {
+        jj_consume_token(SUBJECT);
+        if (jj_2_74(2)) {
+          jj_consume_token(AUXILIAR_EXPRESSION);
+        } else {
+          ;
+        }
+        jj_consume_token(PRINT_VERB);
+        if (jj_2_75(2)) {
+          jj_consume_token(AUXILIAR_CONNECTOR);
+        } else {
+          ;
+        }
+      } else if (jj_2_81(2)) {
+        jj_consume_token(SUBJECT_3rd);
+        if (jj_2_76(2)) {
+          jj_consume_token(AUXILIAR_EXPRESSION);
+          jj_consume_token(PRINT_VERB);
+        } else if (jj_2_77(2)) {
+          jj_consume_token(PRINT_VERB_3rd);
+        } else {
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
+        if (jj_2_78(2)) {
+          jj_consume_token(AUXILIAR_CONNECTOR);
+        } else {
+          ;
+        }
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
-      if (jj_2_78(3)) {
-        jj_consume_token(AUXILIAR_CONNECTOR);
-      } else {
-        ;
-      }
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+    } finally {
+      trace_return("print_sentence");
     }
   }
 
@@ -800,23 +967,28 @@ public class SNL implements SNLConstants {
  * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("return") | ("returns"))
  */
   static final public void return_sentence() throws ParseException {
+    trace_call("return_sentence");
+    try {
   if(verbose) System.out.println("Starts return_sentence");
-    if (jj_2_84(3)) {
-      jj_consume_token(RETURN_VERB);
-    } else if (jj_2_85(3)) {
-      jj_consume_token(SUBJECT_3rd);
-      if (jj_2_82(3)) {
-        jj_consume_token(AUXILIAR_EXPRESSION);
+      if (jj_2_84(2)) {
         jj_consume_token(RETURN_VERB);
-      } else if (jj_2_83(3)) {
-        jj_consume_token(RETURN_VERB_3rd);
+      } else if (jj_2_85(2)) {
+        jj_consume_token(SUBJECT_3rd);
+        if (jj_2_82(2)) {
+          jj_consume_token(AUXILIAR_EXPRESSION);
+          jj_consume_token(RETURN_VERB);
+        } else if (jj_2_83(2)) {
+          jj_consume_token(RETURN_VERB_3rd);
+        } else {
+          jj_consume_token(-1);
+          throw new ParseException();
+        }
       } else {
         jj_consume_token(-1);
         throw new ParseException();
       }
-    } else {
-      jj_consume_token(-1);
-      throw new ParseException();
+    } finally {
+      trace_return("return_sentence");
     }
   }
 
@@ -836,32 +1008,46 @@ public class SNL implements SNLConstants {
  *		(parameter parameter) - have parameters without connector 
  */
   static final public void parameter_list() throws ParseException {
+    trace_call("parameter_list");
+    try {
   if(verbose) System.out.println("Starts parameter_list");
-    jj_consume_token(142);
-    if (jj_2_87(3)) {
-      parameter();
-      label_7:
-      while (true) {
-        if (jj_2_86(3)) {
-          ;
-        } else {
-          break label_7;
-        }
-        jj_consume_token(LIST_CONNECTOR);
+      jj_consume_token(142);
+      if (jj_2_87(2)) {
         parameter();
+        label_7:
+        while (true) {
+          if (jj_2_86(2)) {
+            ;
+          } else {
+            break label_7;
+          }
+          jj_consume_token(LIST_CONNECTOR);
+          parameter();
+        }
+      } else {
+        ;
       }
-    } else {
-      ;
+      jj_consume_token(143);
+    } finally {
+      trace_return("parameter_list");
     }
-    jj_consume_token(143);
   }
 
 /* TYPE ID ([])* */
   static final public void parameter() throws ParseException {
+    trace_call("parameter");
+    try {
   if(verbose) System.out.println("Starts parameter");
-    jj_consume_token(TYPE);
-    jj_consume_token(ID);
-    jj_consume_token(ARRAY_TOKEN);
+      jj_consume_token(TYPE);
+      jj_consume_token(ID);
+      if (jj_2_88(2)) {
+        jj_consume_token(ARRAY_TOKEN);
+      } else {
+        ;
+      }
+    } finally {
+      trace_return("parameter");
+    }
   }
 
 /*
@@ -871,24 +1057,29 @@ public class SNL implements SNLConstants {
  * (' ( expression ("," expression)* )? ')'
  */
   static final public void argument_list() throws ParseException {
+    trace_call("argument_list");
+    try {
   if(verbose) System.out.println("Starts argument_list");
-    jj_consume_token(142);
-    if (jj_2_89(3)) {
-      expression();
-      label_8:
-      while (true) {
-        if (jj_2_88(3)) {
-          ;
-        } else {
-          break label_8;
-        }
-        jj_consume_token(LIST_CONNECTOR);
+      jj_consume_token(142);
+      if (jj_2_90(2)) {
         expression();
+        label_8:
+        while (true) {
+          if (jj_2_89(2)) {
+            ;
+          } else {
+            break label_8;
+          }
+          jj_consume_token(LIST_CONNECTOR);
+          expression();
+        }
+      } else {
+        ;
       }
-    } else {
-      ;
+      jj_consume_token(143);
+    } finally {
+      trace_return("argument_list");
     }
-    jj_consume_token(143);
   }
 
 /*
@@ -902,20 +1093,25 @@ public class SNL implements SNLConstants {
  *
  */
   static final public void array_init() throws ParseException {
+    trace_call("array_init");
+    try {
   if(verbose) System.out.println("Starts array_init");
-    jj_consume_token(146);
-    variable_initializer();
-    label_9:
-    while (true) {
-      if (jj_2_90(3)) {
-        ;
-      } else {
-        break label_9;
-      }
-      jj_consume_token(LIST_CONNECTOR);
+      jj_consume_token(146);
       variable_initializer();
+      label_9:
+      while (true) {
+        if (jj_2_91(2)) {
+          ;
+        } else {
+          break label_9;
+        }
+        jj_consume_token(LIST_CONNECTOR);
+        variable_initializer();
+      }
+      jj_consume_token(147);
+    } finally {
+      trace_return("array_init");
     }
-    jj_consume_token(147);
   }
 
   static private boolean jj_2_1(int xla) {
@@ -1548,14 +1744,11 @@ public class SNL implements SNLConstants {
     finally { jj_save(89, xla); }
   }
 
-  static private boolean jj_3_3() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_70() {
-    if (jj_scan_token(CONTROL_VERB_3rd)) return true;
-    return false;
+  static private boolean jj_2_91(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_91(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(90, xla); }
   }
 
   static private boolean jj_3R_10() {
@@ -1568,18 +1761,17 @@ public class SNL implements SNLConstants {
     if (jj_3_7()) jj_scanpos = xsp;
     if (jj_scan_token(CLASS)) return true;
     if (jj_scan_token(CLASS_ID)) return true;
-    if (jj_3_8()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_8()) { jj_scanpos = xsp; break; }
-    }
     return false;
   }
 
   static private boolean jj_3R_39() {
     if (jj_scan_token(TYPE)) return true;
     if (jj_scan_token(ID)) return true;
-    if (jj_scan_token(ARRAY_TOKEN)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_27() {
+    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -1614,11 +1806,6 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3R_41() {
-    if (jj_scan_token(142)) return true;
-    return false;
-  }
-
   static private boolean jj_3_1() {
     if (jj_scan_token(PACKAGE_STATEMENT)) return true;
     return false;
@@ -1629,13 +1816,8 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_26() {
-    if (jj_3R_23()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_25() {
-    if (jj_3R_45()) return true;
+    if (jj_3R_43()) return true;
     if (jj_3R_18()) return true;
     return false;
   }
@@ -1661,7 +1843,7 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3R_45() {
+  static private boolean jj_3R_43() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_84()) {
@@ -1687,7 +1869,7 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_30() {
+  static private boolean jj_3_31() {
     if (jj_3R_27()) return true;
     return false;
   }
@@ -1697,7 +1879,7 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_25() {
+  static private boolean jj_3_26() {
     if (jj_3R_22()) return true;
     return false;
   }
@@ -1708,14 +1890,9 @@ public class SNL implements SNLConstants {
   }
 
   static private boolean jj_3R_24() {
-    if (jj_3R_44()) return true;
+    if (jj_3R_42()) return true;
     if (jj_scan_token(142)) return true;
     if (jj_3R_18()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_32() {
-    if (jj_3R_28()) return true;
     return false;
   }
 
@@ -1725,7 +1902,7 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_24() {
+  static private boolean jj_3_25() {
     if (jj_3R_18()) return true;
     return false;
   }
@@ -1769,7 +1946,7 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3R_44() {
+  static private boolean jj_3R_42() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_79()) {
@@ -1809,7 +1986,8 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3R_46() {
+  static private boolean jj_3_32() {
+    if (jj_3R_28()) return true;
     return false;
   }
 
@@ -1827,7 +2005,6 @@ public class SNL implements SNLConstants {
   static private boolean jj_3_50() {
     if (jj_scan_token(142)) return true;
     if (jj_3R_18()) return true;
-    if (jj_scan_token(143)) return true;
     return false;
   }
 
@@ -1871,12 +2048,11 @@ public class SNL implements SNLConstants {
   }
 
   static private boolean jj_3R_27() {
-    if (jj_3R_46()) return true;
     if (jj_scan_token(ELSE)) return true;
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_32()) jj_scanpos = xsp;
-    if (jj_3R_47()) return true;
+    if (jj_3R_44()) return true;
     return false;
   }
 
@@ -1933,18 +2109,13 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_23() {
-    if (jj_3R_21()) return true;
-    return false;
-  }
-
   static private boolean jj_3_59() {
     if (jj_scan_token(DOT_NOTATION)) return true;
     if (jj_3R_18()) return true;
     return false;
   }
 
-  static private boolean jj_3_29() {
+  static private boolean jj_3_30() {
     if (jj_3R_26()) return true;
     return false;
   }
@@ -1952,7 +2123,7 @@ public class SNL implements SNLConstants {
   static private boolean jj_3R_22() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3_29()) jj_scanpos = xsp;
+    if (jj_3_30()) jj_scanpos = xsp;
     if (jj_3R_28()) return true;
     return false;
   }
@@ -1962,18 +2133,19 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3R_43() {
-    return false;
-  }
-
   static private boolean jj_3_53() {
     if (jj_scan_token(CHAR_LITERAL)) return true;
     return false;
   }
 
-  static private boolean jj_3_21() {
+  static private boolean jj_3_23() {
     if (jj_scan_token(STATEMENT_CONNECTOR)) return true;
     if (jj_3R_20()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_24() {
+    if (jj_3R_21()) return true;
     return false;
   }
 
@@ -1983,11 +2155,8 @@ public class SNL implements SNLConstants {
   }
 
   static private boolean jj_3R_20() {
-    if (jj_3R_43()) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3_23()) {
-    jj_scanpos = xsp;
     if (jj_3_24()) {
     jj_scanpos = xsp;
     if (jj_3_25()) {
@@ -1996,7 +2165,9 @@ public class SNL implements SNLConstants {
     jj_scanpos = xsp;
     if (jj_3_27()) {
     jj_scanpos = xsp;
-    if (jj_3_28()) return true;
+    if (jj_3_28()) {
+    jj_scanpos = xsp;
+    if (jj_3_29()) return true;
     }
     }
     }
@@ -2024,17 +2195,11 @@ public class SNL implements SNLConstants {
   static private boolean jj_3_49() {
     if (jj_scan_token(TYPE_SPECIAL)) return true;
     if (jj_scan_token(144)) return true;
-    if (jj_3R_18()) return true;
     return false;
   }
 
-  static private boolean jj_3R_47() {
+  static private boolean jj_3R_44() {
     if (jj_3R_20()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_21()) { jj_scanpos = xsp; break; }
-    }
     return false;
   }
 
@@ -2055,6 +2220,11 @@ public class SNL implements SNLConstants {
     return false;
   }
 
+  static private boolean jj_3_19() {
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
   static private boolean jj_3_41() {
     if (jj_3R_34()) return true;
     return false;
@@ -2065,13 +2235,8 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_19() {
+  static private boolean jj_3_21() {
     if (jj_3R_19()) return true;
-    return false;
-  }
-
-  static private boolean jj_3_17() {
-    if (jj_3R_17()) return true;
     return false;
   }
 
@@ -2086,7 +2251,7 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_20() {
+  static private boolean jj_3_22() {
     if (jj_3R_11()) return true;
     return false;
   }
@@ -2094,19 +2259,19 @@ public class SNL implements SNLConstants {
   static private boolean jj_3R_21() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3_20()) jj_scanpos = xsp;
+    if (jj_3_22()) jj_scanpos = xsp;
     if (jj_scan_token(TYPE)) return true;
     if (jj_3R_15()) return true;
     return false;
   }
 
-  static private boolean jj_3_16() {
+  static private boolean jj_3_17() {
     if (jj_scan_token(LIST_CONNECTOR)) return true;
     if (jj_3R_16()) return true;
     return false;
   }
 
-  static private boolean jj_3R_42() {
+  static private boolean jj_3R_41() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_54()) {
@@ -2130,15 +2295,25 @@ public class SNL implements SNLConstants {
   static private boolean jj_3R_40() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3_18()) {
+    if (jj_3_20()) {
     jj_scanpos = xsp;
-    if (jj_3_19()) return true;
+    if (jj_3_21()) return true;
     }
     return false;
   }
 
-  static private boolean jj_3_18() {
+  static private boolean jj_3_20() {
     if (jj_3R_18()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_29() {
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_18() {
+    if (jj_scan_token(ARRAY_TOKEN)) return true;
     return false;
   }
 
@@ -2173,7 +2348,11 @@ public class SNL implements SNLConstants {
   static private boolean jj_3_47() {
     if (jj_scan_token(TYPE)) return true;
     if (jj_scan_token(143)) return true;
-    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  static private boolean jj_3_16() {
+    if (jj_scan_token(ARRAY_TOKEN)) return true;
     return false;
   }
 
@@ -2188,13 +2367,13 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_90() {
+  static private boolean jj_3_91() {
     if (jj_scan_token(LIST_CONNECTOR)) return true;
     if (jj_3R_40()) return true;
     return false;
   }
 
-  static private boolean jj_3R_48() {
+  static private boolean jj_3R_45() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_48()) {
@@ -2215,13 +2394,12 @@ public class SNL implements SNLConstants {
 
   static private boolean jj_3R_16() {
     if (jj_scan_token(TYPE)) return true;
-    if (jj_scan_token(ID)) return true;
     return false;
   }
 
   static private boolean jj_3R_33() {
     if (jj_scan_token(NEW)) return true;
-    if (jj_3R_48()) return true;
+    if (jj_3R_45()) return true;
     return false;
   }
 
@@ -2277,6 +2455,12 @@ public class SNL implements SNLConstants {
     return false;
   }
 
+  static private boolean jj_3_34() {
+    if (jj_scan_token(142)) return true;
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
   static private boolean jj_3R_31() {
     Token xsp;
     xsp = jj_scanpos;
@@ -2308,14 +2492,18 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3R_14() {
-    if (jj_scan_token(METHOD)) return true;
-    if (jj_scan_token(TYPE)) return true;
-    if (jj_scan_token(ID)) return true;
+  static private boolean jj_3_28() {
+    if (jj_3R_24()) return true;
     return false;
   }
 
-  static private boolean jj_3_88() {
+  static private boolean jj_3R_14() {
+    if (jj_scan_token(METHOD)) return true;
+    if (jj_scan_token(TYPE)) return true;
+    return false;
+  }
+
+  static private boolean jj_3_89() {
     if (jj_scan_token(LIST_CONNECTOR)) return true;
     if (jj_3R_18()) return true;
     return false;
@@ -2324,17 +2512,6 @@ public class SNL implements SNLConstants {
   static private boolean jj_3R_19() {
     if (jj_scan_token(146)) return true;
     if (jj_3R_40()) return true;
-    Token xsp;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3_90()) { jj_scanpos = xsp; break; }
-    }
-    if (jj_scan_token(147)) return true;
-    return false;
-  }
-
-  static private boolean jj_3_28() {
-    if (jj_3R_25()) return true;
     return false;
   }
 
@@ -2348,12 +2525,6 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_34() {
-    if (jj_scan_token(142)) return true;
-    if (jj_3R_29()) return true;
-    return false;
-  }
-
   static private boolean jj_3_36() {
     if (jj_3R_31()) return true;
     return false;
@@ -2363,14 +2534,13 @@ public class SNL implements SNLConstants {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_36()) jj_scanpos = xsp;
-    if (jj_3R_42()) return true;
+    if (jj_3R_41()) return true;
     return false;
   }
 
   static private boolean jj_3R_13() {
     if (jj_scan_token(CONSTRUCTOR)) return true;
     if (jj_scan_token(ID)) return true;
-    if (jj_3R_41()) return true;
     return false;
   }
 
@@ -2379,13 +2549,18 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_89() {
+  static private boolean jj_3_90() {
     if (jj_3R_18()) return true;
     Token xsp;
     while (true) {
       xsp = jj_scanpos;
-      if (jj_3_88()) { jj_scanpos = xsp; break; }
+      if (jj_3_89()) { jj_scanpos = xsp; break; }
     }
+    return false;
+  }
+
+  static private boolean jj_3_88() {
+    if (jj_scan_token(ARRAY_TOKEN)) return true;
     return false;
   }
 
@@ -2401,10 +2576,6 @@ public class SNL implements SNLConstants {
 
   static private boolean jj_3R_35() {
     if (jj_scan_token(142)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_89()) jj_scanpos = xsp;
-    if (jj_scan_token(143)) return true;
     return false;
   }
 
@@ -2447,11 +2618,6 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_27() {
-    if (jj_3R_24()) return true;
-    return false;
-  }
-
   static private boolean jj_3R_29() {
     if (jj_3R_18()) return true;
     if (jj_scan_token(COMPARATOR)) return true;
@@ -2459,13 +2625,13 @@ public class SNL implements SNLConstants {
     return false;
   }
 
-  static private boolean jj_3_31() {
-    if (jj_scan_token(0)) return true;
+  static private boolean jj_3_3() {
+    if (jj_3R_11()) return true;
     return false;
   }
 
-  static private boolean jj_3_22() {
-    if (jj_scan_token(0)) return true;
+  static private boolean jj_3_70() {
+    if (jj_scan_token(CONTROL_VERB_3rd)) return true;
     return false;
   }
 
@@ -2509,7 +2675,7 @@ public class SNL implements SNLConstants {
    private static void jj_la1_init_4() {
       jj_la1_4 = new int[] {};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[90];
+  static final private JJCalls[] jj_2_rtns = new JJCalls[91];
   static private boolean jj_rescan = false;
   static private int jj_gc = 0;
 
@@ -2623,6 +2789,7 @@ public class SNL implements SNLConstants {
           }
         }
       }
+      trace_token(token, "");
       return token;
     }
     token = oldToken;
@@ -2660,6 +2827,7 @@ public class SNL implements SNLConstants {
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
     jj_gen++;
+      trace_token(token, " (in getNextToken)");
     return token;
   }
 
@@ -2757,17 +2925,60 @@ public class SNL implements SNLConstants {
     return new ParseException(token, exptokseq, tokenImage);
   }
 
-  /** Enable tracing. */
+  static private int trace_indent = 0;
+  static private boolean trace_enabled = true;
+
+/** Enable tracing. */
   static final public void enable_tracing() {
+    trace_enabled = true;
   }
 
-  /** Disable tracing. */
+/** Disable tracing. */
   static final public void disable_tracing() {
+    trace_enabled = false;
+  }
+
+  static private void trace_call(String s) {
+    if (trace_enabled) {
+      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
+      System.out.println("Call:   " + s);
+    }
+    trace_indent = trace_indent + 2;
+  }
+
+  static private void trace_return(String s) {
+    trace_indent = trace_indent - 2;
+    if (trace_enabled) {
+      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
+      System.out.println("Return: " + s);
+    }
+  }
+
+  static private void trace_token(Token t, String where) {
+    if (trace_enabled) {
+      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
+      System.out.print("Consumed token: <" + tokenImage[t.kind]);
+      if (t.kind != 0 && !tokenImage[t.kind].equals("\"" + t.image + "\"")) {
+        System.out.print(": \"" + t.image + "\"");
+      }
+      System.out.println(" at line " + t.beginLine + " column " + t.beginColumn + ">" + where);
+    }
+  }
+
+  static private void trace_scan(Token t1, int t2) {
+    if (trace_enabled) {
+      for (int i = 0; i < trace_indent; i++) { System.out.print(" "); }
+      System.out.print("Visited token: <" + tokenImage[t1.kind]);
+      if (t1.kind != 0 && !tokenImage[t1.kind].equals("\"" + t1.image + "\"")) {
+        System.out.print(": \"" + t1.image + "\"");
+      }
+      System.out.println(" at line " + t1.beginLine + " column " + t1.beginColumn + ">; Expected token: <" + tokenImage[t2] + ">");
+    }
   }
 
   static private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 90; i++) {
+    for (int i = 0; i < 91; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -2864,6 +3075,7 @@ public class SNL implements SNLConstants {
             case 87: jj_3_88(); break;
             case 88: jj_3_89(); break;
             case 89: jj_3_90(); break;
+            case 90: jj_3_91(); break;
           }
         }
         p = p.next;
