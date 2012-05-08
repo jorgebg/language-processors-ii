@@ -2,8 +2,9 @@
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */
  options{  JDK_VERSION = "1.5";
-  //CHOICE_AMBIGUITY_CHECK = 7;
-  LOOKAHEAD = 3;  static = true;}
+  CHOICE_AMBIGUITY_CHECK = 4;
+  LOOKAHEAD = 2;
+  FORCE_LA_CHECK = true;  static = true;}
 PARSER_BEGIN(SNL)
 public class SNL{
 
@@ -34,6 +35,7 @@ public class SNL{
 	    	return;
 	 	} catch (ParseException e2) {
 	    	System.out.println("Parsing Exception");
+	    	System.out.println("Read Token: "+token.image);
 	    	return;
 	   }
 	    	
@@ -128,7 +130,7 @@ TOKEN [IGNORE_CASE] :
 	//Expression constants| < INSTANCE_OF : "instance_of" >
 | < NEW : "new" >
 	//Array Bracket list
-| < ARRAY_TOKEN : ("[" "]")* >				// Is allways optional !!
+| < ARRAY_TOKEN : ("[" "]")+ >				// Is allways optional !!
 	//Action Verbs -EXTENSIBLE
 | < ASSIGN_VERB : "save" | "store" >
 | < ASSIGN_VERB_3rd : "saves" | "stores" >
@@ -162,7 +164,7 @@ TOKEN:
   < PACKAGE_STATEMENT: (< PACKAGE_MOD > < CLASS_ID > < STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
   // IMPORT FUNCTION HAS BEEN DISABLED
 | < VISIBILITY: (< PUBLIC_MOD >|< PRIVATE_MOD >|< PROTECTED_MOD >) >
-| < TYPE : (< TYPE_SPECIFIER >< ARRAY_TOKEN >) >
+| < TYPE : (< TYPE_SPECIFIER >(< ARRAY_TOKEN >)?) >
 | < TYPE_SPECIFIER: (< TYPE_SPECIAL >|< CLASS_ID >) > 
 | < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
 | < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
@@ -297,7 +299,7 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 TOKEN : /*Meta tokens*/
 {
   	//First person subject
-  < #I_SUBJECT : "I" >
+  < I_SUBJECT : "I" >
 	//Identifiers
 | < #CONSTANT : (< DIGIT >)+ >
 | < #FLOATING_POINT: ". " >
@@ -377,7 +379,7 @@ void constructor_declaration():
 void method_declaration():
 { if(verbose) System.out.println("Starts method_declaration");}
 {
-  < METHOD > < TYPE > < ID > < ARRAY_TOKEN > parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
+  < METHOD > < TYPE > < ID > (< ARRAY_TOKEN >)? parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
 }
 
 /*
@@ -395,7 +397,7 @@ void variable_list():
 void variable_declaration():
 { if(verbose) System.out.println("Starts variable_declaration");}
 {
-  < TYPE > < ID > < ARRAY_TOKEN > (variable_init())?
+  < TYPE > < ID > (< ARRAY_TOKEN >)? (variable_init())?
 }
 
 /*
@@ -443,7 +445,7 @@ void statement_list():
 void statement():
 { if(verbose) System.out.println("Starts statement");}
 {
-  LOOKAHEAD(3) ( variable_declaration_statement() | expression() | if_statement() | while_statement() | print_statement() | return_statement() )
+  ( LOOKAHEAD(3) variable_declaration_statement() | expression() | LOOKAHEAD(3) if_statement() |LOOKAHEAD(3)  while_statement() |LOOKAHEAD(3)  print_statement() | return_statement() )
 }
 
 /* __ IF __ */
@@ -472,7 +474,7 @@ void if_expression():
 void else_expression():
 { if(verbose) System.out.println("Starts else_expression");}
 {
-  LOOKAHEAD(2) < ELSE > (if_expression())? statement_list()
+  < ELSE > (if_expression())? statement_list() 
 }
 
 /* __ WHILE __ */
@@ -534,7 +536,7 @@ void return_statement():
 void logical_expression():
 { if(verbose) System.out.println("Starts logical_expression");}
 {
-  comparison_expression() | "(" comparison_expression() ")"
+  LOOKAHEAD(3) comparison_expression() |LOOKAHEAD(3)  "(" comparison_expression() ")"
 }
 
 /* (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression? */
@@ -728,7 +730,7 @@ void parameter_list():
 void parameter():
 { if(verbose) System.out.println("Starts parameter");}
 {
-  < TYPE > < ID > < ARRAY_TOKEN >
+  < TYPE > < ID > (< ARRAY_TOKEN >)?
 }
 
 /*

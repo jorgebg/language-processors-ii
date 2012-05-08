@@ -2,8 +2,9 @@
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */
  options{  JDK_VERSION = "1.5";
-  //CHOICE_AMBIGUITY_CHECK = 7;
-  LOOKAHEAD = 3;  static = true;}
+  CHOICE_AMBIGUITY_CHECK = 4;
+  LOOKAHEAD = 2;
+  FORCE_LA_CHECK = true;  static = true;}
 PARSER_BEGIN(SNL)
 public class SNL{
 
@@ -98,6 +99,69 @@ public class SNL{
 	}
 */PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}
 
+
+
+/* __ COMPLEX TOKENS __ */
+
+TOKEN :
+{
+  	//Subjects 			// ====== CHANGED ====== // 
+  < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
+| < SUBJECT_3rd : (< THIRD_SUBJECT > | < OTHER_SUBJECT >) >
+	//Comparison		// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
+| < COMPARATOR : ( < IS > < COMPARISON_EXPRESSION > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
+	//Operation 		// ====== CHANGED ====== // -- An operator is to be used in any operation situation. No other token must be used
+| < OPERATOR: (< OPERATION_EXPRESSION >|< OPERATION_SYMBOL >) >
+	//Unary Operation 	// ====== CHANGED ====== // -- An unary operator is to be used in any unary operation situation. No other token must be used
+| < UNARY_OPERATOR: (< UNARY_OPERATION_EXPRESSION >|< UNARY_OPERATION_SYMBOL >) >
+	//Minus (Unary Operation)
+| < MINUS : (< LANGUAGE_MINUS >|< SYMBOLIC_MINUS >) >
+	//String union expression // ONLY SYMBOLIC "+"
+| < PLUS : (< SYMBOLIC_PLUS >) >
+	//Linkers			// ====== CHANGED ====== // -- A linker is to be used in any union situation (And, Or). No other token must be used
+| < LINKER: (< LINKER_EXPRESSION >|< LINKER_SYMBOL >) >
+	//Assign
+| < EQUALS : (< LANGUAGE_EQUALS >|< SYMBOLIC_EQUALS >) >
+	//Auxiliar Verbs
+| < AUXILIAR_EXPRESSION: (< AUX_VERB >" "< TO > |< MODAL_VERB >) >
+| < AUXILIAR_EXPRESSION3:  (< AUX_VERB_3rd > < TO >|< MODAL_VERB >) >
+}
+
+/* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
+
+TOKEN:
+{
+  < PACKAGE_STATEMENT: (< PACKAGE_MOD > < CLASS_ID > < STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
+  // IMPORT FUNCTION HAS BEEN DISABLED
+| < VISIBILITY: (< PUBLIC_MOD >|< PRIVATE_MOD >|< PROTECTED_MOD >) >
+| < TYPE : (< TYPE_SPECIFIER >(< ARRAY_TOKEN >)?) >
+| < TYPE_SPECIFIER: (< TYPE_SPECIAL >|< CLASS_ID >) > 
+| < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
+| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
+| < EXPRESSION_MODIFIER: (< NULL >|< SUPER >|< THIS >) >
+}
+
+TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
+{
+ 	//Language Comparison 	
+  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON > (< LANGUAGE_OR >< LANGUAGE_EQUALS_COMPARISON >)? )>
+| < #LANGUAGE_EQUALS_COMPARISON : (< LANGUAGE_EQUALS > | < LANGUAGE_NOT ><LANGUAGE_EQUALS > ) >
+| < #LANGUAGE_COMPARISON : (< LANGUAGE_GREATER >|< LANGUAGE_SMALLER > ) >
+	//Symbol Comparison
+| < #COMPARISON_SYMBOLS: < SYMBOLIC_EQUALS_COMPARISON >|(< SYMBOLIC_COMPARISON > (< LANGUAGE_EQUALS_COMPARISON >)?) >
+| < #SYMBOLIC_EQUALS_COMPARISON: (< BOOLEAN_EQUALS >|< SYMBOLIC_NOT ><SYMBOLIC_EQUALS >) >
+| < #SYMBOLIC_COMPARISON: (< SYMBOLIC_GREATER >|< SYMBOLIC_SMALLER >) >
+	//Operations
+| < #OPERATION_EXPRESSION: (< LANGUAGE_PLUS >|< LANGUAGE_MINUS >|< LANGUAGE_TIMES >|< LANGUAGE_DIVIDES >) >
+| < #OPERATION_SYMBOL: (< SYMBOLIC_PLUS >|< SYMBOLIC_MINUS >|< SYMBOLIC_TIMES >|< SYMBOLIC_DIVIDES >) >
+	//Unary Operation
+| < #UNARY_OPERATION_EXPRESSION: (< LANGUAGE_INCREMENT >|< LANGUAGE_DECREMENT >) >
+| < #UNARY_OPERATION_SYMBOL: (< SYMBOLIC_INCREMENT >|< SYMBOLIC_DECREMENT >) >
+	//Linker
+| < #LINKER_EXPRESSION: (< LANGUAGE_AND >|< LANGUAGE_OR >) >
+| < #LINKER_SYMBOL: (< SYMBOLIC_AND >|< SYMBOLIC_OR >) >
+}
+
 /* __ SSNL TOKENS __*/
 
 TOKEN [IGNORE_CASE] : 
@@ -110,25 +174,31 @@ TOKEN [IGNORE_CASE] :
 | < FINAL_MOD : "final" >
 | < EXTENDS_MOD : "extends" >
 | < IMPLEMENTS_MOD : "implements" >
+	//Auxiliar Verbs -EXTENSIBLE
+| < AUX_VERB : "want" | "need" >
+| < AUX_VERB_3rd : "wants" | "needs" >
+| < MODAL_VERB : "shall" | "must" | "will" >
   	//Begin-End tokens
 | < CLASS : "class" >
-| < END_CLASS : "end-class" >
+| < END_CLASS : "end-class" > 
 | < CONSTRUCTOR : "constructor" >
 | < END_CONSTRUCTOR : "end-constructor" >
 | < METHOD : ("function" | "method") >
 | < END_METHOD: ("end-function" | "end-method") >
 | < VARIABLE : ("variable" |"variables") >
 | < END_VARIABLE : ("end-variable" |"end-variables") >
-	//Control - Loop Expressions| < IF : "if" >
+	//Control - Loop Expressions
+| < IF : "if" >
 | < ELSE : "else" >
 | < THEN : "then" >
 | < END_IF : "end-if" >
 | < WHILE : "while" >
-| < END_WHILE: "end-while" >
-	//Expression constants| < INSTANCE_OF : "instance_of" >
+| < END_WHILE: "end-while" > 
+	//Expression constants
+| < INSTANCE_OF : "instance_of" >
 | < NEW : "new" >
 	//Array Bracket list
-| < ARRAY_TOKEN : ("[" "]")* >				// Is allways optional !!
+| < ARRAY_TOKEN : ("[" "]")+ >				// Is allways optional !!
 	//Action Verbs -EXTENSIBLE
 | < ASSIGN_VERB : "save" | "store" >
 | < ASSIGN_VERB_3rd : "saves" | "stores" >
@@ -153,153 +223,92 @@ TOKEN [IGNORE_CASE] :
 | < IN  : "in" >
 	//Auxiliar connector (not needed), might not be used
 | < AUXILIAR_CONNECTOR : ("in" "addition") | "also" >
+//Language Comparators
+| < LANGUAGE_NOT : "not" >
+| < LANGUAGE_GREATER : "greater" >
+| < LANGUAGE_SMALLER : "smaller" >
+  	//Symbolic Comparators -- 
+| < SYMBOLIC_NOT : "!" >
+| < SYMBOLIC_GREATER : ">" >
+| < SYMBOLIC_SMALLER : "<" >
+	//Language Operators
+| < LANGUAGE_MINUS : "minus" >
+| < LANGUAGE_PLUS : "plus" >
+| < LANGUAGE_TIMES : "times" >
+| < LANGUAGE_DIVIDES : "divides" >
+	//Symbolic Operators
+| < SYMBOLIC_MINUS : "-" >
+| < SYMBOLIC_PLUS : "+" >
+| < SYMBOLIC_TIMES : "*" >
+| < SYMBOLIC_DIVIDES : "/" >
+	//Assign
+| < LANGUAGE_EQUALS : "equals" >  
+| < SYMBOLIC_EQUALS : "=" > 
+	//Language Unary Operators
+| < LANGUAGE_INCREMENT: "increment" >
+| < LANGUAGE_DECREMENT: "decrement" >
+	//Symbolic Unary Operators
+| < SYMBOLIC_DECREMENT:"--" >
+| < SYMBOLIC_INCREMENT:"++" >
+	//Language Linkers
+| < LANGUAGE_AND : "and" >
+| < LANGUAGE_OR : "or" >
+	//Symbolic Linkers
+| < SYMBOLIC_OR : "||" >
+| < SYMBOLIC_AND: "&&" >
+	//Boolean operator
+| < BOOLEAN_EQUALS: "==" >
+	//Boolean Tokens
+| < TRUE : "true" >
+| < FALSE : "false" >
+	//Expression modifiers
+| < NULL : "null" >
+| < SUPER : "super" >
+| < THIS : "this" >
+  	//Subject
+| < NORMAL_SUBJECT : ("you" | "we" | "they") >
+| < THIRD_SUBJECT : ("he" | "she" | "it" ) >
+| < OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
+	//Others
+| < IS  : "is" >
+| < THAN  : "than" >
+	//Visibility
+| < PUBLIC_MOD : "public" >
+| < PRIVATE_MOD : "private" >
+| < PROTECTED_MOD : "protected" >
+	//Type names
+//| < #STRING : "string" > -- STRING is considered as a CLASS_ID token, it must begin with Capital Letter
+| < CHAR : "char" >
+| < BOOLEAN : "boolean" >
+| < BYTE : "byte" >
+| < SHORT : "short" >
+| < INT : "int" >
+| < LONG : "long" > 		//must be disabled
+| < FLOAT : "float" >		//must be disable
+| < DOUBLE : "double" >
+	//Floating point suffixes
 }
-
-/* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
 
 TOKEN:
-{
-  < PACKAGE_STATEMENT: (< PACKAGE_MOD > < CLASS_ID > < STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
-  // IMPORT FUNCTION HAS BEEN DISABLED
-| < VISIBILITY: (< PUBLIC_MOD >|< PRIVATE_MOD >|< PROTECTED_MOD >) >
-| < TYPE : (< TYPE_SPECIFIER >< ARRAY_TOKEN >) >
-| < TYPE_SPECIFIER: (< TYPE_SPECIAL >|< CLASS_ID >) > 
-| < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
-| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
-| < EXPRESSION_MODIFIER: (< NULL >|< SUPER >|< THIS >) >
+{  //First person subject
+  < #I_SUBJECT : "I" >
 }
 
-/* __ COMPLEX TOKENS __ */
-
-TOKEN :
-{
-  	//Subjects 			// ====== CHANGED ====== // 
-  < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
-| < SUBJECT_3rd : (< THIRD_SUBJECT > | < OTHER_SUBJECT >) >
-	//Comparison		// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
-| < COMPARATOR : ( < IS > < COMPARISON_EXPRESSION > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
-	//Operation 		// ====== CHANGED ====== // -- An operator is to be used in any operation situation. No other token must be used
-| < OPERATOR: (< OPERATION_EXPRESSION >|< OPERATION_SYMBOL >) >
-	//Unary Operation 	// ====== CHANGED ====== // -- An unary operator is to be used in any unary operation situation. No other token must be used
-| <UNARY_OPERATOR: (< UNARY_OPERATION_EXPRESSION >|< UNARY_OPERATION_SYMBOL >) >
-	//Minus (Unary Operation)
-| < MINUS : (< LANGUAGE_MINUS >|< SYMBOLIC_MINUS >) >
-	//String union expression // ONLY SYMBOLIC "+"
-| < PLUS : (< SYMBOLIC_PLUS >) >
-	//Linkers			// ====== CHANGED ====== // -- A linker is to be used in any union situation (And, Or). No other token must be used
-| < LINKER: (< LINKER_EXPRESSION >|< LINKER_SYMBOL >) >
-	//Assign
-| < EQUALS : (< LANGUAGE_EQUALS >|< SYMBOLIC_EQUALS >) >
-	//Auxiliar Verbs
-| < AUXILIAR_EXPRESSION: (< AUX_VERB > < TO >|< MODAL_VERB >) >
-| < AUXILIAR_EXPRESSION3:  (< AUX_VERB_3rd > < TO >|< MODAL_VERB >) >
+TOKEN:
+{	//Literals
+ < INTEGER_LITERAL: < CONSTANT > (< FLOATING_POINT > < CONSTANT >)? > 	// Semantic analyzer must chech if it is an Integer, Float or Double
+	//Char
+| < STRING_LITERAL: "\"" <STRING_VAL > "\"" >
+| < CHAR_LITERAL: "\'" < CHAR_VAL > "\'" >
 	//Identifiers
 | < CLASS_ID: <CAP_LETTER> (<ID_ANY>)* >
 | < ID : <ID_BEGIN> (<ID_ANY>)* >
-	//Literals
-| < INTEGER_LITERAL: < CONSTANT > (< FLOATING_POINT > < CONSTANT >)? > 	// Semantic analyzer must chech if it is an Integer, Float or Double
-| < STRING_LITERAL: "\"" <STRING_VAL > "\"" >
-| < CHAR_LITERAL: "\'" < CHAR_VAL > "\'" >
 }
-
-TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
-{
- 	//Language Comparison 	  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON > (< LANGUAGE_OR >< LANGUAGE_EQUALS_COMPARISON >)? )>
-| < #LANGUAGE_EQUALS_COMPARISON : (< LANGUAGE_EQUALS > | < LANGUAGE_NOT ><LANGUAGE_EQUALS > ) >
-| < #LANGUAGE_COMPARISON : (< LANGUAGE_GREATER >|< LANGUAGE_SMALLER > ) >
-	//Symbol Comparison
-| < #COMPARISON_SYMBOLS: < SYMBOLIC_EQUALS_COMPARISON >|(< SYMBOLIC_COMPARISON > (< LANGUAGE_EQUALS_COMPARISON >)?) >
-| < #SYMBOLIC_EQUALS_COMPARISON: (< BOOLEAN_EQUALS >|< SYMBOLIC_NOT ><SYMBOLIC_EQUALS >) >
-| < #SYMBOLIC_COMPARISON: (< SYMBOLIC_GREATER >|< SYMBOLIC_SMALLER >) >
-	//Operations
-| < #OPERATION_EXPRESSION: (< LANGUAGE_PLUS >|< LANGUAGE_MINUS >|< LANGUAGE_TIMES >|< LANGUAGE_DIVIDES >) >
-| < #OPERATION_SYMBOL: (< SYMBOLIC_PLUS >|< SYMBOLIC_MINUS >|< SYMBOLIC_TIMES >|< SYMBOLIC_DIVIDES >) >
-	//Unary Operation
-| < #UNARY_OPERATION_EXPRESSION: (< LANGUAGE_INCREMENT >|< LANGUAGE_DECREMENT >) >
-| < #UNARY_OPERATION_SYMBOL: (< SYMBOLIC_INCREMENT >|< SYMBOLIC_DECREMENT >) >
-	//Linker
-| < #LINKER_EXPRESSION: (< LANGUAGE_AND >|< LANGUAGE_OR >) >
-| < #LINKER_SYMBOL: (< SYMBOLIC_AND >|< SYMBOLIC_OR >) >
-}
-
-TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
-{
-  	//Auxiliar Verbs -EXTENSIBLE
-  < #AUX_VERB : "want" | "need" >
-| < #AUX_VERB_3rd : "wants" | "needs" >
-| < #MODAL_VERB : "shall" | "must" | "will" >
-  	//Language Comparators
-| < #LANGUAGE_NOT : "not" >
-| < #LANGUAGE_GREATER : "greater" >
-| < #LANGUAGE_SMALLER : "smaller" >
-  	//Symbolic Comparators -- 
-| < #SYMBOLIC_NOT : "!" >
-| < #SYMBOLIC_GREATER : ">" >
-| < #SYMBOLIC_SMALLER : "<" >
-	//Language Operators
-| < #LANGUAGE_MINUS : "minus" >
-| < #LANGUAGE_PLUS : "plus" >
-| < #LANGUAGE_TIMES : "times" >
-| < #LANGUAGE_DIVIDES : "divides" >
-	//Symbolic Operators
-| < #SYMBOLIC_MINUS : "-" >
-| < #SYMBOLIC_PLUS : "+" >
-| < #SYMBOLIC_TIMES : "*" >
-| < #SYMBOLIC_DIVIDES : "/" >
-	//Assign
-| < #LANGUAGE_EQUALS : "equals" >  
-| < #SYMBOLIC_EQUALS : "=" > 
-	//Language Unary Operators
-| < #LANGUAGE_INCREMENT: "increment" >
-| < #LANGUAGE_DECREMENT: "decrement" >
-	//Symbolic Unary Operators
-| < #SYMBOLIC_DECREMENT:"--" >
-| < #SYMBOLIC_INCREMENT:"++" >
-	//Language Linkers
-| < #LANGUAGE_AND : "and" >
-| < #LANGUAGE_OR : "or" >
-	//Symbolic Linkers
-| < #SYMBOLIC_OR : "||" >
-| < #SYMBOLIC_AND: "&&" >
-	//Boolean operator
-| < #BOOLEAN_EQUALS: "==" >
-	//Boolean Tokens
-| < #TRUE : "true" >
-| < #FALSE : "false" >
-	//Expression modifiers
-| < #NULL : "null" >
-| < #SUPER : "super" >
-| < #THIS : "this" >
-  	//Subject
-| < #NORMAL_SUBJECT : ("you" | "we" | "they") >
-| < #THIRD_SUBJECT : ("he" | "she" | "it" ) >
-| < #OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
-	//Others
-| < #IS  : "is" >
-| < #THAN  : "than" >
-	//Visibility
-| < #PUBLIC_MOD : "public" >
-| < #PRIVATE_MOD : "private" >
-| < #PROTECTED_MOD : "protected" >
-	//Type names
-//| < #STRING : "string" > -- STRING is considered as a CLASS_ID token, it must begin with Capital Letter
-| < #CHAR : "char" >
-| < #BOOLEAN : "boolean" >
-| < #BYTE : "byte" >
-| < #SHORT : "short" >
-| < #INT : "int" >
-| < #LONG : "long" > 		//must be disabled
-| < #FLOAT : "float" >		//must be disable
-| < #DOUBLE : "double" >
-	//Floating point suffixes
-} 
 
 TOKEN : /*Meta tokens*/
 {
-  	//First person subject
-  < #I_SUBJECT : "I" >
 	//Identifiers
-| < #CONSTANT : (< DIGIT >)+ >
+  < #CONSTANT : (< DIGIT >)+ >
 | < #FLOATING_POINT: ". " >
 	//Might cause problems with N0 separator
 | < #DIGIT : [ "0"-"9" ] >
@@ -377,7 +386,7 @@ void constructor_declaration():
 void method_declaration():
 { if(verbose) System.out.println("Starts method_declaration");}
 {
-  < METHOD > < TYPE > < ID > < ARRAY_TOKEN > parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
+  < METHOD > < TYPE > < ID > (< ARRAY_TOKEN >)? parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
 }
 
 /*
@@ -395,7 +404,7 @@ void variable_list():
 void variable_declaration():
 { if(verbose) System.out.println("Starts variable_declaration");}
 {
-  < TYPE > < ID > < ARRAY_TOKEN > (variable_init())?
+  < TYPE > < ID > (< ARRAY_TOKEN >)? (variable_init())?
 }
 
 /*
@@ -443,7 +452,7 @@ void statement_list():
 void statement():
 { if(verbose) System.out.println("Starts statement");}
 {
-  LOOKAHEAD(3) ( variable_declaration_statement() | expression() | if_statement() | while_statement() | print_statement() | return_statement() )
+  (variable_declaration_statement() | expression() | if_statement() |  while_statement() | print_statement() | return_statement() )
 }
 
 /* __ IF __ */
@@ -472,7 +481,7 @@ void if_expression():
 void else_expression():
 { if(verbose) System.out.println("Starts else_expression");}
 {
-  LOOKAHEAD(2) < ELSE > (if_expression())? statement_list()
+  < ELSE > (if_expression())? statement_list() 
 }
 
 /* __ WHILE __ */
@@ -728,7 +737,7 @@ void parameter_list():
 void parameter():
 { if(verbose) System.out.println("Starts parameter");}
 {
-  < TYPE > < ID > < ARRAY_TOKEN >
+  < TYPE > < ID > (< ARRAY_TOKEN >)?
 }
 
 /*
