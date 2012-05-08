@@ -2,11 +2,12 @@
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */
  options{  JDK_VERSION = "1.5";
-  CHOICE_AMBIGUITY_CHECK = 7;  static = true;}
+  //CHOICE_AMBIGUITY_CHECK = 7;
+  LOOKAHEAD = 3;  static = true;}
 PARSER_BEGIN(SNL)
 public class SNL{
 
-  public boolean verbose;
+  public static boolean verbose;
     public static void main(String args []) {
 	if (args.length == 0) {
 	    System.out.println("No input given");
@@ -15,10 +16,10 @@ public class SNL{
 	} else if(args.length <= 2){
 		System.out.println("Reading from file:" + args[0] + "...");
 		//Checks verbose option
-		if(args.lenght == 2 && Integer.toString(args[1]) == 1)
-			this.verbose = true;
+		if((args.length == 2) && (args[1].compareTo("verbose") == 0))
+			verbose = true;
 		else
-			this.verbose = false;
+			verbose = false;
 		//Starts the parser
 		try {
 	    	SNL parser = new SNL(new java.io.FileInputStream(args[0]));
@@ -28,7 +29,7 @@ public class SNL{
 	    } catch (java.io.FileNotFoundException e) {
 	    	System.out.println("The File " + args[0] + " has not been found");
 	    	return;
-	   	} catch (TokenMgrException e1) {
+	   	} catch (TokenMgrError e1) {
 	    	System.out.println("Token Exception");
 	    	return;
 	 	} catch (ParseException e2) {
@@ -341,20 +342,20 @@ TOKEN : /*Meta tokens*/
  *
  *	("package" CLASS_ID ";")? class_declaration+
  */
-void compilation_unit():{ if(this.verbose) System.out.println("Start compilation_unit"); }
+void compilation_unit():{ if(verbose) System.out.println("Start compilation_unit"); }
 {
   (< PACKAGE_STATEMENT >)? (class_declaration())+}
 
 /*
  *	creation_sentence? ("public"|"private"|"protected")? ("final"|"abstract")? "class" CLASS_ID field_declaration+ "end-class"
  */
-void class_declaration():{ if(this.verbose) System.out.println("Starts class_declaration");}{
+void class_declaration():{ if(verbose) System.out.println("Starts class_declaration");}{
   (creation_sentence())? (< VISIBILITY >)? (< FINAL_MOD >|<ABSTRACT_MOD >)? < CLASS > < CLASS_ID > (field_declaration())+ < END_CLASS >}
 /*
  *	"." creation_sentence? ("public"|"private"|"protected")? ("static")? ("final")? (constructor_declaration | method_declaration | variable_list)
  */
 void field_declaration():
-{ if(this.verbose) System.out.println("Starts field_declaration");}
+{ if(verbose) System.out.println("Starts field_declaration");}
 {
   < CLASS_METHOD_CONNECTOR > (creation_sentence())? (< VISIBILITY >)? (< STATIC_MOD >)? (< FINAL_MOD >)? (constructor_declaration() | method_declaration() | variable_list())
 }
@@ -365,7 +366,7 @@ void field_declaration():
  *	"constructor" ID parameter_list() ':' statement_list "end-constructor"
  */
 void constructor_declaration():
-{ if(this.verbose) System.out.println("Starts contructor_declaration");}
+{ if(verbose) System.out.println("Starts contructor_declaration");}
 {
   < CONSTRUCTOR > < ID > parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_CONSTRUCTOR >
 }
@@ -374,7 +375,7 @@ void constructor_declaration():
  * ("method"|"function) ID '(' ( parameter ("," parameter)* )? ')' ':' statement_list ("end-method"|"end-funtion")
  */
 void method_declaration():
-{ if(this.verbose) System.out.println("Starts method_declaration");}
+{ if(verbose) System.out.println("Starts method_declaration");}
 {
   < METHOD > < TYPE > < ID > < ARRAY_TOKEN > parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
 }
@@ -383,7 +384,7 @@ void method_declaration():
  * ("variable"|"variables") variable_declaration ("," variable_declaration)* ("end-variable"|"end-variables")
  */
 void variable_list():
-{ if(this.verbose) System.out.println("Starts variable_list");}
+{ if(verbose) System.out.println("Starts variable_list");}
 {
   < VARIABLE > variable_declaration() (< LIST_CONNECTOR > variable_declaration())* < END_VARIABLE >
 }
@@ -392,7 +393,7 @@ void variable_list():
  * ("boolean" | "byte" | "int" |...| CLASS_ID) ID []* variable_init?
  */
 void variable_declaration():
-{ if(this.verbose) System.out.println("Starts variable_declaration");}
+{ if(verbose) System.out.println("Starts variable_declaration");}
 {
   < TYPE > < ID > < ARRAY_TOKEN > (variable_init())?
 }
@@ -401,7 +402,7 @@ void variable_declaration():
  * ("equals" | "=") (expression | array_values)
  */
 void variable_init():
-{ if(this.verbose) System.out.println("Starts variable_init");}
+{ if(verbose) System.out.println("Starts variable_init");}
 {
   < EQUALS > variable_initializer()
 }
@@ -410,7 +411,7 @@ void variable_init():
  * (expression | array_values)
  */
 void variable_initializer():
-{ if(this.verbose) System.out.println("Starts variable_initializer");}
+{ if(verbose) System.out.println("Starts variable_initializer");}
 {
   expression() | array_init()
 }
@@ -420,7 +421,7 @@ void variable_initializer():
  * creation_sentence? ("boolean" | ... | CLASS_ID) variable_list
  */
 void variable_declaration_statement():
-{ if(this.verbose) System.out.println("Starts statement_list");}
+{ if(verbose) System.out.println("Starts statement_list");}
 {
   (creation_sentence())? < TYPE > variable_list()
 }
@@ -431,7 +432,7 @@ void variable_declaration_statement():
  * statement (';' statement)*
  */
 void statement_list():
-{ if(this.verbose) System.out.println("Starts statement_list");}
+{ if(verbose) System.out.println("Starts statement_list");}
 {
   statement() (< STATEMENT_CONNECTOR > statement())*
 }
@@ -440,9 +441,9 @@ void statement_list():
  * variable_list | expression | if_statement | while_statement | print_statement | read_statement | return_statement
  */
 void statement():
-{ if(this.verbose) System.out.println("Starts statement");}
+{ if(verbose) System.out.println("Starts statement");}
 {
-  ( variable_declaration_statement() | expression() | if_statement() | while_statement() | print_statement() | return_statement() )
+  LOOKAHEAD(3) ( variable_declaration_statement() | expression() | if_statement() | while_statement() | print_statement() | return_statement() )
 }
 
 /* __ IF __ */
@@ -451,7 +452,7 @@ void statement():
  * control_sentence? if_expression statement_list else_expression* "end-if"
  */
 void if_statement():
-{ if(this.verbose) System.out.println("Starts if_statement");}
+{ if(verbose) System.out.println("Starts if_statement");}
 {
   (control_sentence())? if_expression() statement_list() (else_expression())* < END_IF >
 }
@@ -460,7 +461,7 @@ void if_statement():
  * "if" '(' logical_expression ')' "then"
  */
 void if_expression():
-{ if(this.verbose) System.out.println("Starts if_expression");}
+{ if(verbose) System.out.println("Starts if_expression");}
 {
   < IF > "(" logical_expression() ")" < THEN >
 }
@@ -469,9 +470,9 @@ void if_expression():
  * "else" if_expression? statement_list 
  */
 void else_expression():
-{ if(this.verbose) System.out.println("Starts else_expression");}
+{ if(verbose) System.out.println("Starts else_expression");}
 {
-  < ELSE > (if_expression())? statement_list()
+  LOOKAHEAD(2) < ELSE > (if_expression())? statement_list()
 }
 
 /* __ WHILE __ */
@@ -483,7 +484,7 @@ void else_expression():
  *
  */
 void while_statement():
-{ if(this.verbose) System.out.println("Starts while_statement");}
+{ if(verbose) System.out.println("Starts while_statement");}
 {
   < WHILE > "(" logical_expression() ")" < THEN > statement_list() < END_WHILE >
 }
@@ -494,7 +495,7 @@ void while_statement():
  * print_sentence '(' expression ')'
  */
 void print_statement():
-{ if(this.verbose) System.out.println("Starts print_statement");}
+{ if(verbose) System.out.println("Starts print_statement");}
 {
   print_sentence() "(" expression() ")" 
 }
@@ -507,7 +508,7 @@ void print_statement():
  * not yet implemented 
  */
 //void read_statement():
-//{ if(this.verbose) System.out.println("Starts read_statement");}
+//{ if(verbose) System.out.println("Starts read_statement");}
 //{
 //	 read_sentence() "(" expression() ")" 
 //}
@@ -520,7 +521,7 @@ void print_statement():
  * ÁÁÁ Semantic analyzer must check the return type !!!
  */
 void return_statement():
-{ if(this.verbose) System.out.println("Starts return_statement");}
+{ if(verbose) System.out.println("Starts return_statement");}
 {
   return_sentence() expression() 
 }
@@ -531,21 +532,21 @@ void return_statement():
 
 /* comparison_expression | '(' comparison_expression ')' // allows nested brackets */
 void logical_expression():
-{ if(this.verbose) System.out.println("Starts logical_expression");}
+{ if(verbose) System.out.println("Starts logical_expression");}
 {
   comparison_expression() | "(" comparison_expression() ")"
 }
 
 /* (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression? */
 void comparison_expression():
-{ if(this.verbose) System.out.println("Starts comparison_expression");}
+{ if(verbose) System.out.println("Starts comparison_expression");}
 {
   (expression() < COMPARATOR > expression()) link_expression()
 }
 
 /* (( "||" | "&&") logical_expression)+ */
 void link_expression():
-{ if(this.verbose) System.out.println("Starts link_expression");}
+{ if(verbose) System.out.println("Starts link_expression");}
 {
   (< LINKER > logical_expression())*
 }
@@ -556,7 +557,7 @@ void link_expression():
 
 /* simple_expression? complex_expression */
 void expression():
-{ if(this.verbose) System.out.println("Starts expression");}
+{ if(verbose) System.out.println("Starts expression");}
 {
   (simple_expression())? complex_expression()
 }
@@ -567,35 +568,35 @@ void expression():
  * casting_expression, also allows the nested brackets
  */
 void simple_expression():
-{ if(this.verbose) System.out.println("Starts simple_expression");}
+{ if(verbose) System.out.println("Starts simple_expression");}
 {
    "(" casting_expression() | creating_expression() | literal_expression() | < EXPRESSION_MODIFIER > | < ID > | (< UNARY_OPERATOR >|< MINUS >) | < READ >
 }
 
 /* expresion ')' | TYPE ')' expression */
 void casting_expression():
-{ if(this.verbose) System.out.println("Starts casting_expression");}
+{ if(verbose) System.out.println("Starts casting_expression");}
 {
    expression() ")" | < TYPE > ")" expression()
 }
 
 /* NEW expression_specifier */
 void creating_expression():
-{ if(this.verbose) System.out.println("Starts creating_expression");}
+{ if(verbose) System.out.println("Starts creating_expression");}
 {
    < NEW > expression_specifier()
 }
 
 /* (CLASS_ID (' argument_list ')') | (TYPE_SPECIAL '[' expression ']') | '(' expression ')' */
 void expression_specifier():
-{ if(this.verbose) System.out.println("Starts expression_specifier");}
+{ if(verbose) System.out.println("Starts expression_specifier");}
 {
    ( < CLASS_ID > argument_list()  ) | (< TYPE_SPECIAL > "[" expression() "]") | "(" expression() ")"
 }
 
 /* CONSTANT ("." CONSTANT)? | \" (CHAR_LITERAL)+ \" | \' any char except (\" \') \' */
 void literal_expression():
-{ if(this.verbose) System.out.println("Starts literal_expression");}
+{ if(verbose) System.out.println("Starts literal_expression");}
 {
    < INTEGER_LITERAL > | < STRING_LITERAL > | < CHAR_LITERAL >
 }
@@ -606,28 +607,28 @@ void literal_expression():
  * numeric_expression | casting_expression | assing_expression | complex_expression | "++", "--", "increment", "decrement"
  */
 void complex_expression():
-{ if(this.verbose) System.out.println("Starts expression");}
+{ if(verbose) System.out.println("Starts expression");}
 {
   numeric_expression() | post_expression() | assign_expression() | < UNARY_OPERATOR >
 }
 
 /* ("+","-", ..."plus","minus",...) expression */
 void numeric_expression():
-{ if(this.verbose) System.out.println("Starts numeric_expression");}
+{ if(verbose) System.out.println("Starts numeric_expression");}
 {
   < OPERATOR > expression()
 }
 
 /* '[' expression ']' | "- >" expression ) */
 void post_expression():
-{ if(this.verbose) System.out.println("Starts post_expression");}
+{ if(verbose) System.out.println("Starts post_expression");}
 {
     "[" expression() "]" | < DOT_NOTATION > expression() 
 }
 
  /* EQUALS (expression) */
 void assign_expression():
-{ if(this.verbose) System.out.println("Starts assign_expression");}
+{ if(verbose) System.out.println("Starts assign_expression");}
 {
      < EQUALS > expression()
 }
@@ -642,7 +643,7 @@ void assign_expression():
  * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("create", "define") | ("creates", "defines"))("also", "in addition") ("a", "the")
  */
 void creation_sentence():
-{ if(this.verbose) System.out.println("Starts creation_sentence");}
+{ if(verbose) System.out.println("Starts creation_sentence");}
 {
  	(< SUBJECT > (< AUXILIAR_EXPRESSION >)? < CREATION_VERB > (< AUXILIAR_CONNECTOR >)? < A_THE >)
  	|(< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < CREATION_VERB >) | < CREATION_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? < A_THE >)
@@ -655,7 +656,7 @@ void creation_sentence():
  * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("check", "verify") | ("checks", "verifies"))("also", "in addition")
  */
 void control_sentence():
-{ if(this.verbose) System.out.println("Starts control_sentence");}
+{ if(verbose) System.out.println("Starts control_sentence");}
 {
  	(< SUBJECT > (< AUXILIAR_EXPRESSION >)? < CONTROL_VERB > (< AUXILIAR_CONNECTOR >)? )
  	|(< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < CONTROL_VERB >) | < CONTROL_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? )
@@ -670,7 +671,7 @@ void control_sentence():
  * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("print") | ("prints"))("also", "in addition") 
  */
 void print_sentence():
-{ if(this.verbose) System.out.println("Starts print_sentence");}
+{ if(verbose) System.out.println("Starts print_sentence");}
 {
   	( < PRINT_VERB > )
 	| (< SUBJECT > (< AUXILIAR_EXPRESSION >)? < PRINT_VERB > (< AUXILIAR_CONNECTOR >)? )
@@ -696,7 +697,7 @@ void print_sentence():
  * ("I", "you"...) (("needs to", "wants to" | "must", "shall") ("return") | ("returns"))
  */
 void return_sentence():
-{ if(this.verbose) System.out.println("Starts return_sentence");}
+{ if(verbose) System.out.println("Starts return_sentence");}
 {
   	( < RETURN_VERB > )
  	| (< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < RETURN_VERB >) | < RETURN_VERB_3rd >) )
@@ -718,14 +719,14 @@ void return_sentence():
  *		(parameter parameter) - have parameters without connector 
  */
 void parameter_list():
-{ if(this.verbose) System.out.println("Starts parameter_list");}
+{ if(verbose) System.out.println("Starts parameter_list");}
 {
   "(" (parameter() (< LIST_CONNECTOR > parameter())*)? ")" 
 }
 
 /* TYPE ID ([])* */
 void parameter():
-{ if(this.verbose) System.out.println("Starts parameter");}
+{ if(verbose) System.out.println("Starts parameter");}
 {
   < TYPE > < ID > < ARRAY_TOKEN >
 }
@@ -737,7 +738,7 @@ void parameter():
  * (' ( expression ("," expression)* )? ')'
  */
 void argument_list():
-{ if(this.verbose) System.out.println("Starts argument_list");}
+{ if(verbose) System.out.println("Starts argument_list");}
 {
   "(" (expression() (< LIST_CONNECTOR > expression())*)? ")" 
 }
@@ -753,7 +754,7 @@ void argument_list():
  *
  */
 void array_init():
-{ if(this.verbose) System.out.println("Starts array_init");}
+{ if(verbose) System.out.println("Starts array_init");}
 {
   "{" variable_initializer() (< LIST_CONNECTOR > variable_initializer())* "}" 
 }
