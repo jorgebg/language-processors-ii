@@ -31,11 +31,10 @@ public class SNL{
 	    	System.out.println("The File " + args[0] + " has not been found");
 	    	return;
 	   	} catch (TokenMgrError e1) {
-	    	System.out.println("Token Exception");
+	    	System.out.println(e1.toString());
 	    	return;
 	 	} catch (ParseException e2) {
-	    	System.out.println("Parsing Exception");
-	    	System.out.println("Read Token: "+token.image);
+	    	System.out.println(e2.toString());
 	    	return;
 	   }
 	    	
@@ -43,91 +42,46 @@ public class SNL{
 	    System.out.println("Wrong number of parameters. Paramater 1: input file. Parameter 2 (optional): verbose (1,0)");
 	    return;
 	}
-
-	//Parser begin
-	
   }
-}
-/* Parser begin -EXAMPLE 1
-	try {
-      	parser.inicio();
-      	parser.ReInit(new java.io.FileInputStream(args[0]));
-      	parser.inicioSegundo();
-		String archivo = args[0];
-      	if(archivo.endsWith(".java"))
-      		archivo = archivo.replace(".java","");
-      	parser.generarCodigo(archivo+".as");
-    	System.out.println("Completado parser");
-    } catch (ParseException e) {
-   		System.out.println("Errores"+ e.getMessage());
-	} catch (java.io.FileNotFoundException e) {
-		System.out.println("Fichero " + args[0] + " no encontrado");
-		return;
-	}
-*/
+}PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}
 
-/* Parser begin - EXAMPLE 2
-	while (true){
-	  System.out.println("Reading from standard input...");
-	  System.out.println("Enter an expression in Structured Java Natual Language: ");
-	  
-	  try
-	  {
-	    switch (SNL.one_line())
-	    {
-	      case 0 : 
-	      System.out.println("OK.");
-	      break;
-	      case 1 : 
-	      System.out.println("Goodbye.");
-	      break;
-	      default : 
-	      break;
-	    }
-	  }
-	  catch (Exception e)
-	  {
-	    System.out.println("NOK.");
-	    System.out.println(e.getMessage());
-	    eg1.ReInit(System.in);
-	  }
-	  catch (Error e)
-	  {
-	    System.out.println("Oops.");
-	    System.out.println(e.getMessage());
-	    break;
-	  }
-	}
-*/PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}
-
-/* __ SSNL TOKENS __*/
-
-TOKEN [IGNORE_CASE] : 
+TOKEN [IGNORE_CASE]:
 {
-  	//Java reserved words
-  < PACKAGE_MOD : "package" >
+	//Functional connectors
+  < CLASS_METHOD_CONNECTOR : (".")  >	//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
+| < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
+| < LIST_CONNECTOR: (",") >					//N2 connector. VariableToVariable, ParameterToParamenter
+| < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
+ 	//Java reserved words
+| < PACKAGE_MOD : "package" >
 | < IMPORT_MOD : "import" >
 | < ABSTRACT_MOD : "abstract" >
 | < STATIC_MOD : "static" >
 | < FINAL_MOD : "final" >
 | < EXTENDS_MOD : "extends" >
 | < IMPLEMENTS_MOD : "implements" >
+	//Auxiliar Verbs -EXTENSIBLE
+| < AUX_VERB : "want" | "need" >
+| < AUX_VERB_3rd : "wants" | "needs" >
+| < MODAL_VERB : "shall" | "must" | "will" >
   	//Begin-End tokens
 | < CLASS : "class" >
-| < END_CLASS : "end-class" >
+| < END_CLASS : "end-class" > 
 | < CONSTRUCTOR : "constructor" >
 | < END_CONSTRUCTOR : "end-constructor" >
 | < METHOD : ("function" | "method") >
 | < END_METHOD: ("end-function" | "end-method") >
 | < VARIABLE : ("variable" |"variables") >
 | < END_VARIABLE : ("end-variable" |"end-variables") >
-	//Control - Loop Expressions| < IF : "if" >
+	//Control - Loop Expressions
+| < IF : "if" >
 | < ELSE : "else" >
 | < THEN : "then" >
 | < END_IF : "end-if" >
 | < WHILE : "while" >
-| < END_WHILE: "end-while" >
-	//Expression constants| < INSTANCE_OF : "instance_of" >
+| < END_WHILE: "end-while" > 
+	//Expression constants
+| < INSTANCE_OF : "instance_of" >
 | < NEW : "new" >
 	//Array Bracket list
 | < ARRAY_TOKEN : ("[" "]")+ >				// Is allways optional !!
@@ -143,11 +97,6 @@ TOKEN [IGNORE_CASE] :
 | < READ : "read" >
 | < RETURN_VERB : "return" >
 | < RETURN_VERB_3rd : "returns" >
-	//Functional connectors
-| < CLASS_METHOD_CONNECTOR : "."  >			//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
-| < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
-| < LIST_CONNECTOR: (",") >					//N2 connector. VariableToVariable, ParameterToParamenter
-| < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
 	//Other Tokens
 | < DOT_NOTATION: "->" >
 | < A_THE : "a" | "the" | "an" >
@@ -155,20 +104,6 @@ TOKEN [IGNORE_CASE] :
 | < IN  : "in" >
 	//Auxiliar connector (not needed), might not be used
 | < AUXILIAR_CONNECTOR : ("in" "addition") | "also" >
-}
-
-/* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
-
-TOKEN:
-{
-  < PACKAGE_STATEMENT: (< PACKAGE_MOD > < CLASS_ID > < STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
-  // IMPORT FUNCTION HAS BEEN DISABLED
-| < VISIBILITY: (< PUBLIC_MOD >|< PRIVATE_MOD >|< PROTECTED_MOD >) >
-| < TYPE : (< TYPE_SPECIFIER >(< ARRAY_TOKEN >)?) >
-| < TYPE_SPECIFIER: (< TYPE_SPECIAL >|< CLASS_ID >) > 
-| < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
-| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
-| < EXPRESSION_MODIFIER: (< NULL >|< SUPER >|< THIS >) >
 }
 
 /* __ COMPLEX TOKENS __ */
@@ -179,11 +114,11 @@ TOKEN :
   < SUBJECT : (< I_SUBJECT > | < NORMAL_SUBJECT >) >
 | < SUBJECT_3rd : (< THIRD_SUBJECT > | < OTHER_SUBJECT >) >
 	//Comparison		// ====== CHANGED ====== // -- A comparator is to be used in any comparison situation. No other token must be used
-| < COMPARATOR : ( < IS > < COMPARISON_EXPRESSION > < THAN > ) | ( < COMPARISON_SYMBOLS > ) >
+| < COMPARATOR : ( < IS >" "< COMPARISON_EXPRESSION >" "< THAN > ) | ( < COMPARISON_SYMBOLS > ) >
 	//Operation 		// ====== CHANGED ====== // -- An operator is to be used in any operation situation. No other token must be used
 | < OPERATOR: (< OPERATION_EXPRESSION >|< OPERATION_SYMBOL >) >
 	//Unary Operation 	// ====== CHANGED ====== // -- An unary operator is to be used in any unary operation situation. No other token must be used
-| <UNARY_OPERATOR: (< UNARY_OPERATION_EXPRESSION >|< UNARY_OPERATION_SYMBOL >) >
+| < UNARY_OPERATOR: (< UNARY_OPERATION_EXPRESSION >|< UNARY_OPERATION_SYMBOL >) >
 	//Minus (Unary Operation)
 | < MINUS : (< LANGUAGE_MINUS >|< SYMBOLIC_MINUS >) >
 	//String union expression // ONLY SYMBOLIC "+"
@@ -193,24 +128,30 @@ TOKEN :
 	//Assign
 | < EQUALS : (< LANGUAGE_EQUALS >|< SYMBOLIC_EQUALS >) >
 	//Auxiliar Verbs
-| < AUXILIAR_EXPRESSION: (< AUX_VERB > < TO >|< MODAL_VERB >) >
-| < AUXILIAR_EXPRESSION3:  (< AUX_VERB_3rd > < TO >|< MODAL_VERB >) >
-	//Identifiers
-| < CLASS_ID: <CAP_LETTER> (<ID_ANY>)* >
-| < ID : <ID_BEGIN> (<ID_ANY>)* >
-	//Literals
-| < INTEGER_LITERAL: < CONSTANT > (< FLOATING_POINT > < CONSTANT >)? > 	// Semantic analyzer must chech if it is an Integer, Float or Double
-| < STRING_LITERAL: "\"" <STRING_VAL > "\"" >
-| < CHAR_LITERAL: "\'" < CHAR_VAL > "\'" >
+| < AUXILIAR_EXPRESSION: (< AUX_VERB >" "< TO > |< MODAL_VERB >) >
+| < AUXILIAR_EXPRESSION3:  (< AUX_VERB_3rd >" "< TO >|< MODAL_VERB >) >
+}
+
+/* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
+
+TOKEN:
+{
+  < PACKAGE_STATEMENT: (< PACKAGE_MOD >" "< CLASS_ID > < STATEMENT_CONNECTOR >) > //STATEMENT_CONNECTOR is ";" if there is any problem it can be changed
+  // IMPORT FUNCTION HAS BEEN DISABLED
+| < VISIBILITY: (< PUBLIC_MOD >|< PRIVATE_MOD >|< PROTECTED_MOD >) >
+| < TYPE_SPECIAL: (< CHAR >|< BOOLEAN >|< BYTE >|< SHORT >|< INT >|< LONG >|< FLOAT >|< DOUBLE >) >
+| < BOOLEAN_TOKEN: (< TRUE >|< FALSE >) >
+| < EXPRESSION_MODIFIER: (< NULL >|< SUPER >|< THIS >) >
 }
 
 TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and Linker*/
 {
- 	//Language Comparison 	  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON > (< LANGUAGE_OR >< LANGUAGE_EQUALS_COMPARISON >)? )>
-| < #LANGUAGE_EQUALS_COMPARISON : (< LANGUAGE_EQUALS > | < LANGUAGE_NOT ><LANGUAGE_EQUALS > ) >
+ 	//Language Comparison 	
+  < #COMPARISON_EXPRESSION : < LANGUAGE_EQUALS_COMPARISON >|(< LANGUAGE_COMPARISON >" "(< LANGUAGE_OR >" "< LANGUAGE_EQUALS_COMPARISON >)? )>
+| < #LANGUAGE_EQUALS_COMPARISON : (< LANGUAGE_EQUALS > | < LANGUAGE_NOT >" "<LANGUAGE_EQUALS > ) >
 | < #LANGUAGE_COMPARISON : (< LANGUAGE_GREATER >|< LANGUAGE_SMALLER > ) >
 	//Symbol Comparison
-| < #COMPARISON_SYMBOLS: < SYMBOLIC_EQUALS_COMPARISON >|(< SYMBOLIC_COMPARISON > (< LANGUAGE_EQUALS_COMPARISON >)?) >
+| < #COMPARISON_SYMBOLS: < SYMBOLIC_EQUALS_COMPARISON >|(< SYMBOLIC_COMPARISON >(< LANGUAGE_EQUALS_COMPARISON >)?) >
 | < #SYMBOLIC_EQUALS_COMPARISON: (< BOOLEAN_EQUALS >|< SYMBOLIC_NOT ><SYMBOLIC_EQUALS >) >
 | < #SYMBOLIC_COMPARISON: (< SYMBOLIC_GREATER >|< SYMBOLIC_SMALLER >) >
 	//Operations
@@ -224,14 +165,12 @@ TOKEN: /*Complex Meta Tokens, for the special Tokens, Comparator, Operator and L
 | < #LINKER_SYMBOL: (< SYMBOLIC_AND >|< SYMBOLIC_OR >) >
 }
 
-TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
+/* __ SSNL TOKENS __*/
+
+TOKEN [IGNORE_CASE] : 
 {
-  	//Auxiliar Verbs -EXTENSIBLE
-  < #AUX_VERB : "want" | "need" >
-| < #AUX_VERB_3rd : "wants" | "needs" >
-| < #MODAL_VERB : "shall" | "must" | "will" >
-  	//Language Comparators
-| < #LANGUAGE_NOT : "not" >
+	//Language Comparators
+ < #LANGUAGE_NOT : "not" >
 | < #LANGUAGE_GREATER : "greater" >
 | < #LANGUAGE_SMALLER : "smaller" >
   	//Symbolic Comparators -- 
@@ -275,7 +214,7 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
   	//Subject
 | < #NORMAL_SUBJECT : ("you" | "we" | "they") >
 | < #THIRD_SUBJECT : ("he" | "she" | "it" ) >
-| < #OTHER_SUBJECT : < A_THE > ("program" | "computer" | "machine") >
+| < #OTHER_SUBJECT : < A_THE >" "("program" | "computer" | "machine") >
 	//Others
 | < #IS  : "is" >
 | < #THAN  : "than" >
@@ -284,7 +223,7 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 | < #PRIVATE_MOD : "private" >
 | < #PROTECTED_MOD : "protected" >
 	//Type names
-//| < #STRING : "string" > -- STRING is considered as a CLASS_ID token, it must begin with Capital Letter
+//| < ##STRING : "string" > -- STRING is considered as a CLASS_ID token, it must begin with Capital Letter
 | < #CHAR : "char" >
 | < #BOOLEAN : "boolean" >
 | < #BYTE : "byte" >
@@ -294,14 +233,28 @@ TOKEN [IGNORE_CASE] : /* Meta Tokens - Ignore Case */ /* EXTENSIBLE */
 | < #FLOAT : "float" >		//must be disable
 | < #DOUBLE : "double" >
 	//Floating point suffixes
-} 
+}
+
+TOKEN:
+{  //First person subject
+  < #I_SUBJECT : "I" >
+}
+
+TOKEN:
+{	//Literals
+ < INTEGER_LITERAL: < CONSTANT > (< FLOATING_POINT > < CONSTANT >)? > 	// Semantic analyzer must chech if it is an Integer, Float or Double
+	//Char
+| < STRING_LITERAL: "\"" <STRING_VAL > "\"" >
+| < CHAR_LITERAL: "\'" < CHAR_VAL > "\'" >
+	//Identifiers
+| < CLASS_ID: <CAP_LETTER> (<ID_ANY>)* >
+| < ID : <ID_BEGIN> (<ID_ANY>)* >
+}
 
 TOKEN : /*Meta tokens*/
 {
-  	//First person subject
-  < I_SUBJECT : "I" >
 	//Identifiers
-| < #CONSTANT : (< DIGIT >)+ >
+  < #CONSTANT : (< DIGIT >)+ >
 | < #FLOATING_POINT: ". " >
 	//Might cause problems with N0 separator
 | < #DIGIT : [ "0"-"9" ] >
@@ -352,7 +305,11 @@ void compilation_unit():{ if(verbose) System.out.println("Start compilation_uni
  *	creation_sentence? ("public"|"private"|"protected")? ("final"|"abstract")? "class" CLASS_ID field_declaration+ "end-class"
  */
 void class_declaration():{ if(verbose) System.out.println("Starts class_declaration");}{
-  (creation_sentence())? (< VISIBILITY >)? (< FINAL_MOD >|<ABSTRACT_MOD >)? < CLASS > < CLASS_ID > (field_declaration())+ < END_CLASS >}
+  //try  //{	 (creation_sentence())? (< VISIBILITY >)? (< FINAL_MOD >|<ABSTRACT_MOD >)? < CLASS > < CLASS_ID > (field_declaration())+ < END_CLASS >
+
+  //}catch(ParseException e)  //{
+  //  System.out.println(e.toString());  //}
+}
 /*
  *	"." creation_sentence? ("public"|"private"|"protected")? ("static")? ("final")? (constructor_declaration | method_declaration | variable_list)
  */
@@ -379,7 +336,7 @@ void constructor_declaration():
 void method_declaration():
 { if(verbose) System.out.println("Starts method_declaration");}
 {
-  < METHOD > < TYPE > < ID > (< ARRAY_TOKEN >)? parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
+  < METHOD > type() < ID > (< ARRAY_TOKEN >)? parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
 }
 
 /*
@@ -397,7 +354,7 @@ void variable_list():
 void variable_declaration():
 { if(verbose) System.out.println("Starts variable_declaration");}
 {
-  < TYPE > < ID > (< ARRAY_TOKEN >)? (variable_init())?
+  type() < ID > (< ARRAY_TOKEN >)? (variable_init())?
 }
 
 /*
@@ -425,7 +382,7 @@ void variable_initializer():
 void variable_declaration_statement():
 { if(verbose) System.out.println("Starts statement_list");}
 {
-  (creation_sentence())? < TYPE > variable_list()
+  (creation_sentence())? type() variable_list()
 }
 
 /* __ STATEMENTS __ */
@@ -445,7 +402,7 @@ void statement_list():
 void statement():
 { if(verbose) System.out.println("Starts statement");}
 {
-  ( LOOKAHEAD(3) variable_declaration_statement() | expression() | LOOKAHEAD(3) if_statement() |LOOKAHEAD(3)  while_statement() |LOOKAHEAD(3)  print_statement() | return_statement() )
+  (variable_declaration_statement() | expression() | if_statement() |  while_statement() | print_statement() | return_statement() )
 }
 
 /* __ IF __ */
@@ -536,7 +493,7 @@ void return_statement():
 void logical_expression():
 { if(verbose) System.out.println("Starts logical_expression");}
 {
-  LOOKAHEAD(3) comparison_expression() |LOOKAHEAD(3)  "(" comparison_expression() ")"
+  comparison_expression() | "(" comparison_expression() ")"
 }
 
 /* (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression? */
@@ -579,7 +536,7 @@ void simple_expression():
 void casting_expression():
 { if(verbose) System.out.println("Starts casting_expression");}
 {
-   expression() ")" | < TYPE > ")" expression()
+   expression() ")" | type() ")" expression()
 }
 
 /* NEW expression_specifier */
@@ -730,7 +687,7 @@ void parameter_list():
 void parameter():
 { if(verbose) System.out.println("Starts parameter");}
 {
-  < TYPE > < ID > (< ARRAY_TOKEN >)?
+  type() < ID > (< ARRAY_TOKEN >)?
 }
 
 /*
@@ -761,7 +718,15 @@ void array_init():
   "{" variable_initializer() (< LIST_CONNECTOR > variable_initializer())* "}" 
 }
 
+/* __ TOKEN EXPRESSIONS __*/
+//Those are simple expressions that simplifies the grammar comprehension but cannot be stored in the lexical analyzer easily
 
+/*  (TYPE_SPECIFIER | CLASS_ID) ([])* */
+void type():
+{ if(verbose) System.out.println("Starts parameter");}
+{
+  (< TYPE_SPECIAL > | < CLASS_ID >) (< ARRAY_TOKEN >)?
+}
 
 
 
