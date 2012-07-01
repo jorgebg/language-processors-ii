@@ -1,0 +1,25 @@
+-- Square and Rectangle Area.
+-- Test4 receives as parameter a boolean 
+	true if we want to find the area of a square, 
+	false if we want to find the area of a rectangle -! -!
+
+public CLASS Test4.
+
+I need to define the public static void METHOD main (String[] args):
+the method needs to check IF (args->length != 1) 
+	THEN it prints ("The number of given arguments is wrong.")
+	-- in SNL is allowed to do things like squareArea(read) it is much faster -!
+	ELSE IF (args[0]->equals("true") equals to true) 
+	THEN it prints ("The area of the square is: "+ squareArea(read))
+	ELSE it prints ("The area of the rectangle is: "+ rectangleArea(read, read))
+	END_IF 
+END_METHOD.
+
+I create the public static int FUNCTION squareArea(int side):
+the function returns side * side END_FUNCTION.
+
+I create also the public static int FUNCTION rectangleArea(int side1,int side2):
+the function creates the VARIABLE int area = side1*side2 --END_VARIABLE-!;
+the function returns area END_FUNCTION
+
+END_CLASS

@@ -1,0 +1,12 @@
+-- SquareArea. Operations, assign, read and return -!
+public CLASS Test3.
+private final VARIABLE int squareSide = 5 --END_VARIABLE-!. 
+
+I need to define the public static void METHOD main (String[] args):
+the function declares the VARIABLE Test3 test = new Test3();
+it prints ("The area of the square is: " + test->squareArea()) END_METHOD.
+
+I create the public int FUNCTION squareArea():
+the function returns this->side * this->side END_FUNCTION
+
+END_CLASS

@@ -9,287 +9,295 @@ public interface SNLConstants {
   /** End of File. */
   int EOF = 0;
   /** RegularExpression Id. */
-  int CLASS_METHOD_CONNECTOR = 5;
+  int CLASS_METHOD_CONNECTOR = 9;
   /** RegularExpression Id. */
-  int METHOD_STATEMENT_CONNECTOR = 6;
+  int METHOD_STATEMENT_CONNECTOR = 10;
   /** RegularExpression Id. */
-  int LIST_CONNECTOR = 7;
+  int LIST_CONNECTOR = 11;
   /** RegularExpression Id. */
-  int STATEMENT_CONNECTOR = 8;
+  int STATEMENT_CONNECTOR = 12;
   /** RegularExpression Id. */
-  int PACKAGE_MOD = 9;
+  int PACKAGE_MOD = 13;
   /** RegularExpression Id. */
-  int IMPORT_MOD = 10;
+  int IMPORT_MOD = 14;
   /** RegularExpression Id. */
-  int ABSTRACT_MOD = 11;
+  int ABSTRACT_MOD = 15;
   /** RegularExpression Id. */
-  int STATIC_MOD = 12;
+  int STATIC_MOD = 16;
   /** RegularExpression Id. */
-  int FINAL_MOD = 13;
+  int FINAL_MOD = 17;
   /** RegularExpression Id. */
-  int EXTENDS_MOD = 14;
+  int EXTENDS_MOD = 18;
   /** RegularExpression Id. */
-  int IMPLEMENTS_MOD = 15;
+  int IMPLEMENTS_MOD = 19;
   /** RegularExpression Id. */
-  int AUX_VERB = 16;
+  int AUX_VERB = 20;
   /** RegularExpression Id. */
-  int AUX_VERB_3rd = 17;
+  int AUX_VERB_3rd = 21;
   /** RegularExpression Id. */
-  int MODAL_VERB = 18;
+  int MODAL_VERB = 22;
   /** RegularExpression Id. */
-  int CLASS = 19;
+  int CLASS = 23;
   /** RegularExpression Id. */
-  int END_CLASS = 20;
+  int END_CLASS = 24;
   /** RegularExpression Id. */
-  int CONSTRUCTOR = 21;
+  int CONSTRUCTOR = 25;
   /** RegularExpression Id. */
-  int END_CONSTRUCTOR = 22;
+  int END_CONSTRUCTOR = 26;
   /** RegularExpression Id. */
-  int METHOD = 23;
+  int METHOD = 27;
   /** RegularExpression Id. */
-  int END_METHOD = 24;
+  int END_METHOD = 28;
   /** RegularExpression Id. */
-  int VARIABLE = 25;
+  int VARIABLE = 29;
   /** RegularExpression Id. */
-  int END_VARIABLE = 26;
+  int END_VARIABLE = 30;
   /** RegularExpression Id. */
-  int IF = 27;
+  int IF = 31;
   /** RegularExpression Id. */
-  int ELSE = 28;
+  int ELSE = 32;
   /** RegularExpression Id. */
-  int THEN = 29;
+  int THEN = 33;
   /** RegularExpression Id. */
-  int END_IF = 30;
+  int END_IF = 34;
   /** RegularExpression Id. */
-  int WHILE = 31;
+  int WHILE = 35;
   /** RegularExpression Id. */
-  int END_WHILE = 32;
+  int END_WHILE = 36;
   /** RegularExpression Id. */
-  int INSTANCE_OF = 33;
+  int INSTANCE_OF = 37;
   /** RegularExpression Id. */
-  int NEW = 34;
+  int NEW = 38;
   /** RegularExpression Id. */
-  int ARRAY_TOKEN = 35;
+  int ARRAY_TOKEN = 39;
   /** RegularExpression Id. */
-  int ASSIGN_VERB = 36;
+  int ASSIGN_VERB = 40;
   /** RegularExpression Id. */
-  int ASSIGN_VERB_3rd = 37;
+  int ASSIGN_VERB_3rd = 41;
   /** RegularExpression Id. */
-  int CREATION_VERB = 38;
+  int CREATION_VERB = 42;
   /** RegularExpression Id. */
-  int CREATION_VERB_3rd = 39;
+  int CREATION_VERB_3rd = 43;
   /** RegularExpression Id. */
-  int CONTROL_VERB = 40;
+  int CONTROL_VERB = 44;
   /** RegularExpression Id. */
-  int CONTROL_VERB_3rd = 41;
+  int CONTROL_VERB_3rd = 45;
   /** RegularExpression Id. */
-  int PRINT_VERB = 42;
+  int PRINT_VERB = 46;
   /** RegularExpression Id. */
-  int PRINT_VERB_3rd = 43;
+  int PRINT_VERB_3rd = 47;
   /** RegularExpression Id. */
-  int READ = 44;
+  int READ = 48;
   /** RegularExpression Id. */
-  int RETURN_VERB = 45;
+  int RETURN_VERB = 49;
   /** RegularExpression Id. */
-  int RETURN_VERB_3rd = 46;
+  int RETURN_VERB_3rd = 50;
   /** RegularExpression Id. */
-  int DOT_NOTATION = 47;
+  int DOT_NOTATION = 51;
   /** RegularExpression Id. */
-  int A_THE = 48;
+  int A_THE = 52;
   /** RegularExpression Id. */
-  int TO = 49;
+  int TO = 53;
   /** RegularExpression Id. */
-  int IN = 50;
+  int IN = 54;
   /** RegularExpression Id. */
-  int AUXILIAR_CONNECTOR = 51;
+  int AUXILIAR_CONNECTOR = 55;
   /** RegularExpression Id. */
-  int SUBJECT = 52;
+  int SUBJECT = 56;
   /** RegularExpression Id. */
-  int SUBJECT_3rd = 53;
+  int SUBJECT_3rd = 57;
   /** RegularExpression Id. */
-  int COMPARATOR = 54;
+  int COMPARATOR = 58;
   /** RegularExpression Id. */
-  int OPERATOR = 55;
+  int OPERATOR = 59;
   /** RegularExpression Id. */
-  int UNARY_OPERATOR = 56;
+  int UNARY_OPERATOR = 60;
   /** RegularExpression Id. */
-  int MINUS = 57;
+  int MINUS = 61;
   /** RegularExpression Id. */
-  int PLUS = 58;
+  int PLUS = 62;
   /** RegularExpression Id. */
-  int LINKER = 59;
+  int LINKER = 63;
   /** RegularExpression Id. */
-  int EQUALS = 60;
+  int EQUALS = 64;
   /** RegularExpression Id. */
-  int AUXILIAR_EXPRESSION = 61;
+  int AUXILIAR_EXPRESSION = 65;
   /** RegularExpression Id. */
-  int AUXILIAR_EXPRESSION3 = 62;
+  int AUXILIAR_EXPRESSION3 = 66;
   /** RegularExpression Id. */
-  int PACKAGE_STATEMENT = 63;
+  int PACKAGE_STATEMENT = 67;
   /** RegularExpression Id. */
-  int VISIBILITY = 64;
+  int VISIBILITY = 68;
   /** RegularExpression Id. */
-  int TYPE_SPECIAL = 65;
+  int TYPE_SPECIAL = 69;
   /** RegularExpression Id. */
-  int BOOLEAN_TOKEN = 66;
+  int BOOLEAN_TOKEN = 70;
   /** RegularExpression Id. */
-  int EXPRESSION_MODIFIER = 67;
+  int EXPRESSION_MODIFIER = 71;
   /** RegularExpression Id. */
-  int COMPARISON_EXPRESSION = 68;
+  int COMPARISON_EXPRESSION = 72;
   /** RegularExpression Id. */
-  int LANGUAGE_EQUALS_COMPARISON = 69;
+  int LANGUAGE_EQUALS_COMPARISON = 73;
   /** RegularExpression Id. */
-  int LANGUAGE_COMPARISON = 70;
+  int LANGUAGE_COMPARISON = 74;
   /** RegularExpression Id. */
-  int COMPARISON_SYMBOLS = 71;
+  int COMPARISON_SYMBOLS = 75;
   /** RegularExpression Id. */
-  int SYMBOLIC_EQUALS_COMPARISON = 72;
+  int SYMBOLIC_EQUALS_COMPARISON = 76;
   /** RegularExpression Id. */
-  int SYMBOLIC_COMPARISON = 73;
+  int SYMBOLIC_COMPARISON = 77;
   /** RegularExpression Id. */
-  int OPERATION_EXPRESSION = 74;
+  int OPERATION_EXPRESSION = 78;
   /** RegularExpression Id. */
-  int OPERATION_SYMBOL = 75;
+  int OPERATION_SYMBOL = 79;
   /** RegularExpression Id. */
-  int UNARY_OPERATION_EXPRESSION = 76;
+  int UNARY_OPERATION_EXPRESSION = 80;
   /** RegularExpression Id. */
-  int UNARY_OPERATION_SYMBOL = 77;
+  int UNARY_OPERATION_SYMBOL = 81;
   /** RegularExpression Id. */
-  int LINKER_EXPRESSION = 78;
+  int LINKER_EXPRESSION = 82;
   /** RegularExpression Id. */
-  int LINKER_SYMBOL = 79;
+  int LINKER_SYMBOL = 83;
   /** RegularExpression Id. */
-  int LANGUAGE_NOT = 80;
+  int LANGUAGE_NOT = 84;
   /** RegularExpression Id. */
-  int LANGUAGE_GREATER = 81;
+  int LANGUAGE_GREATER = 85;
   /** RegularExpression Id. */
-  int LANGUAGE_SMALLER = 82;
+  int LANGUAGE_SMALLER = 86;
   /** RegularExpression Id. */
-  int SYMBOLIC_NOT = 83;
+  int SYMBOLIC_NOT = 87;
   /** RegularExpression Id. */
-  int SYMBOLIC_GREATER = 84;
+  int SYMBOLIC_GREATER = 88;
   /** RegularExpression Id. */
-  int SYMBOLIC_SMALLER = 85;
+  int SYMBOLIC_SMALLER = 89;
   /** RegularExpression Id. */
-  int LANGUAGE_MINUS = 86;
+  int LANGUAGE_MINUS = 90;
   /** RegularExpression Id. */
-  int LANGUAGE_PLUS = 87;
+  int LANGUAGE_PLUS = 91;
   /** RegularExpression Id. */
-  int LANGUAGE_TIMES = 88;
+  int LANGUAGE_TIMES = 92;
   /** RegularExpression Id. */
-  int LANGUAGE_DIVIDES = 89;
+  int LANGUAGE_DIVIDES = 93;
   /** RegularExpression Id. */
-  int SYMBOLIC_MINUS = 90;
+  int SYMBOLIC_MINUS = 94;
   /** RegularExpression Id. */
-  int SYMBOLIC_PLUS = 91;
+  int SYMBOLIC_PLUS = 95;
   /** RegularExpression Id. */
-  int SYMBOLIC_TIMES = 92;
+  int SYMBOLIC_TIMES = 96;
   /** RegularExpression Id. */
-  int SYMBOLIC_DIVIDES = 93;
+  int SYMBOLIC_DIVIDES = 97;
   /** RegularExpression Id. */
-  int LANGUAGE_EQUALS = 94;
+  int LANGUAGE_EQUALS = 98;
   /** RegularExpression Id. */
-  int SYMBOLIC_EQUALS = 95;
+  int SYMBOLIC_EQUALS = 99;
   /** RegularExpression Id. */
-  int LANGUAGE_INCREMENT = 96;
+  int LANGUAGE_INCREMENT = 100;
   /** RegularExpression Id. */
-  int LANGUAGE_DECREMENT = 97;
+  int LANGUAGE_DECREMENT = 101;
   /** RegularExpression Id. */
-  int SYMBOLIC_DECREMENT = 98;
+  int SYMBOLIC_DECREMENT = 102;
   /** RegularExpression Id. */
-  int SYMBOLIC_INCREMENT = 99;
+  int SYMBOLIC_INCREMENT = 103;
   /** RegularExpression Id. */
-  int LANGUAGE_AND = 100;
+  int LANGUAGE_AND = 104;
   /** RegularExpression Id. */
-  int LANGUAGE_OR = 101;
+  int LANGUAGE_OR = 105;
   /** RegularExpression Id. */
-  int SYMBOLIC_OR = 102;
+  int SYMBOLIC_OR = 106;
   /** RegularExpression Id. */
-  int SYMBOLIC_AND = 103;
+  int SYMBOLIC_AND = 107;
   /** RegularExpression Id. */
-  int BOOLEAN_EQUALS = 104;
+  int BOOLEAN_EQUALS = 108;
   /** RegularExpression Id. */
-  int TRUE = 105;
+  int TRUE = 109;
   /** RegularExpression Id. */
-  int FALSE = 106;
+  int FALSE = 110;
   /** RegularExpression Id. */
-  int NULL = 107;
+  int NULL = 111;
   /** RegularExpression Id. */
-  int SUPER = 108;
+  int SUPER = 112;
   /** RegularExpression Id. */
-  int THIS = 109;
+  int THIS = 113;
   /** RegularExpression Id. */
-  int NORMAL_SUBJECT = 110;
+  int NORMAL_SUBJECT = 114;
   /** RegularExpression Id. */
-  int THIRD_SUBJECT = 111;
+  int THIRD_SUBJECT = 115;
   /** RegularExpression Id. */
-  int OTHER_SUBJECT = 112;
+  int OTHER_SUBJECT = 116;
   /** RegularExpression Id. */
-  int IS = 113;
+  int IS = 117;
   /** RegularExpression Id. */
-  int THAN = 114;
+  int THAN = 118;
   /** RegularExpression Id. */
-  int PUBLIC_MOD = 115;
+  int PUBLIC_MOD = 119;
   /** RegularExpression Id. */
-  int PRIVATE_MOD = 116;
+  int PRIVATE_MOD = 120;
   /** RegularExpression Id. */
-  int PROTECTED_MOD = 117;
+  int PROTECTED_MOD = 121;
   /** RegularExpression Id. */
-  int CHAR = 118;
+  int CHAR = 122;
   /** RegularExpression Id. */
-  int BOOLEAN = 119;
+  int BOOLEAN = 123;
   /** RegularExpression Id. */
-  int BYTE = 120;
+  int BYTE = 124;
   /** RegularExpression Id. */
-  int SHORT = 121;
+  int SHORT = 125;
   /** RegularExpression Id. */
-  int INT = 122;
+  int INT = 126;
   /** RegularExpression Id. */
-  int LONG = 123;
+  int LONG = 127;
   /** RegularExpression Id. */
-  int FLOAT = 124;
+  int FLOAT = 128;
   /** RegularExpression Id. */
-  int DOUBLE = 125;
+  int DOUBLE = 129;
   /** RegularExpression Id. */
-  int I_SUBJECT = 126;
+  int VOID = 130;
   /** RegularExpression Id. */
-  int INTEGER_LITERAL = 127;
+  int I_SUBJECT = 131;
   /** RegularExpression Id. */
-  int STRING_LITERAL = 128;
+  int INTEGER_LITERAL = 132;
   /** RegularExpression Id. */
-  int CHAR_LITERAL = 129;
+  int STRING_LITERAL = 133;
   /** RegularExpression Id. */
-  int CLASS_ID = 130;
+  int CHAR_LITERAL = 134;
   /** RegularExpression Id. */
-  int ID = 131;
+  int CLASS_ID = 135;
   /** RegularExpression Id. */
-  int CONSTANT = 132;
+  int ID = 136;
   /** RegularExpression Id. */
-  int FLOATING_POINT = 133;
+  int CONSTANT = 137;
   /** RegularExpression Id. */
-  int DIGIT = 134;
+  int FLOATING_POINT = 138;
   /** RegularExpression Id. */
-  int CAP_LETTER = 135;
+  int DIGIT = 139;
   /** RegularExpression Id. */
-  int ID_BEGIN = 136;
+  int CAP_LETTER = 140;
   /** RegularExpression Id. */
-  int ID_ANY = 137;
+  int ID_BEGIN = 141;
   /** RegularExpression Id. */
-  int STRING_VAL = 138;
+  int ID_ANY = 142;
   /** RegularExpression Id. */
-  int CHAR_VAL = 139;
+  int STRING_VAL = 143;
+  /** RegularExpression Id. */
+  int CHAR_VAL = 144;
 
   /** Lexical state. */
   int DEFAULT = 0;
+  /** Lexical state. */
+  int InnerComment = 1;
 
   /** Literal token values. */
   String[] tokenImage = {
     "<EOF>",
+    "\"--\"",
+    "\"--\"",
+    "\"-!\"",
+    "<token of kind 4>",
     "\" \"",
     "\"\\r\"",
     "\"\\t\"",
     "\"\\n\"",
-    "\".\"",
+    "<CLASS_METHOD_CONNECTOR>",
     "\":\"",
     "\",\"",
     "\";\"",
@@ -304,9 +312,9 @@ public interface SNLConstants {
     "<AUX_VERB_3rd>",
     "<MODAL_VERB>",
     "\"class\"",
-    "\"end-class\"",
+    "\"end_class\"",
     "\"constructor\"",
-    "\"end-constructor\"",
+    "\"end_constructor\"",
     "<METHOD>",
     "<END_METHOD>",
     "<VARIABLE>",
@@ -314,9 +322,9 @@ public interface SNLConstants {
     "\"if\"",
     "\"else\"",
     "\"then\"",
-    "\"end-if\"",
+    "\"end_if\"",
     "\"while\"",
-    "\"end-while\"",
+    "\"end_while\"",
     "\"instance_of\"",
     "\"new\"",
     "<ARRAY_TOKEN>",
@@ -378,7 +386,7 @@ public interface SNLConstants {
     "\"+\"",
     "\"*\"",
     "\"/\"",
-    "\"equals\"",
+    "\"equal\"",
     "\"=\"",
     "\"increment\"",
     "\"decrement\"",
@@ -388,7 +396,7 @@ public interface SNLConstants {
     "\"or\"",
     "\"||\"",
     "\"&&\"",
-    "\"==\"",
+    "<BOOLEAN_EQUALS>",
     "\"true\"",
     "\"false\"",
     "\"null\"",
@@ -410,6 +418,7 @@ public interface SNLConstants {
     "\"long\"",
     "\"float\"",
     "\"double\"",
+    "<VOID>",
     "\"I\"",
     "<INTEGER_LITERAL>",
     "<STRING_LITERAL>",

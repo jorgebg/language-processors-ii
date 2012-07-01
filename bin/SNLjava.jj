@@ -1,15 +1,20 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */
- options{  JDK_VERSION = "1.5";
-  CHOICE_AMBIGUITY_CHECK = 4;
-  LOOKAHEAD = 2;
-  FORCE_LA_CHECK = true;  static = true;}
-PARSER_BEGIN(SNL)
+ options{  JDK_VERSION = "1.6";
+  //CHOICE_AMBIGUITY_CHECK = 4;
+  //LOOKAHEAD = 3;
+  //FORCE_LA_CHECK = true;  static = true;}
+PARSER_BEGIN(SNL)
+
 public class SNL{
 
   public static boolean verbose;
-    public static void main(String args []) {
+
+  /*public SNL (String s)  {	this((Reader)(new StringReader(s)));
+  }*/
+  public static void main(String args []) {
+    //CHECK ARGUMENTS
 	if (args.length == 0) {
 	    System.out.println("No input given");
 	    //  SNL snlParser = new SNL(System.in);
@@ -26,34 +31,44 @@ public class SNL{
 	    	SNL parser = new SNL(new java.io.FileInputStream(args[0]));
 	    	parser.compilation_unit();
 			System.out.println("Parsing complete");
-		//Catchs Exceptions
 	    } catch (java.io.FileNotFoundException e) {
 	    	System.out.println("The File " + args[0] + " has not been found");
 	    	return;
+	   //Catch Parsing Exceptions
+	   	} catch (ParseException e2) {
+	 	  	//e2.printStackTrace();
+	    	System.err.println("Parse error: " + e2.getMessage());
 	   	} catch (TokenMgrError e1) {
-	    	System.out.println(e1.toString());
-	    	return;
-	 	} catch (ParseException e2) {
-	    	System.out.println(e2.toString());
-	    	return;
-	   }
-	    	
+			//e1.printStackTrace();
+	    	System.err.println("Token error: " + e1.getMessage());
+	  	}
+	 	
 	} else {
 	    System.out.println("Wrong number of parameters. Paramater 1: input file. Parameter 2 (optional): verbose (1,0)");
 	    return;
 	}
   }
-}PARSER_END(SNL)SKIP :{  " " | "\r" | "\t" | "\n"}
+}PARSER_END(SNL)
+TOKEN_MGR_DECLS:
+{	static int commentNumber=0;
+}
+
+SKIP:
+{	"--"{ commentNumber =1;} : InnerComment}
+< InnerComment > SKIP:{  	"--"{ commentNumber++;}
+	| "-!"{commentNumber--; if (commentNumber == 0) SwitchTo(DEFAULT);}
+	| < (~[]) >	}    	    
+SKIP :{  " " | "\r" | "\t" | "\n"}
 
 TOKEN [IGNORE_CASE]:
 {
-	//Functional connectors
-  < CLASS_METHOD_CONNECTOR : (".")  >	//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
+  //Functional connectors
+  < CLASS_METHOD_CONNECTOR : ("In which" | ".")  >	//N0 connector. ClassToClass, ClassToMethod, MethodToMethod 
 | < METHOD_STATEMENT_CONNECTOR : ":"  > 	//N1 connector. MethodToStatement. Will be optional
 | < LIST_CONNECTOR: (",") >					//N2 connector. VariableToVariable, ParameterToParamenter
 | < STATEMENT_CONNECTOR : ";" >				//N3 connector. StatementToStatement
  	//Java reserved words
-| < PACKAGE_MOD : "package" >
+|  < PACKAGE_MOD : "package" >
 | < IMPORT_MOD : "import" >
 | < ABSTRACT_MOD : "abstract" >
 | < STATIC_MOD : "static" >
@@ -61,25 +76,25 @@ TOKEN [IGNORE_CASE]:
 | < EXTENDS_MOD : "extends" >
 | < IMPLEMENTS_MOD : "implements" >
 	//Auxiliar Verbs -EXTENSIBLE
-| < AUX_VERB : "want" | "need" >
-| < AUX_VERB_3rd : "wants" | "needs" >
+| < #AUX_VERB : "want" | "need" >
+| < #AUX_VERB_3rd : "wants" | "needs" >
 | < MODAL_VERB : "shall" | "must" | "will" >
   	//Begin-End tokens
 | < CLASS : "class" >
-| < END_CLASS : "end-class" > 
+| < END_CLASS : "end_class" > 
 | < CONSTRUCTOR : "constructor" >
-| < END_CONSTRUCTOR : "end-constructor" >
+| < END_CONSTRUCTOR : "end_constructor" >
 | < METHOD : ("function" | "method") >
-| < END_METHOD: ("end-function" | "end-method") >
+| < END_METHOD: ("end_function" | "end_method") >
 | < VARIABLE : ("variable" |"variables") >
-| < END_VARIABLE : ("end-variable" |"end-variables") >
+| < END_VARIABLE : ("end_variable" |"end_variables") >
 	//Control - Loop Expressions
 | < IF : "if" >
 | < ELSE : "else" >
 | < THEN : "then" >
-| < END_IF : "end-if" >
+| < END_IF : "end_if" >
 | < WHILE : "while" >
-| < END_WHILE: "end-while" > 
+| < END_WHILE: "end_while" > 
 	//Expression constants
 | < INSTANCE_OF : "instance_of" >
 | < NEW : "new" >
@@ -88,8 +103,8 @@ TOKEN [IGNORE_CASE]:
 	//Action Verbs -EXTENSIBLE
 | < ASSIGN_VERB : "save" | "store" >
 | < ASSIGN_VERB_3rd : "saves" | "stores" >
-| < CREATION_VERB : "create" | "define" >
-| < CREATION_VERB_3rd : "creates" | "defines" >
+| < CREATION_VERB : "create" | "define" | "declare" >
+| < CREATION_VERB_3rd : "creates" | "defines" | "declares" >
 | < CONTROL_VERB : "check" | "verify" >
 | < CONTROL_VERB_3rd : "checks" | "verifies" >
 | < PRINT_VERB : "print" >
@@ -128,8 +143,8 @@ TOKEN :
 	//Assign
 | < EQUALS : (< LANGUAGE_EQUALS >|< SYMBOLIC_EQUALS >) >
 	//Auxiliar Verbs
-| < AUXILIAR_EXPRESSION: (< AUX_VERB >" "< TO > |< MODAL_VERB >) >
-| < AUXILIAR_EXPRESSION3:  (< AUX_VERB_3rd >" "< TO >|< MODAL_VERB >) >
+| < AUXILIAR_EXPRESSION: (< AUX_VERB >" "< TO >) >
+| < AUXILIAR_EXPRESSION3:  (< AUX_VERB_3rd >" "< TO >) >
 }
 
 /* __ COMPLEX TOKENS ADDED FROM THE GRAMMAR __ *///This might clarify the syntactical analyzer
@@ -188,7 +203,7 @@ TOKEN [IGNORE_CASE] :
 | < #SYMBOLIC_TIMES : "*" >
 | < #SYMBOLIC_DIVIDES : "/" >
 	//Assign
-| < #LANGUAGE_EQUALS : "equals" >  
+| < #LANGUAGE_EQUALS : "equal" >  
 | < #SYMBOLIC_EQUALS : "=" > 
 	//Language Unary Operators
 | < #LANGUAGE_INCREMENT: "increment" >
@@ -203,7 +218,7 @@ TOKEN [IGNORE_CASE] :
 | < #SYMBOLIC_OR : "||" >
 | < #SYMBOLIC_AND: "&&" >
 	//Boolean operator
-| < #BOOLEAN_EQUALS: "==" >
+| < #BOOLEAN_EQUALS: "==" | "equals to">
 	//Boolean Tokens
 | < #TRUE : "true" >
 | < #FALSE : "false" >
@@ -214,7 +229,7 @@ TOKEN [IGNORE_CASE] :
   	//Subject
 | < #NORMAL_SUBJECT : ("you" | "we" | "they") >
 | < #THIRD_SUBJECT : ("he" | "she" | "it" ) >
-| < #OTHER_SUBJECT : < A_THE >" "("program" | "computer" | "machine") >
+| < #OTHER_SUBJECT : < A_THE >" "("program" | "computer" | "machine" | "method" | "function") >
 	//Others
 | < #IS  : "is" >
 | < #THAN  : "than" >
@@ -232,6 +247,7 @@ TOKEN [IGNORE_CASE] :
 | < #LONG : "long" > 		//must be disabled
 | < #FLOAT : "float" >		//must be disable
 | < #DOUBLE : "double" >
+| < VOID: "void" | "chachi" >
 	//Floating point suffixes
 }
 
@@ -304,11 +320,7 @@ void compilation_unit():{ if(verbose) System.out.println("Start compilation_uni
 /*
  *	creation_sentence? ("public"|"private"|"protected")? ("final"|"abstract")? "class" CLASS_ID field_declaration+ "end-class"
  */
-void class_declaration():{ if(verbose) System.out.println("Starts class_declaration");}{
-  //try  //{	 (creation_sentence())? (< VISIBILITY >)? (< FINAL_MOD >|<ABSTRACT_MOD >)? < CLASS > < CLASS_ID > (field_declaration())+ < END_CLASS >
-
-  //}catch(ParseException e)  //{
-  //  System.out.println(e.toString());  //}
+void class_declaration():{ if(verbose) System.out.println("Starts class_declaration");}{	 (creation_sentence())? (< VISIBILITY >)? (< FINAL_MOD >|<ABSTRACT_MOD >)? < CLASS > < CLASS_ID > (field_declaration())+ < END_CLASS >
 }
 /*
  *	"." creation_sentence? ("public"|"private"|"protected")? ("static")? ("final")? (constructor_declaration | method_declaration | variable_list)
@@ -327,7 +339,7 @@ void field_declaration():
 void constructor_declaration():
 { if(verbose) System.out.println("Starts contructor_declaration");}
 {
-  < CONSTRUCTOR > < ID > parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_CONSTRUCTOR >
+  < CONSTRUCTOR > < CLASS_ID > parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_CONSTRUCTOR >
 }
 
 /*
@@ -336,16 +348,16 @@ void constructor_declaration():
 void method_declaration():
 { if(verbose) System.out.println("Starts method_declaration");}
 {
-  < METHOD > type() < ID > (< ARRAY_TOKEN >)? parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
+  type() < METHOD > < ID > (< ARRAY_TOKEN >)? parameter_list() < METHOD_STATEMENT_CONNECTOR > statement_list() < END_METHOD >
 }
 
 /*
- * ("variable"|"variables") variable_declaration ("," variable_declaration)* ("end-variable"|"end-variables")
+ * ("variable"|"variables") variable_declaration ("," variable_declaration)*
  */
 void variable_list():
 { if(verbose) System.out.println("Starts variable_list");}
 {
-  < VARIABLE > variable_declaration() (< LIST_CONNECTOR > variable_declaration())* < END_VARIABLE >
+  < VARIABLE > variable_declaration() (< LIST_CONNECTOR > variable_declaration())* (< END_VARIABLE >)? //WARNING CHANGED (END_VARIABLE) to optional, was not practic while programming 
 }
 
 /*
@@ -377,12 +389,12 @@ void variable_initializer():
 
 /*
  * needed for local variables, called from statement
- * creation_sentence? ("boolean" | ... | CLASS_ID) variable_list
+ * creation_sentence? variable_list
  */
 void variable_declaration_statement():
 { if(verbose) System.out.println("Starts statement_list");}
 {
-  (creation_sentence())? type() variable_list()
+  (creation_sentence())? variable_list() //WARNING deleted type() becase it was duplicated in the variable list
 }
 
 /* __ STATEMENTS __ */
@@ -402,7 +414,7 @@ void statement_list():
 void statement():
 { if(verbose) System.out.println("Starts statement");}
 {
-  (variable_declaration_statement() | expression() | if_statement() |  while_statement() | print_statement() | return_statement() )
+  (LOOKAHEAD(4) variable_declaration_statement() | expression() | LOOKAHEAD(4)if_statement() |LOOKAHEAD(4) while_statement() |LOOKAHEAD(4) print_statement() | LOOKAHEAD(4) return_statement() )
 }
 
 /* __ IF __ */
@@ -456,7 +468,7 @@ void while_statement():
 void print_statement():
 { if(verbose) System.out.println("Starts print_statement");}
 {
-  print_sentence() "(" expression() ")" 
+  print_sentence() expression() //WARNING DELETED PARENTHESIS "(" expression ")"
 }
 
 /* __ READ __ */
@@ -490,25 +502,25 @@ void return_statement():
 /* __ LOGICAL EXPRESSIONS __ */
 
 /* comparison_expression | '(' comparison_expression ')' // allows nested brackets */
-void logical_expression():
+/*void logical_expression():
 { if(verbose) System.out.println("Starts logical_expression");}
 {
-  comparison_expression() | "(" comparison_expression() ")"
-}
+  comparison_expression()
+}*/ //WARNING not needed, deleted the parenthesis alternative
 
 /* (expression ("=="|"!="|">"| ... |"equals"|"greater or equals"|...) expression) link_expression? */
-void comparison_expression():
+void logical_expression():
 { if(verbose) System.out.println("Starts comparison_expression");}
 {
-  (expression() < COMPARATOR > expression()) link_expression()
-}
+  (expression() < COMPARATOR > expression()) (< LINKER > logical_expression())* //link_expression())*
+} //WARNING CHANGED !!! (Added <LINKER > logical_expression
 
 /* (( "||" | "&&") logical_expression)+ */
 void link_expression():
 { if(verbose) System.out.println("Starts link_expression");}
 {
-  (< LINKER > logical_expression())*
-}
+  < LINKER > logical_expression()
+}   
 
 /* __ EXPRESSION __ */
 
@@ -518,18 +530,21 @@ void link_expression():
 void expression():
 { if(verbose) System.out.println("Starts expression");}
 {
-  (simple_expression())? complex_expression()
+  simple_expression() (complex_expression())* //RE-WARNING new change (complex_expression)*
+  				//RE-WARNING (deleted previous WARNING) problems with post-expression
+  				//WARNING !!! I HAVE CHANGED THE OPTIONALITY FROM (simple_expression())? to (complex_expression())? ASUMING A BUG
 }
 
 /* __ SIMPLE __ */
 /*
- * '(' casting_expression | creating_expression | literal_expression | "null""this""super" | ID | "-""--""++""increment""decrement" | "read"
- * casting_expression, also allows the nested brackets
+ * '(' casting_expression | creating_expression | literal_expression | "null""this""super" | ID  (argument_list) | ("-""--""++""increment""decrement") expression | "true""false" | "read" 
+ * casting_expression, also allows the nested brackets.
+ * in ID (argument_list)? is needed for the method calls
  */
 void simple_expression():
 { if(verbose) System.out.println("Starts simple_expression");}
 {
-   "(" casting_expression() | creating_expression() | literal_expression() | < EXPRESSION_MODIFIER > | < ID > | (< UNARY_OPERATOR >|< MINUS >) | < READ >
+   "(" casting_expression()  | creating_expression() | literal_expression() | < EXPRESSION_MODIFIER > | < ID > (argument_list())? | (< UNARY_OPERATOR >|< MINUS >) expression() | < BOOLEAN_TOKEN > | < READ >
 }
 
 /* expresion ')' | TYPE ')' expression */
@@ -604,8 +619,8 @@ void assign_expression():
 void creation_sentence():
 { if(verbose) System.out.println("Starts creation_sentence");}
 {
- 	(< SUBJECT > (< AUXILIAR_EXPRESSION >)? < CREATION_VERB > (< AUXILIAR_CONNECTOR >)? < A_THE >)
- 	|(< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < CREATION_VERB >) | < CREATION_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? < A_THE >)
+	  (< SUBJECT > (< AUXILIAR_EXPRESSION > | < MODAL_VERB >)? < CREATION_VERB > (< AUXILIAR_CONNECTOR >)? < A_THE >)
+	  |(< SUBJECT_3rd > ( ((< AUXILIAR_EXPRESSION3 > | < MODAL_VERB >) < CREATION_VERB >) | < CREATION_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? < A_THE >)
 }
 
 /* __ CONTROL __ */
@@ -617,8 +632,8 @@ void creation_sentence():
 void control_sentence():
 { if(verbose) System.out.println("Starts control_sentence");}
 {
- 	(< SUBJECT > (< AUXILIAR_EXPRESSION >)? < CONTROL_VERB > (< AUXILIAR_CONNECTOR >)? )
- 	|(< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < CONTROL_VERB >) | < CONTROL_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? )
+ 	(< SUBJECT > (< AUXILIAR_EXPRESSION > | < MODAL_VERB >)? < CONTROL_VERB > (< AUXILIAR_CONNECTOR >)? )
+ 	|(< SUBJECT_3rd > ( ((< AUXILIAR_EXPRESSION3 > | < MODAL_VERB >) < CONTROL_VERB >) | < CONTROL_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? )
 }
 
 /* __ PRINT __ */
@@ -633,8 +648,8 @@ void print_sentence():
 { if(verbose) System.out.println("Starts print_sentence");}
 {
   	( < PRINT_VERB > )
-	| (< SUBJECT > (< AUXILIAR_EXPRESSION >)? < PRINT_VERB > (< AUXILIAR_CONNECTOR >)? )
- 	| (< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < PRINT_VERB >) | < PRINT_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? )
+	| (< SUBJECT > (< AUXILIAR_EXPRESSION > | < MODAL_VERB >)? < PRINT_VERB > (< AUXILIAR_CONNECTOR >)? )
+ 	| (< SUBJECT_3rd > ( ((< AUXILIAR_EXPRESSION3 > | < MODAL_VERB >) < PRINT_VERB >) | < PRINT_VERB_3rd >) (< AUXILIAR_CONNECTOR >)? )
 }
 
 /* __ READ __ */
@@ -659,7 +674,7 @@ void return_sentence():
 { if(verbose) System.out.println("Starts return_sentence");}
 {
   	( < RETURN_VERB > )
- 	| (< SUBJECT_3rd > ( (< AUXILIAR_EXPRESSION > < RETURN_VERB >) | < RETURN_VERB_3rd >) )
+ 	| (< SUBJECT_3rd > ( ((< AUXILIAR_EXPRESSION3 > | < MODAL_VERB >) < RETURN_VERB >) | < RETURN_VERB_3rd >) )
 }
 
 /* __ AUXILIAR EXPRESSIONS __ */ 
@@ -725,7 +740,7 @@ void array_init():
 void type():
 { if(verbose) System.out.println("Starts parameter");}
 {
-  (< TYPE_SPECIAL > | < CLASS_ID >) (< ARRAY_TOKEN >)?
+  (    (< TYPE_SPECIAL > | < CLASS_ID >) (< ARRAY_TOKEN >)? )| < VOID >
 }
 
 

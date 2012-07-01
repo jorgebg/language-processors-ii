@@ -1,0 +1,13 @@
+-- Print Attributes. Attributes and Constructor -!
+I want to create a public CLASS Test2.
+
+the program shall define the VARIABLES int x, String strTest END_VARIABLE.
+
+the program creates the CONSTRUCTOR Test2():
+x = 42; strTest="The answer to the Ultimate Question of Life, The Universe, and Everything: " END_CONSTRUCTOR.
+
+it defines also the public static void METHOD main ( String[] args ):
+the function declares the VARIABLE Test2 test = new Test2();
+it must PRINT (test->strTest+test->x) END_METHOD
+
+END_CLASS 
