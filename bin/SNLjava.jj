@@ -1,7 +1,7 @@
 /**
  * JavaCC template file created by SF JavaCC plugin 1.5.17+ wizard for JavaCC 1.5.0+
  */
- options{  JDK_VERSION = "1.6";
+  options{  JDK_VERSION = "1.6";
   //CHOICE_AMBIGUITY_CHECK = 4;
   //LOOKAHEAD = 3;
   //FORCE_LA_CHECK = true;  static = true;}
@@ -42,7 +42,7 @@ public class SNL{
 			//e1.printStackTrace();
 	    	System.err.println("Token error: " + e1.getMessage());
 	  	}
-	 	
+
 	} else {
 	    System.out.println("Wrong number of parameters. Paramater 1: input file. Parameter 2 (optional): verbose (1,0)");
 	    return;
